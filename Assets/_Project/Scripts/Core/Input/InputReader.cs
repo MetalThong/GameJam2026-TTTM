@@ -24,6 +24,7 @@ public sealed class InputReader : IInputReader, IDisposable
     public bool IsCrouchHeld => _crouchAction.IsPressed();
     public bool IsJumpHeld => _jumpAction.IsPressed();
     public bool IsSprintHeld => _sprintAction.IsPressed();
+    public bool WasNextPressedThisFrame => _nextAction.WasPressedThisFrame();
 
     public event Action AttackPressed;
     public event Action AttackReleased;

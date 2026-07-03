@@ -11,6 +11,7 @@ public interface IInputReader
     bool IsCrouchHeld { get; }
     bool IsJumpHeld { get; }
     bool IsSprintHeld { get; }
+    bool WasNextPressedThisFrame { get; }
 
     event Action AttackPressed;
     event Action AttackReleased;

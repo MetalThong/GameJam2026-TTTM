@@ -12,7 +12,7 @@ public sealed class MainMenuController : MonoBehaviour
 
     [Header("Legacy Scene References")]
     [SerializeField] private GameObject settingsPanel;
-    [SerializeField] private string gameplaySceneName = "Gameplay";
+    [SerializeField] private string gameplaySceneName = "BedRoom";
 
     [Header("Runtime Components")]
     [SerializeField] private MainMenuGameFlow gameFlow;

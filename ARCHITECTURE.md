@@ -40,9 +40,7 @@ The current start scene is `SceneId.MainMenu`, mapped to `Assets/_Project/Scenes
 4. If missing, it instantiates `Assets/_Project/Prefabs/Core/PersistantRoot.prefab`.
 5. `GameManager.Instance.Initialize()` sets state to `Booting`.
 6. `SceneLoader.LoadSceneAsync(startScene)` loads the target scene in `LoadSceneMode.Single`.
-7. When load completes, `GameManager` enters:
-   - `Playing` if `startScene == SceneId.Gameplay`
-   - `MainMenu` otherwise
+7. When load completes, `Bootstrapper` currently sets `GameManager` to `MainMenu`.
 
 ## Persistent Root
 
@@ -91,9 +89,10 @@ It uses UniTask and an `IsLoading` flag to avoid overlapping loads. When loading
 Current scene ids:
 
 - `MainMenu`
-- `Gameplay`
+- `BedRoom`
+- `Hall`
 
-Current Build Settings only include `Bootstrap` and `MainMenu`; `Gameplay` exists in enum but no gameplay scene is currently present in Build Settings.
+Current Build Settings include `Bootstrap`, `MainMenu`, and `BedRoom`. `Hall` exists in the enum but is not currently present in Build Settings.
 
 ### Input
 
@@ -130,6 +129,10 @@ Files:
 - `Assets/_Project/Scripts/CatMovement/MovementFormBehaviour.cs`
 - `Assets/_Project/Scripts/CatMovement/CatMovementForm.cs`
 - `Assets/_Project/Scripts/CatMovement/GhostMovementForm.cs`
+- `Assets/_Project/Scripts/CatMovement/CatAnimationController.cs`
+- `Assets/_Project/Scripts/CatMovement/MovementFormTransitionVfx.cs`
+- `Assets/_Project/Scripts/CatMovement/SpriteBoxColliderFitter.cs`
+- `Assets/_Project/Scripts/CatMovement/CatWalkDustController.cs`
 
 `Movement` is the current player movement coordinator. It reads movement through `MovementInput`, switches form with the temporary `T` test key, and delegates actual movement behavior to `MovementFormBehaviour` components.
 
@@ -139,6 +142,14 @@ Current forms:
 - `GhostMovementForm`: smooth free movement in the air with gravity disabled while active.
 
 `Movement` expects a `Rigidbody2D` reference on the player. Rigidbody and collider setup stays in Unity/Inspector so level and character collision rules remain designer-controlled.
+
+`CatAnimationController` is a visual-only companion component for the cat prototype. It reads the movement input and Rigidbody2D horizontal velocity, drives the cat Animator `IsMoving` and `IsGhost` bools, and flips the SpriteRenderer on X for facing direction. Animator state changes between `CatIdle`, `CatWalk`, and `GhostCat` live in the Animator Controller.
+
+`Movement` exposes a `FormChanged` event when runtime input switches between cat and ghost forms. `MovementFormTransitionVfx` listens to that event and plays a small sprite afterimage/color pulse so the visual transition is smooth without coupling the movement physics forms to presentation effects.
+
+`SpriteBoxColliderFitter` keeps the prototype BoxCollider2D aligned with the current SpriteRenderer sprite. This is needed while cat and ghost animations use different sprite bounds on the same GameObject.
+
+`CatWalkDustController` emits a small auto-created ParticleSystem at the current sprite foot position while the cat form is walking. It reads movement state and keeps the dust disabled for the ghost form.
 
 ### Audio
 
@@ -209,10 +220,12 @@ Current `SaveData` fields:
 Files:
 
 - `Assets/_Project/Scripts/Core/UI/UIManager.cs`
+- `Assets/_Project/Scripts/Core/UI/SceneUIController.cs`
 - `Assets/_Project/Scripts/Core/UI/UIPanelView.cs`
 - `Assets/_Project/Scripts/Dialogue/DialogueLine.cs`
 - `Assets/_Project/Scripts/Dialogue/DialogueView.cs`
 - `Assets/_Project/Scripts/Dialogue/DialogueTestRunner.cs`
+- `Assets/_Project/Editor/SceneUISetupTool.cs`
 - `Assets/_Project/Scripts/Enum/PanelId.cs`
 
 `UIManager` keeps a serialized list of `UIPanelView` instances and builds a `Dictionary<PanelId, UIPanelView>` in `Awake`.
@@ -234,6 +247,10 @@ Current panel ids:
 - `Lose`
 
 Important current limitation: `UIPanelView.Id` has only a getter and is not serialized, so derived panels need to provide an id or this base will not expose a configurable id in the Inspector.
+
+`BedRoom.unity` owns its scene UI under `SceneUIRoot`. This root contains a Screen Space Overlay canvas, a Settings button, a Settings panel, and the Dialogue panel. `SceneUIController` binds the scene Settings button and close button to the Settings panel without relying on persistent global UI state.
+
+`SceneUISetupTool` is an Editor-only helper at `Tools/GameJam/Setup BedRoom UI`. It rebuilds the `BedRoom` scene UI with Unity APIs and ensures `BedRoom.unity` is present in Build Settings.
 
 ### Main Menu
 
@@ -258,7 +275,7 @@ The main menu scripts are split around the first two SOLID principles:
 - Single Responsibility: `MainMenuController` binds scene buttons and initializes the menu state, `MainMenuGameFlow` owns start/continue/quit scene flow, and `MainMenuSettingsPanel` owns panel visibility.
 - Open/Closed direction: button UI wiring is kept separate from game-flow and panel behavior, so future menu features should be added as new focused components or commands instead of growing one large menu controller.
 
-`MainMenuGameFlow` defaults to loading a scene named `Gameplay`. That scene id already exists in `SceneId`, but a gameplay scene still needs to be created and added to Build Settings before the Start/Continue buttons can load it.
+`MainMenuGameFlow` and `MainMenuController` default to loading `BedRoom`, which is present in Build Settings.
 
 ### Dialogue Prototype
 
@@ -268,7 +285,7 @@ Files:
 - `Assets/_Project/Scripts/Dialogue/DialogueView.cs`
 - `Assets/_Project/Scripts/Dialogue/DialogueTestRunner.cs`
 
-`DialogueTestRunner` is a temporary runtime test harness. It auto-creates itself after scene load, persists across scene transitions, and listens for the Enter key through the Unity Input System.
+`DialogueTestRunner` is a temporary scene-owned runtime test harness. It is attached to `SceneUIRoot` in `BedRoom.unity`, references the scene `DialogueView`, and listens for the Enter key through the Unity Input System.
 
 Runtime test flow:
 
@@ -277,7 +294,7 @@ Runtime test flow:
 3. Further Enter presses advance through the test lines.
 4. After the final line, the panel hides.
 
-`DialogueView` builds a Screen Space Overlay canvas at runtime. The panel includes a background image, a portrait image slot, a speaker-name text label, and a body-text area. Current fallback sprites are loaded from `Assets/_Project/Resources/Dialogue` for fast prototype testing; this should be replaced with serialized references, Addressables, or feature-owned configuration when the dialogue system becomes production data.
+`DialogueView` does not create UI objects at runtime. It receives serialized scene references for the panel root, background image, portrait image, speaker-name text, and body text. The panel includes a background image, a portrait image slot, a speaker-name text label, and a body-text area. Current prototype sprites come from `Assets/_Project/Resources/Dialogue`; this should move to serialized configuration, Addressables, or feature-owned dialogue data when the dialogue system becomes production-ready.
 
 ### Event Bus
 
@@ -335,13 +352,19 @@ MainMenu Scripts
   -> GameManager
   -> SceneLoader
   -> Unity UI
+
+BedRoom Scene UI
+  -> SceneUIController
+  -> DialogueView
+  -> DialogueTestRunner
+  -> Unity UI / TextMeshPro
 ```
 
 The architecture is manager-centric. Cross-scene infrastructure is global and scene content calls into it as needed.
 
 ## Current Gaps And Risks
 
-- `SceneId.Gameplay` exists, but no `Gameplay.unity` scene is currently in Build Settings.
+- `SceneId.Hall` exists, but no `Hall.unity` scene is currently in Build Settings.
 - `UIPanelView.Id` is not serialized or abstract, so the base class alone cannot configure unique panel ids in the Inspector.
 - Managers are singleton-based, which is simple for game jam speed but can make tests and scene isolation harder later.
 - `SaveManager.FindSaveables` only finds currently loaded active `MonoBehaviour` objects, so inactive objects or unloaded scenes are not saved.

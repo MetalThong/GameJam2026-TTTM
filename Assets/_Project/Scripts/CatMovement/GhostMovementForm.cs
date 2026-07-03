@@ -16,8 +16,8 @@ public sealed class GhostMovementForm : MovementFormBehaviour
 
     public override void Move(Rigidbody2D rigidbody, Vector2 moveInput)
     {
-        Vector2 targetVelocity = moveInput * moveSpeed;
-        rigidbody.linearVelocity = Vector2.Lerp(
+        Vector2 targetVelocity = Vector2.ClampMagnitude(moveInput, 1f) * moveSpeed;
+        rigidbody.linearVelocity = Vector2.MoveTowards(
             rigidbody.linearVelocity,
             targetVelocity,
             acceleration * Time.fixedDeltaTime

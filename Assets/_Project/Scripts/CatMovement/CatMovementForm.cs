@@ -14,6 +14,7 @@ public sealed class CatMovementForm : MovementFormBehaviour
 
     public override void Move(Rigidbody2D rigidbody, Vector2 moveInput)
     {
-        rigidbody.linearVelocity = new Vector2(moveInput.x * moveSpeed, rigidbody.linearVelocity.y);
+        float horizontalInput = Mathf.Clamp(moveInput.x, -1f, 1f);
+        rigidbody.linearVelocity = new Vector2(horizontalInput * moveSpeed, rigidbody.linearVelocity.y);
     }
 }
