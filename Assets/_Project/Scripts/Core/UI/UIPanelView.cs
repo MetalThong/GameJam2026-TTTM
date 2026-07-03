@@ -2,7 +2,9 @@ using UnityEngine;
 
 public abstract class UIPanelView : MonoBehaviour
 {
-    public PanelId Id { get; }
+    [SerializeField] private PanelId id;
+
+    public PanelId Id => id;
 
     public virtual void Show()
     {

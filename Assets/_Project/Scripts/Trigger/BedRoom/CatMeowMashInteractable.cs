@@ -1,9 +1,7 @@
 using System;
 using System.Threading;
 using Cysharp.Threading.Tasks;
-using DG.Tweening;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class CatMeowMashInteractable : MashStoryInteractable
 {
@@ -25,31 +23,11 @@ public class CatMeowMashInteractable : MashStoryInteractable
     [SerializeField] private bool waitForOwnerAnimation = true;
     [SerializeField, Min(0f)] private float postOwnerAnimationDelay;
 
-    [Header("Screen Fade")]
-    [SerializeField] private bool fadeScreenAfterOwnerDialogue = true;
-    [SerializeField, Range(0f, 1f)] private float screenFadeMaxAlpha = 0.45f;
-    [SerializeField, Min(0f)] private float screenFadeToBlackDuration = 0.35f;
-    [SerializeField, Min(0f)] private float screenFadeHoldDuration = 0.2f;
-    [SerializeField, Min(0f)] private float screenFadeFromBlackDuration = 0.35f;
-
     [Header("Completion Cleanup")]
     [SerializeField] private GameObject[] hideOnComplete;
 
     private bool _isPlaying;
     private GameObject _spawnedOwner;
-    private GameObject _screenFadeRoot;
-    private CanvasGroup _screenFadeGroup;
-    private Tween _screenFadeTween;
-
-    private void OnDestroy()
-    {
-        _screenFadeTween?.Kill();
-
-        if (_screenFadeRoot != null)
-        {
-            Destroy(_screenFadeRoot);
-        }
-    }
 
     protected override void OnInteractSucceeded()
     {
@@ -58,6 +36,7 @@ public class CatMeowMashInteractable : MashStoryInteractable
             return;
         }
 
+        HideCompletionTargets();
         PlaySequenceAsync().Forget();
     }
 
@@ -84,12 +63,11 @@ public class CatMeowMashInteractable : MashStoryInteractable
 
             await PlayDialogueIfAssignedAsync(ownerExitDialogue, destroyToken);
 
+
             float animationDuration = PlayOwnerExitAnimation(_spawnedOwner);
-            await PlayFadeAndAnimationWaitAsync(animationDuration, destroyToken);
+            await WaitForOwnerAnimationAsync(animationDuration, destroyToken);
 
             ExecuteAction();
-            HideCompletionTargets();
-            gameObject.SetActive(false);
         }
         catch (OperationCanceledException)
         {
@@ -273,91 +251,20 @@ public class CatMeowMashInteractable : MashStoryInteractable
         return clip.length;
     }
 
-    private async UniTask PlayFadeAndAnimationWaitAsync(float animationDuration, CancellationToken cancellationToken)
+    private async UniTask WaitForOwnerAnimationAsync(float animationDuration, CancellationToken cancellationToken)
     {
-        UniTask fadeTask = PlayScreenFadeAsync(cancellationToken);
-
         if (!waitForOwnerAnimation || animationDuration <= 0f)
         {
-            await fadeTask;
             return;
         }
 
         float waitDuration = animationDuration + postOwnerAnimationDelay;
-        UniTask animationWaitTask = UniTask.Delay(TimeSpan.FromSeconds(waitDuration), cancellationToken: cancellationToken);
-        await UniTask.WhenAll(fadeTask, animationWaitTask);
-    }
-
-    private async UniTask PlayScreenFadeAsync(CancellationToken cancellationToken)
-    {
-        if (!fadeScreenAfterOwnerDialogue || screenFadeMaxAlpha <= 0f)
+        if (waitDuration <= 0f)
         {
             return;
         }
 
-        CanvasGroup fadeGroup = EnsureScreenFade();
-        fadeGroup.alpha = 0f;
-        fadeGroup.gameObject.SetActive(true);
-
-        _screenFadeTween?.Kill();
-
-        Sequence sequence = DOTween.Sequence();
-        sequence.Append(fadeGroup.DOFade(screenFadeMaxAlpha, screenFadeToBlackDuration));
-
-        if (screenFadeHoldDuration > 0f)
-        {
-            sequence.AppendInterval(screenFadeHoldDuration);
-        }
-
-        sequence.Append(fadeGroup.DOFade(0f, screenFadeFromBlackDuration));
-        _screenFadeTween = sequence;
-
-        await sequence.AsyncWaitForCompletion();
-
-        if (cancellationToken.IsCancellationRequested)
-        {
-            return;
-        }
-
-        if (_screenFadeTween == sequence)
-        {
-            _screenFadeTween = null;
-        }
-
-        fadeGroup.gameObject.SetActive(false);
-    }
-
-    private CanvasGroup EnsureScreenFade()
-    {
-        if (_screenFadeGroup != null)
-        {
-            return _screenFadeGroup;
-        }
-
-        _screenFadeRoot = new GameObject("OwnerExitScreenFade", typeof(Canvas), typeof(CanvasGroup));
-        Canvas canvas = _screenFadeRoot.GetComponent<Canvas>();
-        canvas.renderMode = RenderMode.ScreenSpaceOverlay;
-        canvas.sortingOrder = short.MaxValue;
-
-        _screenFadeGroup = _screenFadeRoot.GetComponent<CanvasGroup>();
-        _screenFadeGroup.blocksRaycasts = false;
-        _screenFadeGroup.interactable = false;
-
-        GameObject imageObject = new("Black");
-        imageObject.transform.SetParent(_screenFadeRoot.transform, false);
-
-        RectTransform rectTransform = imageObject.AddComponent<RectTransform>();
-        rectTransform.anchorMin = Vector2.zero;
-        rectTransform.anchorMax = Vector2.one;
-        rectTransform.offsetMin = Vector2.zero;
-        rectTransform.offsetMax = Vector2.zero;
-
-        Image image = imageObject.AddComponent<Image>();
-        image.color = Color.black;
-        image.raycastTarget = false;
-
-        _screenFadeRoot.SetActive(false);
-        return _screenFadeGroup;
+        await UniTask.Delay(TimeSpan.FromSeconds(waitDuration), cancellationToken: cancellationToken);
     }
 
     private DialogueManager ResolveDialogueManager()
