@@ -59,6 +59,7 @@ public sealed class SaveManager : MonoBehaviour
     public void NewGame()
     {
         _saveData = new SaveData();
+        LoadFlags();
         LoadSaveables();
     }
 
@@ -89,6 +90,7 @@ public sealed class SaveManager : MonoBehaviour
             return;
         }
 
+        LoadFlags();
         LoadSaveables();
     }
 
@@ -105,6 +107,15 @@ public sealed class SaveManager : MonoBehaviour
         foreach (ISaveable saveable in _saveables)
         {
             saveable.Load(_saveData);
+        }
+    }
+
+    private void LoadFlags()
+    {
+        if (FlagManager.Instance != null)
+        {
+            FlagManager.Instance.Load(_saveData.Flags);
+            EventBus.Publish(new FlagsLoadedEvent(_saveData.Flags?.Count ?? 0));
         }
     }
 
