@@ -16,6 +16,10 @@ public sealed class Movement : MonoBehaviour
     [Header("Form")]
     [SerializeField] private MovementForm startingForm = MovementForm.Cat;
 
+    [Header("Story Lock")]
+    [SerializeField] private bool shouldLockMovementUntilFlag;
+    [SerializeField] private string unlockMovementFlag = "waked_up";
+
     [Header("Input")]
     [SerializeField] private InputActionAsset inputActions;
 
@@ -41,6 +45,7 @@ public sealed class Movement : MonoBehaviour
     private float _defaultGravityScale;
     private bool _hasDefaultGravityScale;
     private bool _isFacingRight = true;
+    private bool _isMovementLocked;
     private Vector2 _catColliderBaseOffset;
     private Vector2 _ghostColliderBaseOffset;
 
@@ -80,11 +85,26 @@ public sealed class Movement : MonoBehaviour
         CacheColliderOffsets();
 
         SetForm(startingForm);
+        RefreshMovementLock();
+    }
+
+    private void OnEnable()
+    {
+        EventBus.Subscribe<FlagChangedEvent>(OnFlagChanged);
+        EventBus.Subscribe<FlagsLoadedEvent>(OnFlagsLoaded);
+        RefreshMovementLock();
     }
 
     private void Update()
     {
         _input.Refresh();
+
+        if (_isMovementLocked)
+        {
+            StopMovement();
+            UpdateAnimator(Vector2.zero);
+            return;
+        }
 
         if (_input.WasToggleFormPressed)
         {
@@ -97,6 +117,12 @@ public sealed class Movement : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (_isMovementLocked)
+        {
+            StopMovement();
+            return;
+        }
+
         if (_currentForm == null)
         {
             return;
@@ -107,6 +133,9 @@ public sealed class Movement : MonoBehaviour
 
     private void OnDisable()
     {
+        EventBus.Unsubscribe<FlagChangedEvent>(OnFlagChanged);
+        EventBus.Unsubscribe<FlagsLoadedEvent>(OnFlagsLoaded);
+
         if (_hasDefaultGravityScale && targetRigidbody != null)
         {
             targetRigidbody.gravityScale = _defaultGravityScale;
@@ -324,6 +353,44 @@ public sealed class Movement : MonoBehaviour
         }
 
         return moveInput.sqrMagnitude > movingThreshold * movingThreshold;
+    }
+
+    private void OnFlagChanged(FlagChangedEvent eventData)
+    {
+        if (eventData.FlagId == unlockMovementFlag)
+        {
+            RefreshMovementLock();
+        }
+    }
+
+    private void OnFlagsLoaded(FlagsLoadedEvent eventData)
+    {
+        RefreshMovementLock();
+    }
+
+    private void RefreshMovementLock()
+    {
+        if (!shouldLockMovementUntilFlag || string.IsNullOrWhiteSpace(unlockMovementFlag))
+        {
+            _isMovementLocked = false;
+            return;
+        }
+
+        FlagManager flagManager = FlagManager.Instance;
+        _isMovementLocked = flagManager != null && !flagManager.HasFlag(unlockMovementFlag);
+
+        if (_isMovementLocked)
+        {
+            StopMovement();
+        }
+    }
+
+    private void StopMovement()
+    {
+        if (targetRigidbody != null)
+        {
+            targetRigidbody.linearVelocity = Vector2.zero;
+        }
     }
 
 #if UNITY_EDITOR

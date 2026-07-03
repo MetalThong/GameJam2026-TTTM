@@ -11,25 +11,25 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: de1c86f536d245db82f29a587ef55cfc, type: 3}
   m_Name: SO_LocalizationTable
-  m_EditorClassIdentifier:
+  m_EditorClassIdentifier: 
   entries:
   - key: settings.title
-    vietnamese: "Cài đặt"
+    vietnamese: "C\xE0i \u0111\u1EB7t"
     english: Settings
-    cat: "Meo meo"
+    cat: Meo meo
   - key: settings.music
-    vietnamese: "Nhạc nền"
+    vietnamese: "Nh\u1EA1c n\u1EC1n"
     english: Background Music
-    cat: "Meo nền"
+    cat: Meo meo
   - key: settings.sfx
-    vietnamese: "Hiệu ứng"
+    vietnamese: "Hi\u1EC7u \u1EE9ng"
     english: SFX
-    cat: "Meo hiệu ứng"
+    cat: Meo meo
   - key: settings.language
-    vietnamese: "Ngôn ngữ"
+    vietnamese: "Ng\xF4n ng\u1EEF"
     english: Language
-    cat: "Tiếng meo"
+    cat: Meo meo
   - key: settings.quit
-    vietnamese: "Thoát về Menu"
+    vietnamese: "Tho\xE1t v\u1EC1 Menu"
     english: Quit to Menu
-    cat: "Meo về nhà"
+    cat: Meo meo

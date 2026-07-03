@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0df2ddcceb2389b4d864a64d8b7d2cf4, type: 3}
+  m_Name: SO_Dialogue_WakeUp
+  m_EditorClassIdentifier: 
+  background: {fileID: -4987337320017983735, guid: ef76815bb5462ca40918f9ee00dd2b1b, type: 3}
+  lines:
+  - speakerName: Silly
+    text: "Meow...S\xE1ng r\u1ED3i \xE0"
+    portrait: {fileID: 6468568510307345621, guid: 0c05e137063d43e429af4b01ffae35ac, type: 3}
+  - speakerName: Silly
+    text: "Sao m\xECnh l\u1EA1i l\u01A1 l\u1EEDng th\u1EBF n\xE0y nh\u1EC9 ..."
+    portrait: {fileID: 6468568510307345621, guid: 0c05e137063d43e429af4b01ffae35ac, type: 3}
+  - speakerName: Silly
+    text: "Th\xF4i k\u1EC7, ph\u1EA3i g\u1ECDi anh \u1EA5y d\u1EADy \u0111\xE3 !"
+    portrait: {fileID: 6468568510307345621, guid: 0c05e137063d43e429af4b01ffae35ac, type: 3}

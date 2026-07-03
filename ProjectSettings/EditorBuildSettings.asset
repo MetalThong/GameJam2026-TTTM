@@ -11,6 +11,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/_Project/Scenes/MainMenu.unity
     guid: 0e3c6b350c9053844b77a69b6575d309
+  - enabled: 1
+    path: Assets/_Project/Scenes/BedRoom.unity
+    guid: bf440f02bf0b2334890828630d6d8f59
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0

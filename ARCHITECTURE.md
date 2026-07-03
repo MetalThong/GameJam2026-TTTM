@@ -131,27 +131,26 @@ Files:
 - `Assets/_Project/Scripts/CatMovement/MovementFormBehaviour.cs`
 - `Assets/_Project/Scripts/CatMovement/CatMovementForm.cs`
 - `Assets/_Project/Scripts/CatMovement/GhostMovementForm.cs`
-- `Assets/_Project/Scripts/CatMovement/CatAnimationController.cs`
-- `Assets/_Project/Scripts/CatMovement/MovementFormTransitionVfx.cs`
-- `Assets/_Project/Scripts/CatMovement/SpriteBoxColliderFitter.cs`
-- `Assets/_Project/Scripts/CatMovement/CatWalkDustController.cs`
+- `Assets/_Project/Scripts/CatMovement/CatInteractor.cs`
 
-`Movement` is the current player movement coordinator. It reads movement through `MovementInput`, switches form with the temporary `T` test key, and delegates actual movement behavior to `MovementFormBehaviour` components.
+`Movement` is the current player movement coordinator. It reads movement through `MovementInput`, switches form through the global `Next` input, local `Next` input, or temporary `T` keyboard fallback, and delegates actual movement behavior to `MovementFormBehaviour` components.
+
+`Movement` can also lock player movement until a story flag is set. When `shouldLockMovementUntilFlag` is enabled, it holds the Rigidbody2D velocity at zero and ignores movement/form-toggle input until `unlockMovementFlag` exists in `FlagManager`.
 
 Current forms:
 
 - `CatMovementForm`: horizontal platform movement with normal gravity.
 - `GhostMovementForm`: smooth free movement in the air with gravity disabled while active.
 
-`Movement` expects a `Rigidbody2D` reference on the player. Rigidbody and collider setup stays in Unity/Inspector so level and character collision rules remain designer-controlled.
+`Movement` requires `Rigidbody2D`, `Animator`, `SpriteRenderer`, `BoxCollider2D`, `MovementInput`, `CatMovementForm`, and `GhostMovementForm`. It resolves missing serialized references in `Awake`/`OnValidate`, disables itself on missing critical references, and logs errors for missing Rigidbody, body collider, or `MovementInput`.
 
-`CatAnimationController` is a visual-only companion component for the cat prototype. It reads the movement input and Rigidbody2D horizontal velocity, drives the cat Animator `IsMoving` and `IsGhost` bools, and flips the SpriteRenderer on X for facing direction. Animator state changes between `CatIdle`, `CatWalk`, and `GhostCat` live in the Animator Controller.
+Animation and facing are currently handled directly by `Movement`. It drives Animator bools `IsMoving` and `IsGhost`, flips the `SpriteRenderer` from horizontal input or rigidbody velocity, and mirrors collider offsets when configured.
 
-`Movement` exposes a `FormChanged` event when runtime input switches between cat and ghost forms. `MovementFormTransitionVfx` listens to that event and plays a small sprite afterimage/color pulse so the visual transition is smooth without coupling the movement physics forms to presentation effects.
+Collider handling supports either separate cat/ghost `BoxCollider2D` references or one shared body collider with serialized cat/ghost collider profiles. Switching form enables the appropriate collider or applies the selected collider size/offset profile.
 
-`SpriteBoxColliderFitter` keeps the prototype BoxCollider2D aligned with the current SpriteRenderer sprite. This is needed while cat and ghost animations use different sprite bounds on the same GameObject.
+`CatInteractor` is the current player interaction bridge. It tracks the active `IInteractable` when a collider enters/exits the cat trigger and calls `TryInteract()` when the `E` key is pressed.
 
-`CatWalkDustController` emits a small auto-created ParticleSystem at the current sprite foot position while the cat form is walking. It reads movement state and keeps the dust disabled for the ghost form.
+In `BedRoom.unity`, the Cat prefab instance starts as `MovementForm.Ghost` and has movement locked until the WakeUpPanel interaction sets `waked_up`. Interaction remains active while movement is locked so the player can press `E` to wake up.
 
 ### Audio
 
@@ -217,8 +216,84 @@ Save flow:
 
 Current `SaveData` fields:
 
-- `coin`
-- `playerPosition`
+- `Coin`
+- `PlayerPosition`
+- `Flags`
+
+`FlagManager` implements `ISaveable`, so story flags are included in the same save file. Flag changes call `SaveManager.SaveGame()` when a save manager is available. On load, `SaveManager` pushes saved flags back into `FlagManager` and publishes `FlagsLoadedEvent` so flag-dependent scene objects can refresh.
+
+### Story Flags, Triggers, And Interactions
+
+Files:
+
+- `Assets/_Project/Scripts/Trigger/FlagManager.cs`
+- `Assets/_Project/Scripts/Trigger/StoryFlagStore.cs`
+- `Assets/_Project/Scripts/Trigger/StoryFlagCondition.cs`
+- `Assets/_Project/Scripts/Trigger/StoryFlagAction.cs`
+- `Assets/_Project/Scripts/Trigger/FlagSaveEntry.cs`
+- `Assets/_Project/Scripts/Trigger/StoryFlagId.cs`
+- `Assets/_Project/Scripts/Event/FlagChangedEvent.cs`
+- `Assets/_Project/Scripts/Trigger/IInteractable.cs`
+- `Assets/_Project/Scripts/Trigger/StoryTrigger.cs`
+- `Assets/_Project/Scripts/Trigger/StoryInteractable.cs`
+- `Assets/_Project/Scripts/Trigger/MashStoryInteractable.cs`
+- `Assets/_Project/Scripts/Trigger/DialogueStoryInteractable.cs`
+- `Assets/_Project/Scripts/Trigger/MashProgressView.cs`
+- `Assets/_Project/Scripts/Trigger/InteractButton.cs`
+- `Assets/_Project/Scripts/Trigger/FlagBasedObject.cs`
+- `Assets/_Project/Scripts/Trigger/FadeFlagObject.cs`
+- `Assets/_Project/Scripts/Trigger/BedRoom/CatMeowTrigger.cs`
+- `Assets/_Project/Scripts/Trigger/BedRoom/CatMeowInteractable.cs`
+- `Assets/_Project/Scripts/Trigger/BedRoom/CatMeowMashInteractable.cs`
+
+The story system is flag-driven. `FlagManager` is the current singleton owner for a `StoryFlagStore`, exposes `HasFlag` and `SetFlag`, publishes `FlagChangedEvent` when a flag value changes, and saves after flag changes when `SaveManager` exists.
+
+`StoryFlagStore` stores flags as string/bool pairs. Empty or whitespace flag ids are ignored on set/remove, and invalid save entries are skipped on load. `StoryFlagId` currently defines `GameStart = "game_start"` as a shared constant.
+
+`StoryFlagCondition` gates behavior with two lists:
+
+- `requiredFlags`: every listed flag must be true.
+- `blockedFlags`: every listed flag must be false or absent.
+
+`StoryFlagAction` applies story results with two lists:
+
+- `setFlags`: each listed flag is set true.
+- `unsetFlags`: each listed flag is set false.
+
+`StoryTrigger` runs from `OnTriggerEnter2D` when the entering collider has the `Player` tag. It checks `FlagManager`, optional one-shot completion flag, and `StoryFlagCondition`, then executes `StoryFlagAction`. One-shot triggers write `trigger_completed_{triggerId}`.
+
+`StoryInteractable` implements `IInteractable`. It follows the same condition/action model as `StoryTrigger`, but is activated by interaction code instead of trigger entry. One-shot interactables write `interact_completed_{interactId}`.
+
+`MashStoryInteractable` extends `StoryInteractable` for repeated presses. It increments progress by one per successful interact, decays progress after `decayDelay` by `decayPerSecond`, succeeds when progress reaches `requiredPressCount`, and can reset progress after success. It exposes `NormalizedProgress` (0..1) and the `Pressed`, `ProgressChanged`, and `Succeeded` events so views can render mash feedback without owning the mash state.
+
+`MashProgressView` renders that feedback. It lives on the same GameObject as a `MashStoryInteractable` (`RequireComponent`), subscribes to its events, and serializes `visualRoot`, `fillRenderer`, and `emoteTransform`. If any of those are not assigned, it can resolve `visualRoot` to its own GameObject, choose a child `SpriteRenderer` named like a full bar (for example `ProgressBarFull`) as the fill, and use the visual root transform as the punch target. It fills the bar by scaling X from 0 to the renderer's original local scale, lerps color from warning yellow/orange toward red, punch-scales on each press (DOTween), snaps to full with a stronger punch on success, and hides the visual root when progress decays back to zero.
+
+`InteractButton` is a simple prompt helper. It toggles an assigned button/prompt GameObject when a `Player` tagged collider enters or exits its trigger. It hides the prompt in `Awake` so a button left active in the scene does not show until the player enters the trigger.
+
+`FlagBasedObject` listens to `FlagChangedEvent` and `FlagsLoadedEvent` and toggles an assigned target based on a required flag. The listener object should stay active; if `target == gameObject` and the target would be disabled, it warns and refuses to disable itself so future flag events are not lost.
+
+`FadeFlagObject` extends `FlagBasedObject` by fading a target `SpriteRenderer` with DOTween before disabling it. If no sprite renderer is available, it falls back to normal active-state toggling.
+
+`DialogueStoryInteractable` extends `StoryInteractable` to play a `DialogueSO` (and optional SFX id) on success, then run the flag action, and optionally deactivate its own GameObject. On success it can fade a `hideBeforeDialogue` visual (for example the WakeUpPanel `Visual`) over `hideBeforeDialogueFadeDuration`, wait `dialogueDelayAfterHide`, then await `PlayDialogueAsync` before executing the action, so flags are only set after the dialogue finishes. The hide fade supports `SpriteRenderer`, UI `Graphic`, and TMP children. It guards against re-entry while a dialogue is playing. This is the reusable base for flag-gated interactions that should show dialogue (WakeUp panel, cat meow, etc.).
+
+The scene `DialogueManager` is resolved lazily through `ResolveDialogueManager`: it uses the serialized `dialogueManager` field if assigned, otherwise falls back to `FindFirstObjectByType<DialogueManager>` once and caches the result. This lets interactions work with only a `DialogueSO` assigned, as long as one `DialogueManager` exists in the scene. The find call is one-shot and cached, not a per-frame lookup, so it stays within acceptable use of the `RULE.md` anti-pattern for game-jam speed; prefer assigning the field directly when convenient.
+
+Current BedRoom story components:
+
+- `CatMeowTrigger` executes its configured flag action after success.
+- `CatMeowInteractable` derives from `DialogueStoryInteractable`, so it plays its assigned dialogue then runs its flag action.
+- `CatMeowMashInteractable` extends `MashStoryInteractable` with the same dialogue/SFX flow, plays its dialogue before executing its action, and deactivates its own GameObject when finished.
+- WakeUpPanel starts with its `Visual` active and shows the prompt text `Ấn E để tỉnh dậy`. Interacting fades that visual out over `hideBeforeDialogueFadeDuration` (currently 1 second), waits `dialogueDelayAfterHide` (currently 2 seconds), then plays the assigned wake-up `DialogueSO`; `waked_up` is applied only after dialogue completion, which keeps the cat locked until the wake-up flow finishes.
+- The Phùng Thanh Nộ mash setup lives on the boss `InteractE` object. `CatMeowMashInteractable` requires `met_boss`, asks for repeated `E` presses (`requiredPressCount` currently 12), decays after `decayDelay` (currently 0.3 seconds) at `decayPerSecond` (currently 3.5 progress per second), and plays `SO_Dialogue_PhungThanhNo` before setting `waked_boss_up`. `MashProgressView` points at the `PhungThanhNo` visual root, auto-finds the full progress bar renderer, warms the bar color toward red, and punch-scales the emote/root to make spam input feel like it is making the character angrier.
+
+Current error and guard behavior:
+
+- `StoryTrigger` logs a warning when `FlagManager` is missing.
+- `StoryInteractable` silently returns when `FlagManager` is missing.
+- Conditions fail closed: unmet required flags or present blocked flags stop the trigger/interaction without side effects.
+- `FlagManager.SetFlag` ignores empty ids, publishes only when the effective value changes, and still attempts save after valid set calls.
+- `StoryFlagAction.Execute` safely returns on null `FlagManager`.
+- `FlagBasedObject` warns once for missing or invalid targets.
 
 ### UI
 
@@ -230,7 +305,6 @@ Files:
 - `Assets/_Project/Scripts/Dialogue/DialogueLine.cs`
 - `Assets/_Project/Scripts/Dialogue/DialogueView.cs`
 - `Assets/_Project/Scripts/Dialogue/DialogueTestRunner.cs`
-- `Assets/_Project/Editor/SceneUISetupTool.cs`
 - `Assets/_Project/Scripts/Enum/PanelId.cs`
 
 `UIManager` keeps a serialized list of `UIPanelView` instances and builds a `Dictionary<PanelId, UIPanelView>` in `Awake`.
@@ -254,8 +328,6 @@ Current panel ids:
 Important current limitation: `UIPanelView.Id` has only a getter and is not serialized, so derived panels need to provide an id or this base will not expose a configurable id in the Inspector.
 
 `BedRoom.unity` owns its scene UI under `SceneUIRoot`. This root contains a Screen Space Overlay canvas, a Settings button, a Settings panel, and the Dialogue panel. `SceneUIController` binds the scene Settings button and close button to the Settings panel without relying on persistent global UI state.
-
-`SceneUISetupTool` is an Editor-only helper at `Tools/GameJam/Setup BedRoom UI`. It rebuilds the `BedRoom` scene UI with Unity APIs and ensures `BedRoom.unity` is present in Build Settings.
 
 ### Main Menu
 
@@ -292,24 +364,38 @@ The main menu scripts are split around the first two SOLID principles:
 
 `MainMenuGameFlow` and `MainMenuController` default to loading `BedRoom`, which is present in Build Settings.
 
-### Dialogue Prototype
+### Dialogue
 
 Files:
 
 - `Assets/_Project/Scripts/Dialogue/DialogueLine.cs`
+- `Assets/_Project/Scripts/Dialogue/DialogueSO.cs`
 - `Assets/_Project/Scripts/Dialogue/DialogueView.cs`
+- `Assets/_Project/Scripts/Dialogue/DialogueManager.cs`
 - `Assets/_Project/Scripts/Dialogue/DialogueTestRunner.cs`
 
-`DialogueTestRunner` is a temporary scene-owned runtime test harness. It is attached to `SceneUIRoot` in `BedRoom.unity`, references the scene `DialogueView`, and listens for the Enter key through the Unity Input System.
+`DialogueSO` is a ScriptableObject holding an ordered `DialogueLine` list and an optional background sprite. It is created through the `TTTM/Dialogue` create-asset menu (`SO_Dialogue_` prefix). Dialogue content is authored as assets instead of inline scene arrays, so writers can build lines without touching scenes.
 
-Runtime test flow:
+`DialogueManager` is a scene-scoped component (intentionally not a global singleton, per `RULE.md`). It exposes `PlayDialogueAsync(DialogueSO)` (UniTask), a fire-and-forget `PlayDialogue(DialogueSO)` wrapper, `SetDialogueView` for code wiring, and an `IsPlaying` guard. It drives the scene `DialogueView` one line at a time and advances on the `Interact` key (`E`):
 
-1. Press Enter while playing.
-2. `DialogueTestRunner` opens the dialogue panel with the first test line.
-3. Further Enter presses advance through the test lines.
-4. After the final line, the panel hides.
+1. Set the dialogue background when provided.
+2. For each line, run the `DialogueView` typewriter reveal.
+3. First `E` press while revealing snaps the line to fully shown; a second press advances.
+4. If the line is already fully shown, the first press advances directly.
+5. After the last line, the panel hides and `IsPlaying` returns to false.
 
-`DialogueView` does not create UI objects at runtime. It receives serialized scene references for the panel root, background image, portrait image, speaker-name text, and body text. The panel includes a background image, a portrait image slot, a speaker-name text label, and a body-text area. Current prototype sprites come from `Assets/_Project/Resources/Dialogue`; this should move to serialized configuration, Addressables, or feature-owned dialogue data when the dialogue system becomes production-ready.
+`DialogueView` does not create UI objects at runtime. It receives serialized scene references for the panel root, background image, portrait image, speaker-name text, and body text. It supports a simple TMP `maxVisibleCharacters` typewriter through `ShowAsync`, exposes `IsRevealing`, `IsLineFullyVisible`, and `CompleteReveal` to snap to full text. `Show` remains for instant, non-typewriter display. Prototype sprites come from `Assets/_Project/Resources/Dialogue`; this should move to serialized configuration, Addressables, or feature-owned dialogue data when the dialogue system becomes production-ready.
+
+Dialogue authoring and polish rules:
+
+- Production dialogue belongs in `DialogueSO` assets. Scene objects should reference those assets instead of storing inline line arrays.
+- Keep speaker names consistent across assets. Current boss dialogue uses `Phùng Thanh Nộ`; Unity YAML escaped Unicode is acceptable, but mojibake such as `Ná»™` should not be committed.
+- Keep each `DialogueLine` short enough for the TMP box at the target resolution. Split long thoughts into multiple lines instead of relying on wrapping to carry the whole beat.
+- Use line order intentionally: immediate reaction first, player or world response next, and objective/input hint last only when the player needs a nudge.
+- Preserve the interaction contract: while text is revealing, `E` reveals the full current line; once the current line is fully visible, `E` advances to the next line.
+- Prompt text should be brief, player-facing, and action-first, such as `Ấn E để tỉnh dậy`. Do not put debug/how-to documentation text into production dialogue unless it is intentionally part of the game voice.
+
+`DialogueTestRunner` remains a temporary scene-owned Enter-key harness for quickly stepping through inline test lines during development; production interactions should use `DialogueManager.PlayDialogueAsync` with a `DialogueSO`.
 
 ### Event Bus
 
@@ -362,6 +448,12 @@ Gameplay Scripts
   -> UIManager
   -> EventBus
 
+Story/Trigger Scripts
+  -> FlagManager/StoryFlagStore
+  -> SaveManager/ISaveable
+  -> EventBus
+  -> DOTween for fade presentation
+
 MainMenu Scripts
   -> SaveManager
   -> GameManager
@@ -379,12 +471,14 @@ The architecture is manager-centric. Cross-scene infrastructure is global and sc
 
 ## Current Gaps And Risks
 
-- `SceneId.Hall` exists, but no `Hall.unity` scene is currently in Build Settings.
+- `SceneId.Hall` and `Hall.unity` exist, but Hall is not currently in Build Settings.
 - `UIPanelView.Id` is not serialized or abstract, so the base class alone cannot configure unique panel ids in the Inspector.
 - Managers are singleton-based, which is simple for game jam speed but can make tests and scene isolation harder later.
 - `SaveManager.FindSaveables` only finds currently loaded active `MonoBehaviour` objects, so inactive objects or unloaded scenes are not saved.
 - `AudioManager` depends on correctly configured `AudioLibrary`, `AudioMixer`, and mixer parameter names.
 - `InputReader` throws if expected action map/action names are missing, which is useful during setup but should be accounted for when editing the input asset.
+- `CatInteractor` currently reads the `E` key directly instead of using `InputReader.InteractPressed`, so interaction rebinding is not fully wired yet.
+- Story flags are string ids in Inspector fields; typos will fail silently unless caught by scene testing or future validation tooling.
 
 ## Adding New Features
 
@@ -397,4 +491,5 @@ For a new gameplay feature:
 5. Add saveable behavior through `ISaveable`.
 6. Add input through `InputSystem_Actions.inputactions`, `IInputReader`, and `InputReader`.
 7. Add UI panels by deriving from `UIPanelView`, adding a `PanelId`, and registering the panel in `UIManager`.
-8. Add scenes to Build Settings before loading them by name or `SceneId`.
+8. Add story progression through `StoryFlagCondition`, `StoryFlagAction`, and `FlagManager` when a feature needs persistent world/story state.
+9. Add scenes to Build Settings before loading them by name or `SceneId`.

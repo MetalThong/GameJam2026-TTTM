@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0df2ddcceb2389b4d864a64d8b7d2cf4, type: 3}
+  m_Name: SO_Dialogue_Test
+  m_EditorClassIdentifier:
+  background: {fileID: 0}
+  lines:
+  - speakerName: Xuan
+    text: Day la dialogue test trong scene UI. Nhan E de sang cau tiep theo.
+    portrait: {fileID: -6552609154196831589, guid: f30580df705e8104495302a302aa8001, type: 3}
+  - speakerName: Meo
+    text: Panel nay co nen rieng, o chan dung, ten nhan vat va vung text duoc can san.
+    portrait: {fileID: -6552609154196831589, guid: f30580df705e8104495302a302aa8001, type: 3}
+  - speakerName: Xuan
+    text: Het doan test thi dialogue se an. Sau nay minh chi can thay du lieu that vao DialogueSO.
+    portrait: {fileID: -6552609154196831589, guid: f30580df705e8104495302a302aa8001, type: 3}

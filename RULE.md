@@ -331,6 +331,15 @@ Feature docs should include:
 - Usage example
 - Architecture notes
 
+Dialogue, prompt, and interaction text polish:
+
+- Production dialogue content belongs in `DialogueSO` assets, not inline scene arrays or temporary runner data.
+- Keep Vietnamese text encoded cleanly. Unity-written escaped Unicode is acceptable in YAML; mojibake is not.
+- Keep each dialogue line short enough for its TMP container and split long thoughts into multiple `DialogueLine` entries.
+- Preserve the dialogue input contract: while text is revealing, `E` reveals the full current line; once the line is fully visible, `E` advances.
+- Prompt copy should be short, player-facing, and action-first, such as `Ấn E để tỉnh dậy`.
+- Mash/spam interactions need readable feedback tied to progress: visible fill, color/intensity change, and a stronger success response.
+
 Code comments:
 
 - Explain why, not what.

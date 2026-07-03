@@ -33,10 +33,16 @@ Assets/
     Prefabs/
       Core/
         PersistantRoot.prefab
+      cAT/
+      ui/
+    Resources/
     Scenes/
       Bootstrap.unity
       MainMenu.unity
+      BedRoom.unity
+      Hall.unity
     Scripts/
+      CatMovement/
       Core/
         Audio/
         Bootstrap/
@@ -47,8 +53,11 @@ Assets/
         Pooling/
         Save/
         UI/
+      Dialogue/
       Enum/
+      Event/
       MainMenu/
+      Trigger/
   Plugins/
     Demigiant/DOTween/
   Packages/
@@ -68,10 +77,13 @@ Current Build Settings include:
 
 1. `Assets/_Project/Scenes/Bootstrap.unity`
 2. `Assets/_Project/Scenes/MainMenu.unity`
+3. `Assets/_Project/Scenes/BedRoom.unity`
 
 `Bootstrap.unity` owns the startup object `Bootstraper`. It instantiates `Assets/_Project/Prefabs/Core/PersistantRoot.prefab` if the persistent root is not already present, initializes managers, then loads the configured start scene.
 
 `MainMenu.unity` is currently the configured start scene through `SceneId.MainMenu`.
+
+`Hall.unity` exists under `Assets/_Project/Scenes`, and `SceneId.Hall` exists in code, but Hall is not currently enabled in Build Settings.
 
 ## Core Prefab
 
@@ -100,13 +112,16 @@ The root is marked with `DontDestroyOnLoad`, so these services survive scene cha
 - Camera: `CameraManager` manages a Cinemachine camera, follow/look-at target, zoom, priority, bounds, and impulse shake.
 - Save: `SaveManager` stores `SaveData` as JSON in `Application.persistentDataPath`; saveable objects implement `ISaveable`.
 - UI: `UIManager` opens/closes registered `UIPanelView` instances by `PanelId`.
+- Dialogue: `DialogueSO` assets feed the scene `DialogueManager` and `DialogueView`; `E` reveals the current typed line first, then advances once the line is fully visible.
 - Main Menu: runtime components under `Assets/_Project/Scripts/MainMenu` bind the `MainMenu.unity` buttons, control start/continue/quit flow, hide Continue until a save exists, and provide settings controls for music, SFX, and language.
+- Story flags and triggers: runtime components under `Assets/_Project/Scripts/Trigger` store story flags, gate triggers/interactions with required and blocked flag conditions, execute set/unset flag actions, refresh flag-based objects through events, and persist flags through `SaveData`.
+- Interaction: `CatInteractor` tracks the current `IInteractable` inside its trigger and calls `TryInteract()` on `E`; `InteractButton` shows or hides an assigned prompt object while the Player is in range.
 - Pooling: `PrefabPool<T>` wraps Unity `ObjectPool<T>` for prefab instances implementing `IPoolable`.
 - Events: `EventBus` is a static typed pub/sub helper for gameplay events.
 
 ## Current Enums
 
-- `SceneId`: `MainMenu`, `Gameplay`
+- `SceneId`: `MainMenu`, `BedRoom`, `Hall`
 - `GameState`: `Booting`, `MainMenu`, `Playing`, `Paused`, `GameOver`
 - `PanelId`: `Loading`, `Settings`, `Pause`, `Win`, `Lose`
 
