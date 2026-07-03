@@ -35,10 +35,15 @@ public class StoryTrigger : MonoBehaviour
             return;
         }
 
-        ExecuteTrigger();
+        Trigger();
     }
 
-    protected virtual void ExecuteTrigger()
+    protected virtual void Trigger()
+    {
+        ExecuteAction();
+    }
+
+    protected void ExecuteAction()
     {
         FlagManager flagManager = FlagManager.Instance;
         if (flagManager == null)

@@ -2,9 +2,9 @@ using UnityEngine;
 
 public class FlagBasedObject : MonoBehaviour
 {
-    [SerializeField] private GameObject target;
-    [SerializeField] private string requiredFlag;
-    [SerializeField] private bool activeWhenFlagExists = true;
+    [SerializeField] protected GameObject target;
+    [SerializeField] protected string requiredFlag;
+    [SerializeField] protected bool activeWhenFlagExists = true;
 
     private bool _warnedInvalidTarget;
 
@@ -34,7 +34,7 @@ public class FlagBasedObject : MonoBehaviour
         Refresh();
     }
 
-    private void Refresh()
+    protected virtual void Refresh()
     {
         if (FlagManager.Instance == null)
         {
@@ -47,19 +47,47 @@ public class FlagBasedObject : MonoBehaviour
             return;
         }
 
-        bool hasFlag = FlagManager.Instance.HasFlag(requiredFlag);
-        bool shouldBeActive = activeWhenFlagExists ? hasFlag : !hasFlag;
+        SetTargetActive();
+    }
 
-        if (target == gameObject && !shouldBeActive)
+    protected void SetTargetActive()
+    {
+        if (!TryGetTargetActiveState(out bool shouldBeActive))
         {
-            WarnInvalidTarget("[FlagBasedObject] Target should be a separate child/object so this listener can stay active.");
             return;
         }
 
         target.SetActive(shouldBeActive);
     }
 
-    private void WarnInvalidTarget(string message)
+    protected bool TryGetTargetActiveState(out bool shouldBeActive)
+    {
+        shouldBeActive = false;
+
+        if (FlagManager.Instance == null)
+        {
+            return false;
+        }
+
+        if (target == null)
+        {
+            WarnInvalidTarget("[FlagBasedObject] Target is not assigned.");
+            return false;
+        }
+
+        bool hasFlag = FlagManager.Instance.HasFlag(requiredFlag);
+        shouldBeActive = activeWhenFlagExists ? hasFlag : !hasFlag;
+
+        if (target == gameObject && !shouldBeActive)
+        {
+            WarnInvalidTarget("[FlagBasedObject] Target should be a separate child/object so this listener can stay active.");
+            return false;
+        }
+
+        return true;
+    }
+
+    protected void WarnInvalidTarget(string message)
     {
         if (_warnedInvalidTarget)
         {
