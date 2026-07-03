@@ -906,7 +906,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 27dbe4b6646beb24bbd2838499029c91, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::FlagBasedObject
   target: {fileID: 1427161035}
   requiredFlag: met_boss
@@ -1645,8 +1645,9 @@ GameObject:
   m_Component:
   - component: {fileID: 1332487314}
   - component: {fileID: 1332487313}
+  - component: {fileID: 1332487315}
   m_Layer: 0
-  m_Name: Holder
+  m_Name: HolderAfter
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1662,10 +1663,27 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 27dbe4b6646beb24bbd2838499029c91, type: 3}
-  m_Name: 
+  m_Name:
   m_EditorClassIdentifier: Assembly-CSharp::FlagBasedObject
   target: {fileID: 1528064479}
   requiredFlag: met_boss
+  blockedFlag: waked_boss_up
+  activeWhenFlagExists: 1
+--- !u!114 &1332487315
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1332487312}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 27dbe4b6646beb24bbd2838499029c91, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::FlagBasedObject
+  target: {fileID: 1844219055}
+  requiredFlag: met_boss
+  blockedFlag: waked_boss_up
   activeWhenFlagExists: 1
 --- !u!4 &1332487314
 Transform:
@@ -1937,7 +1955,7 @@ MonoBehaviour:
     - met_boss
     unsetFlags: []
   dialogueManager: {fileID: 1774755907}
-  dialogue: {fileID: 11400000, guid: b2c3d4e5f6a7481920304a5b6c7d8e90, type: 2}
+  dialogue: {fileID: 11400000, guid: e72e207d684440048df1b84e460ef6f5, type: 2}
   sfxId: 
   hideBeforeDialogue: {fileID: 0}
   hideBeforeDialogueFadeDuration: 1
@@ -1992,6 +2010,22 @@ MonoBehaviour:
   dialogueManager: {fileID: 1774755907}
   dialogue: {fileID: 11400000, guid: 548bb42f0d13dc048b6eface7ea4566f, type: 2}
   meowSfxId: cat_meow
+  ownerPrefab: {fileID: 0}
+  ownerResourcePath: Main/thang chu di
+  ownerSpawnPoint: {fileID: 1844219056}
+  ownerSpawnOffset: {x: 0, y: 0, z: 0}
+  ownerExitDialogue: {fileID: 11400000, guid: b170a1e4f6ff4ebba5db133c2fdaa746, type: 2}
+  ownerExitAnimationState: thang chu di_clip
+  waitForOwnerAnimation: 1
+  postOwnerAnimationDelay: 0
+  fadeScreenAfterOwnerDialogue: 1
+  screenFadeMaxAlpha: 0.45
+  screenFadeToBlackDuration: 0.35
+  screenFadeHoldDuration: 0.2
+  screenFadeFromBlackDuration: 0.35
+  hideOnComplete:
+  - {fileID: 1844219055}
+  - {fileID: 1528064479}
 --- !u!114 &1528064481
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2080,6 +2114,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MashProgressView
   visualRoot: {fileID: 1844219055}
+  hideWhenEmpty: 0
   fillRenderer: {fileID: 0}
   emptyColor: {r: 1, g: 0.8, b: 0.3, a: 1}
   fullColor: {r: 0.9, g: 0.15, b: 0.15, a: 1}
@@ -2113,23 +2148,23 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7878350319992209165, guid: 181b304ffea8bcf4692c832430929855, type: 3}
       propertyPath: m_LocalScale.x
-      value: 2
+      value: 1.5
       objectReference: {fileID: 0}
     - target: {fileID: 7878350319992209165, guid: 181b304ffea8bcf4692c832430929855, type: 3}
       propertyPath: m_LocalScale.y
-      value: 2
+      value: 1.5
       objectReference: {fileID: 0}
     - target: {fileID: 7878350319992209165, guid: 181b304ffea8bcf4692c832430929855, type: 3}
       propertyPath: m_LocalScale.z
-      value: 2
+      value: 1.5
       objectReference: {fileID: 0}
     - target: {fileID: 7878350319992209165, guid: 181b304ffea8bcf4692c832430929855, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.434
+      value: 0.54
       objectReference: {fileID: 0}
     - target: {fileID: 7878350319992209165, guid: 181b304ffea8bcf4692c832430929855, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.7
+      value: -0.646
       objectReference: {fileID: 0}
     - target: {fileID: 7878350319992209165, guid: 181b304ffea8bcf4692c832430929855, type: 3}
       propertyPath: m_LocalPosition.z
@@ -2378,7 +2413,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1844219056
 Transform:
   m_ObjectHideFlags: 0

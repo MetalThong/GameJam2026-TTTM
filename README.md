@@ -115,7 +115,7 @@ The root is marked with `DontDestroyOnLoad`, so these services survive scene cha
 - Dialogue: `DialogueSO` assets feed the scene `DialogueManager` and `DialogueView`; `E` reveals the current typed line first, then advances once the line is fully visible.
 - Main Menu: runtime components under `Assets/_Project/Scripts/MainMenu` bind the `MainMenu.unity` buttons, control start/continue/quit flow, hide Continue until a save exists, and provide settings controls for music, SFX, and language.
 - Story flags and triggers: runtime components under `Assets/_Project/Scripts/Trigger` store story flags, gate triggers/interactions with required and blocked flag conditions, execute set/unset flag actions, refresh flag-based objects through events, and persist flags through `SaveData`.
-- Interaction: `CatInteractor` tracks the current `IInteractable` inside its trigger and calls `TryInteract()` on `E`; `InteractButton` shows or hides an assigned prompt object while the Player is in range.
+- Interaction: `CatInteractor` tracks overlapping `IInteractable` targets, skips gameplay interactions while dialogue is playing or just closed, and calls the first valid `TryInteract()` on `E`; `InteractButton` shows or hides an assigned prompt object while the Player is in range.
 - Pooling: `PrefabPool<T>` wraps Unity `ObjectPool<T>` for prefab instances implementing `IPoolable`.
 - Events: `EventBus` is a static typed pub/sub helper for gameplay events.
 

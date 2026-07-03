@@ -4,6 +4,7 @@ public class FlagBasedObject : MonoBehaviour
 {
     [SerializeField] protected GameObject target;
     [SerializeField] protected string requiredFlag;
+    [SerializeField] protected string blockedFlag;
     [SerializeField] protected bool activeWhenFlagExists = true;
 
     private bool _warnedInvalidTarget;
@@ -23,7 +24,7 @@ public class FlagBasedObject : MonoBehaviour
 
     private void OnFlagChanged(FlagChangedEvent eventData)
     {
-        if (eventData.FlagId == requiredFlag)
+        if (eventData.FlagId == requiredFlag || eventData.FlagId == blockedFlag)
         {
             Refresh();
         }
@@ -75,8 +76,10 @@ public class FlagBasedObject : MonoBehaviour
             return false;
         }
 
-        bool hasFlag = FlagManager.Instance.HasFlag(requiredFlag);
-        shouldBeActive = activeWhenFlagExists ? hasFlag : !hasFlag;
+        bool hasRequiredFlag = string.IsNullOrWhiteSpace(requiredFlag) || FlagManager.Instance.HasFlag(requiredFlag);
+        bool hasBlockedFlag = !string.IsNullOrWhiteSpace(blockedFlag) && FlagManager.Instance.HasFlag(blockedFlag);
+        bool conditionMet = hasRequiredFlag && !hasBlockedFlag;
+        shouldBeActive = activeWhenFlagExists ? conditionMet : !conditionMet;
 
         if (target == gameObject && !shouldBeActive)
         {

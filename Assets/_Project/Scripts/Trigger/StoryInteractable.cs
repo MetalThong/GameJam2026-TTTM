@@ -7,25 +7,36 @@ public class StoryInteractable : MonoBehaviour, IInteractable
     [SerializeField] private StoryFlagCondition condition = new();
     [SerializeField] private StoryFlagAction action = new();
 
-    public void TryInteract()
+    public bool TryInteract()
     {
         FlagManager flagManager = FlagManager.Instance;
         if (flagManager == null)
         {
-            return;
+            return false;
         }
 
         if (interactOnce && flagManager.HasFlag($"interact_completed_{interactId}"))
         {    
-            return;
+            return false;
         }
 
         if (condition != null && !condition.IsMet(flagManager.Flags))
         {
-            return;
+            return false;
+        }
+
+        if (!CanInteract())
+        {
+            return false;
         }
 
         Interact();
+        return true;
+    }
+
+    protected virtual bool CanInteract()
+    {
+        return true;
     }
 
     protected virtual void Interact()
