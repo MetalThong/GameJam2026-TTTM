@@ -22,7 +22,6 @@ public class StoryInteractable : MonoBehaviour, IInteractable
 
         if (condition != null && !condition.IsMet(flagManager.Flags))
         {
-            Debug.Log("sdadsa");
             return;
         }
 
