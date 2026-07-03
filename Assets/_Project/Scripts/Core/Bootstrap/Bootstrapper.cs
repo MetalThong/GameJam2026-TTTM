@@ -34,13 +34,6 @@ public sealed class Bootstrapper : MonoBehaviour
         SceneLoader sceneLoader = new();
         await sceneLoader.LoadSceneAsync(startScene);
 
-        if (startScene == SceneId.Gameplay)
-        {
-            GameManager.Instance.SetState(GameState.Playing);
-        }
-        else
-        {
-            GameManager.Instance.SetState(GameState.MainMenu);
-        }
+        GameManager.Instance.SetState(GameState.MainMenu);
     }
 }

@@ -3,7 +3,7 @@ using UnityEngine;
 
 public sealed class MainMenuGameFlow : MonoBehaviour
 {
-    [SerializeField] private string gameplaySceneName = "Gameplay";
+    [SerializeField] private string gameplaySceneName = "BedRoom";
 
     private readonly SceneLoader _sceneLoader = new();
 
@@ -39,11 +39,11 @@ public sealed class MainMenuGameFlow : MonoBehaviour
 
     public void QuitGame()
     {
-#if UNITY_EDITOR
-        UnityEditor.EditorApplication.isPlaying = false;
-#else
-        Application.Quit();
-#endif
+        #if UNITY_EDITOR
+                UnityEditor.EditorApplication.isPlaying = false;
+        #else
+                Application.Quit();
+        #endif
     }
 
     private async UniTaskVoid LoadGameplayAsync()

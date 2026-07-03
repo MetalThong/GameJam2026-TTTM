@@ -1,5 +1,6 @@
 public enum SceneId
 {
     MainMenu = 0,
-    Gameplay = 1
+    BedRoom = 1,
+    Hall = 2
 }
