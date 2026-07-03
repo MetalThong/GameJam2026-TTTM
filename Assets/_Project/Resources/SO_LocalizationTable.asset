@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: de1c86f536d245db82f29a587ef55cfc, type: 3}
+  m_Name: SO_LocalizationTable
+  m_EditorClassIdentifier:
+  entries:
+  - key: settings.title
+    vietnamese: "C\xE0i đặt"
+    english: Settings
+    cat: "Meo meo"
+  - key: settings.music
+    vietnamese: "\xC2m nhạc"
+    english: Music
+    cat: "Meo~ nhạc"
+  - key: settings.sfx
+    vietnamese: "Hiệu ứng"
+    english: SFX
+    cat: "Meo hiệu ứng"
+  - key: settings.language
+    vietnamese: "Ng\xF4n ngữ"
+    english: Language
+    cat: "Tiếng meo"
+  - key: settings.quit
+    vietnamese: "Tho\xE1t về Menu"
+    english: Quit to Menu
+    cat: "Meo về nh\xE0"
