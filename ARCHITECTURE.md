@@ -1,0 +1,287 @@
+# Architecture
+
+This document describes the current architecture of `GameJam2026-TTTM` based on the code and Unity assets in the repository.
+
+This is a living document. Update it whenever project structure, scenes, core systems, services, feature boundaries, dependencies, or important runtime flows change.
+
+For coding and architecture rules, read `RULE.md`.
+
+## High-Level Shape
+
+The project is a Unity 2D game using a small persistent core layer and scene-specific content. Startup begins in `Bootstrap.unity`, creates a persistent root prefab, initializes global managers, then loads the configured start scene.
+
+```text
+Bootstrap.unity
+  Bootstraper GameObject
+    Bootstrapper
+      -> Instantiate PersistantRoot.prefab if needed
+      -> GameManager.Initialize()
+      -> SceneLoader.LoadSceneAsync(startScene)
+
+PersistantRoot.prefab
+  PersistantRoot
+  GameManager
+  AudioManager
+  CameraManager
+  SaveManager
+  InputManager
+  UIManager
+  PanelCanvas
+```
+
+The current start scene is `SceneId.MainMenu`, mapped to `Assets/_Project/Scenes/MainMenu.unity`.
+
+## Runtime Lifecycle
+
+1. Unity opens `Assets/_Project/Scenes/Bootstrap.unity`.
+2. `Bootstrapper.Start` runs.
+3. `Bootstrapper.EnsurePersistantRoot` checks `PersistantRoot.Instance`.
+4. If missing, it instantiates `Assets/_Project/Prefabs/Core/PersistantRoot.prefab`.
+5. `GameManager.Instance.Initialize()` sets state to `Booting`.
+6. `SceneLoader.LoadSceneAsync(startScene)` loads the target scene in `LoadSceneMode.Single`.
+7. When load completes, `GameManager` enters:
+   - `Playing` if `startScene == SceneId.Gameplay`
+   - `MainMenu` otherwise
+
+## Persistent Root
+
+`PersistantRoot` is a `MonoBehaviour` singleton that calls `DontDestroyOnLoad(gameObject)`. It prevents duplicate persistent roots by destroying later instances.
+
+The prefab currently acts as the cross-scene service container. Managers under it survive scene changes and provide global gameplay infrastructure.
+
+Note: the class and prefab currently use the spelling `PersistantRoot`. Keep references consistent unless doing a deliberate rename across code, prefab, and scene references.
+
+## Core Systems
+
+### Game Management
+
+Files:
+
+- `Assets/_Project/Scripts/Core/Manager/GameManager.cs`
+- `Assets/_Project/Scripts/Enum/GameState.cs`
+
+`GameManager` owns the current game state and exposes `StateChanged`. Current states are:
+
+- `Booting`
+- `MainMenu`
+- `Playing`
+- `Paused`
+- `GameOver`
+
+Main transitions:
+
+- `Initialize()` -> `Booting`
+- `Pause()` -> `Paused` only from `Playing`
+- `Resume()` -> `Playing` only from `Paused`
+- `RestartRun()` -> `Booting`
+- `QuitToMenu()` -> `MainMenu`
+
+### Scene Loading
+
+Files:
+
+- `Assets/_Project/Scripts/Core/Manager/SceneLoader.cs`
+- `Assets/_Project/Scripts/Enum/SceneId.cs`
+
+`SceneLoader` is a plain C# service class, not a `MonoBehaviour`. It loads by `SceneId` or string scene name through `SceneManager.LoadSceneAsync`.
+
+It uses UniTask and an `IsLoading` flag to avoid overlapping loads. When loading by enum, `sceneId.ToString()` is used, so enum names must match scene names.
+
+Current scene ids:
+
+- `MainMenu`
+- `Gameplay`
+
+Current Build Settings only include `Bootstrap` and `MainMenu`; `Gameplay` exists in enum but no gameplay scene is currently present in Build Settings.
+
+### Input
+
+Files:
+
+- `Assets/_Project/Scripts/Core/Input/InputManager.cs`
+- `Assets/_Project/Scripts/Core/Input/InputReader.cs`
+- `Assets/_Project/Scripts/Core/Input/IInputReader.cs`
+- `Assets/InputSystem_Actions.inputactions`
+
+`InputManager` is the singleton bridge between Unity and gameplay code. It owns an `InputReader`, which clones the serialized `InputActionAsset` so runtime subscriptions do not mutate the source asset.
+
+`InputReader` expects an action map named `Player` and these actions:
+
+- `Move`
+- `Look`
+- `Attack`
+- `Interact`
+- `Crouch`
+- `Jump`
+- `Previous`
+- `Next`
+- `Sprint`
+
+Gameplay code should depend on `IInputReader` where possible. It exposes continuous values (`Move`, `Look`), held-state booleans, and press/release events.
+
+### Audio
+
+Files:
+
+- `Assets/_Project/Scripts/Core/Audio/AudioManager.cs`
+- `Assets/_Project/Scripts/Core/Audio/AudioLibrary.cs`
+- `Assets/_Project/Scripts/Core/Audio/AudioEntry.cs`
+
+`AudioManager` is a singleton that creates two `AudioSource` components at runtime:
+
+- music source
+- SFX source
+
+It resolves clips from an `AudioLibrary` ScriptableObject by string id. `AudioLibrary` builds a lazy dictionary from serialized `AudioEntry` records.
+
+Supported behavior:
+
+- looped/non-looped music playback
+- non-spatial one-shot SFX
+- spatial one-shot SFX through temporary GameObjects
+- master/music/SFX volume writes to an `AudioMixer`
+
+Expected mixer parameters:
+
+- `MasterVolume`
+- `MusicVolume`
+- `SfxVolume`
+
+### Camera
+
+Files:
+
+- `Assets/_Project/Scripts/Core/Camera/CameraManager.cs`
+- `Assets/_Project/Scripts/Core/Camera/CameraBounds2D.cs`
+
+`CameraManager` is a Cinemachine-based singleton. It can find a scene `CinemachineCamera`, set follow/look-at targets, adjust orthographic zoom, set priority, prioritize the camera, apply 2D bounds, and generate impulse shake.
+
+It listens to `SceneManager.sceneLoaded` and resolves scene camera references after scene loads.
+
+`CameraBounds2D` registers a `Collider2D` with `CameraManager.Instance.SetBounds`, allowing scene objects to define camera limits.
+
+### Save System
+
+Files:
+
+- `Assets/_Project/Scripts/Core/Save/SaveManager.cs`
+- `Assets/_Project/Scripts/Core/Save/SaveFileHandler.cs`
+- `Assets/_Project/Scripts/Core/Save/SaveData.cs`
+- `Assets/_Project/Scripts/Core/Save/ISaveable.cs`
+
+`SaveManager` is a singleton that owns the current `SaveData` and a `SaveFileHandler`. It can create a new save, load a save, save all active saveables, and delete the save file.
+
+Save flow:
+
+1. `SaveManager` finds active `MonoBehaviour` instances implementing `ISaveable`.
+2. On save, each saveable writes into the shared `SaveData`.
+3. `SaveFileHandler` serializes `SaveData` to JSON with `JsonUtility`.
+4. The save file is stored under `Application.persistentDataPath`.
+
+Current `SaveData` fields:
+
+- `coin`
+- `playerPosition`
+
+### UI
+
+Files:
+
+- `Assets/_Project/Scripts/Core/UI/UIManager.cs`
+- `Assets/_Project/Scripts/Core/UI/UIPanelView.cs`
+- `Assets/_Project/Scripts/Enum/PanelId.cs`
+
+`UIManager` keeps a serialized list of `UIPanelView` instances and builds a `Dictionary<PanelId, UIPanelView>` in `Awake`.
+
+It supports:
+
+- `OpenPanel(PanelId)`
+- `ClosePanel(PanelId)`
+- `HideAllPanels()`
+
+`UIPanelView` is a base class with `Show` and `Hide` methods that toggle GameObject active state.
+
+Current panel ids:
+
+- `Loading`
+- `Settings`
+- `Pause`
+- `Win`
+- `Lose`
+
+Important current limitation: `UIPanelView.Id` has only a getter and is not serialized, so derived panels need to provide an id or this base will not expose a configurable id in the Inspector.
+
+### Event Bus
+
+File:
+
+- `Assets/_Project/Scripts/Core/Event/EventBus.cs`
+
+`EventBus` is a static typed publish/subscribe utility.
+
+It stores subscribers by event type, prevents duplicate subscriptions for the same handler, publishes against a snapshot to tolerate modifications while dispatching, and logs exceptions thrown by handlers.
+
+It also exposes `Clear()` for wiping all subscribers.
+
+### Pooling
+
+Files:
+
+- `Assets/_Project/Scripts/Core/Pooling/PrefabPool.cs`
+- `Assets/_Project/Scripts/Core/Pooling/IPoolable.cs`
+
+`PrefabPool<T>` wraps `UnityEngine.Pool.ObjectPool<T>` for prefabs where `T : MonoBehaviour, IPoolable`.
+
+Lifecycle:
+
+- create: instantiate prefab under parent and deactivate
+- get: activate and call `OnSpawned`
+- release: call `OnDespawned` and deactivate
+- destroy: call `OnDestroyed` and destroy GameObject
+
+## Dependency Direction
+
+Current intended dependency flow:
+
+```text
+Scene Content
+  -> Core Managers
+  -> Unity APIs / Packages
+
+Bootstrapper
+  -> PersistantRoot prefab
+  -> GameManager
+  -> SceneLoader
+
+Gameplay Scripts
+  -> InputManager/IInputReader
+  -> AudioManager
+  -> CameraManager
+  -> SaveManager/ISaveable
+  -> UIManager
+  -> EventBus
+```
+
+The architecture is manager-centric. Cross-scene infrastructure is global and scene content calls into it as needed.
+
+## Current Gaps And Risks
+
+- `SceneId.Gameplay` exists, but no `Gameplay.unity` scene is currently in Build Settings.
+- `UIPanelView.Id` is not serialized or abstract, so the base class alone cannot configure unique panel ids in the Inspector.
+- Managers are singleton-based, which is simple for game jam speed but can make tests and scene isolation harder later.
+- `SaveManager.FindSaveables` only finds currently loaded active `MonoBehaviour` objects, so inactive objects or unloaded scenes are not saved.
+- `AudioManager` depends on correctly configured `AudioLibrary`, `AudioMixer`, and mixer parameter names.
+- `InputReader` throws if expected action map/action names are missing, which is useful during setup but should be accounted for when editing the input asset.
+
+## Adding New Features
+
+For a new gameplay feature:
+
+1. Put scripts under `Assets/_Project/Scripts`.
+2. Keep scene-local behavior in scene objects.
+3. Use existing managers for cross-cutting behavior.
+4. Add persistent services to `PersistantRoot.prefab` only when they truly need to survive scene loads.
+5. Add saveable behavior through `ISaveable`.
+6. Add input through `InputSystem_Actions.inputactions`, `IInputReader`, and `InputReader`.
+7. Add UI panels by deriving from `UIPanelView`, adding a `PanelId`, and registering the panel in `UIManager`.
+8. Add scenes to Build Settings before loading them by name or `SceneId`.
