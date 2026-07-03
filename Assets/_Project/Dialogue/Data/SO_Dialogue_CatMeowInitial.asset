@@ -15,11 +15,17 @@ MonoBehaviour:
   background: {fileID: 0}
   lines:
   - speakerName: Silly
+    englishSpeakerName: Silly
     text: "Meo... anh Vũ ơi, dậy đi!"
+    englishText: Meow... Vu, wake up!
     portrait: {fileID: 6468568510307345621, guid: 0c05e137063d43e429af4b01ffae35ac, type: 3}
   - speakerName: Silly
+    englishSpeakerName: Silly
     text: "Ngủ say quá. Chắc mình phải gọi lớn hơn một chút."
+    englishText: He's sleeping so deeply. I guess I need to call a little louder.
     portrait: {fileID: 6468568510307345621, guid: 0c05e137063d43e429af4b01ffae35ac, type: 3}
   - speakerName: Silly
+    englishSpeakerName: Silly
     text: "Ấn E liên tục để gọi anh ấy dậy."
+    englishText: Press E repeatedly to wake him up.
     portrait: {fileID: 6468568510307345621, guid: 0c05e137063d43e429af4b01ffae35ac, type: 3}

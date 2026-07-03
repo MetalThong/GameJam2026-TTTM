@@ -148,8 +148,12 @@ public sealed class DialogueView : MonoBehaviour
             return false;
         }
 
-        speakerNameText.text = string.IsNullOrWhiteSpace(line.SpeakerName) ? "???" : line.SpeakerName;
-        _fullBodyText = string.IsNullOrWhiteSpace(line.Text) ? string.Empty : line.Text;
+        LocalizationManager localizationManager = LocalizationManager.Instance;
+        string speakerName = line.GetSpeakerName(localizationManager);
+        string body = line.GetText(localizationManager);
+
+        speakerNameText.text = string.IsNullOrWhiteSpace(speakerName) ? "???" : speakerName;
+        _fullBodyText = string.IsNullOrWhiteSpace(body) ? string.Empty : body;
         _visibleCharacterCount = 0;
 
         if (portraitImage != null)

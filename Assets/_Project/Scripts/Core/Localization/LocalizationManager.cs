@@ -7,6 +7,8 @@ using UnityEngine;
 /// </summary>
 public sealed class LocalizationManager : MonoBehaviour
 {
+    public const string CatText = "Meow";
+
     private const string LanguagePrefKey = "settings.language";
 
     [SerializeField] private LocalizationTable table;
@@ -59,11 +61,61 @@ public sealed class LocalizationManager : MonoBehaviour
     /// </summary>
     public string Get(string key)
     {
+        if (CurrentLanguage == Language.Cat && !IsCatLanguageExemptKey(key))
+        {
+            return CatText;
+        }
+
         if (table != null && table.TryGet(key, CurrentLanguage, out string value))
         {
             return value;
         }
 
+        if (CurrentLanguage == Language.Cat)
+        {
+            return CatText;
+        }
+
         return key;
+    }
+
+    public string GetDialogueText(string vietnameseText, string englishText)
+    {
+        return CurrentLanguage switch
+        {
+            Language.English => !string.IsNullOrWhiteSpace(englishText) ? englishText : vietnameseText,
+            Language.Cat => Catify(vietnameseText),
+            _ => vietnameseText
+        };
+    }
+
+    public string GetDialogueSpeaker(string vietnameseSpeaker, string englishSpeaker)
+    {
+        return CurrentLanguage switch
+        {
+            Language.English => !string.IsNullOrWhiteSpace(englishSpeaker) ? englishSpeaker : vietnameseSpeaker,
+            Language.Cat => Catify(vietnameseSpeaker),
+            _ => vietnameseSpeaker
+        };
+    }
+
+    public static string GetLanguageDisplayName(Language language)
+    {
+        return language switch
+        {
+            Language.English => "English",
+            Language.Cat => "Tiếng Mèo",
+            _ => "Tiếng Việt"
+        };
+    }
+
+    public static string Catify(string source)
+    {
+        return string.IsNullOrWhiteSpace(source) ? string.Empty : CatText;
+    }
+
+    private static bool IsCatLanguageExemptKey(string key)
+    {
+        return key is "language.vietnamese" or "language.english" or "language.cat";
     }
 }

@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -49,6 +50,11 @@ public sealed class MainMenuController : MonoBehaviour
         {
             closeSettingsButton.onClick.AddListener(settingsPanelView.Close);
         }
+
+        if (LocalizationManager.Instance != null)
+        {
+            LocalizationManager.Instance.LanguageChanged += OnLanguageChanged;
+        }
     }
 
     private void Start()
@@ -60,6 +66,7 @@ public sealed class MainMenuController : MonoBehaviour
 
         settingsPanelView.Close();
         RefreshContinueButton();
+        RefreshTexts();
     }
 
     private void OnDisable()
@@ -88,6 +95,24 @@ public sealed class MainMenuController : MonoBehaviour
         {
             closeSettingsButton.onClick.RemoveListener(settingsPanelView.Close);
         }
+
+        if (LocalizationManager.Instance != null)
+        {
+            LocalizationManager.Instance.LanguageChanged -= OnLanguageChanged;
+        }
+    }
+
+    private void OnLanguageChanged(Language language)
+    {
+        RefreshTexts();
+    }
+
+    private void RefreshTexts()
+    {
+        SetButtonText(startButton, GetText("main.start", "Bắt đầu"));
+        SetButtonText(continueButton, GetText("main.continue", "Tiếp tục"));
+        SetButtonText(settingsButton, GetText("main.settings", "Cài đặt"));
+        SetButtonText(quitButton, GetText("main.quit", "Thoát"));
     }
 
     private void RefreshContinueButton()
@@ -116,5 +141,21 @@ public sealed class MainMenuController : MonoBehaviour
 
         gameFlow.SetGameplaySceneName(gameplaySceneName);
         settingsPanelView.SetPanel(settingsPanel);
+    }
+
+    private static void SetButtonText(Button button, string text)
+    {
+        TMP_Text label = button != null ? button.GetComponentInChildren<TMP_Text>(true) : null;
+        if (label != null)
+        {
+            label.text = text;
+        }
+    }
+
+    private static string GetText(string key, string fallback)
+    {
+        return LocalizationManager.Instance != null
+            ? LocalizationManager.Instance.Get(key)
+            : fallback;
     }
 }

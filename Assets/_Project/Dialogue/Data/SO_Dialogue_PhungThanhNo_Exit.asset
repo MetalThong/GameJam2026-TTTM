@@ -12,11 +12,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0df2ddcceb2389b4d864a64d8b7d2cf4, type: 3}
   m_Name: SO_Dialogue_PhungThanhNo_Exit
   m_EditorClassIdentifier: 
-  background: {fileID: 0}
+  background: {fileID: -4987337320017983735, guid: ef76815bb5462ca40918f9ee00dd2b1b, type: 3}
   lines:
-  - speakerName: "Vũ"
-    text: "Mệt thật..."
-    portrait: {fileID: 0}
-  - speakerName: "Vũ"
-    text: "Mình phải xuống tầng cái đã."
-    portrait: {fileID: 0}
+  - speakerName: "V\u0169"
+    englishSpeakerName: Vu
+    text: "M\u1EC7t th\u1EADt..."
+    englishText: I'm exhausted...
+    portrait: {fileID: -4254258901546231152, guid: c5d997eca51e38d418373f1e8fdc90ce, type: 3}
+  - speakerName: "V\u0169"
+    englishSpeakerName: Vu
+    text: "M\xECnh ph\u1EA3i xu\u1ED1ng t\u1EA7ng c\xE1i \u0111\xE3."
+    englishText: I need to go downstairs first.
+    portrait: {fileID: -4254258901546231152, guid: c5d997eca51e38d418373f1e8fdc90ce, type: 3}

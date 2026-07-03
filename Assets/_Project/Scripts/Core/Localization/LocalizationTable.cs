@@ -25,8 +25,8 @@ public sealed class LocalizationTable : ScriptableObject
         {
             return language switch
             {
-                Language.English => english,
-                Language.Cat => cat,
+                Language.English => !string.IsNullOrWhiteSpace(english) ? english : vietnamese,
+                Language.Cat => !string.IsNullOrWhiteSpace(cat) ? cat : vietnamese,
                 _ => vietnamese
             };
         }

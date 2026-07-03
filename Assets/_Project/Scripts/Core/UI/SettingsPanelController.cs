@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -13,8 +14,15 @@ public sealed class SettingsPanelController : MonoBehaviour
     private const string SfxVolumePrefKey = "settings.sfxVolume";
     private const float DefaultVolume = 0.8f;
 
+    private static readonly Color LanguageNormalColor = new(0.2f, 0.32f, 0.5f, 1f);
+    private static readonly Color LanguageSelectedColor = new(0.3f, 0.72f, 0.44f, 1f);
+    private static readonly Color LanguageNormalTextColor = Color.white;
+    private static readonly Color LanguageSelectedTextColor = new(0.04f, 0.08f, 0.06f, 1f);
+    private static readonly Color LanguageSelectedOutlineColor = new(0.85f, 1f, 0.72f, 1f);
+
     [Header("Panel")]
     [SerializeField] private GameObject panel;
+    [SerializeField] private GameObject panelContentRoot;
     [SerializeField] private Button openButton;
     [SerializeField] private Button closeButton;
 
@@ -140,7 +148,15 @@ public sealed class SettingsPanelController : MonoBehaviour
         if (panel != null)
         {
             panel.SetActive(true);
+            panel.transform.SetAsLastSibling();
         }
+
+        if (panelContentRoot != null)
+        {
+            panelContentRoot.SetActive(true);
+        }
+
+        RefreshLanguageButtons();
     }
 
     public void Close()
@@ -214,17 +230,63 @@ public sealed class SettingsPanelController : MonoBehaviour
             ? LocalizationManager.Instance.CurrentLanguage
             : Language.Vietnamese;
 
-        SetButtonSelected(vietnameseButton, current == Language.Vietnamese);
-        SetButtonSelected(englishButton, current == Language.English);
-        SetButtonSelected(catButton, current == Language.Cat);
+        SetLanguageButton(vietnameseButton, Language.Vietnamese, current == Language.Vietnamese);
+        SetLanguageButton(englishButton, Language.English, current == Language.English);
+        SetLanguageButton(catButton, Language.Cat, current == Language.Cat);
+    }
+
+    private static void SetLanguageButton(Button button, Language language, bool selected)
+    {
+        SetButtonLabel(button, LocalizationManager.GetLanguageDisplayName(language));
+        SetButtonSelected(button, selected);
     }
 
     private static void SetButtonSelected(Button button, bool selected)
     {
-        if (button != null)
+        if (button == null)
         {
-            // The active language is non-interactable so it reads as "pressed/selected".
-            button.interactable = !selected;
+            return;
+        }
+
+        button.interactable = !selected;
+
+        if (button.targetGraphic is Image image)
+        {
+            image.color = selected ? LanguageSelectedColor : LanguageNormalColor;
+        }
+
+        ColorBlock colors = button.colors;
+        colors.normalColor = LanguageNormalColor;
+        colors.highlightedColor = new Color(0.26f, 0.4f, 0.62f, 1f);
+        colors.pressedColor = new Color(0.16f, 0.26f, 0.4f, 1f);
+        colors.selectedColor = LanguageSelectedColor;
+        colors.disabledColor = LanguageSelectedColor;
+        button.colors = colors;
+
+        TMP_Text label = button.GetComponentInChildren<TMP_Text>(true);
+        if (label != null)
+        {
+            label.color = selected ? LanguageSelectedTextColor : LanguageNormalTextColor;
+            label.fontStyle = selected ? FontStyles.Bold : FontStyles.Normal;
+        }
+
+        Outline outline = button.GetComponent<Outline>();
+        if (outline == null)
+        {
+            outline = button.gameObject.AddComponent<Outline>();
+            outline.effectDistance = new Vector2(3f, -3f);
+        }
+
+        outline.effectColor = LanguageSelectedOutlineColor;
+        outline.enabled = selected;
+    }
+
+    private static void SetButtonLabel(Button button, string label)
+    {
+        TMP_Text text = button != null ? button.GetComponentInChildren<TMP_Text>(true) : null;
+        if (text != null)
+        {
+            text.text = label;
         }
     }
 

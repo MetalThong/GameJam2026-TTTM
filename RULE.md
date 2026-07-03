@@ -335,6 +335,8 @@ Dialogue, prompt, and interaction text polish:
 
 - Production dialogue content belongs in `DialogueSO` assets, not inline scene arrays or temporary runner data.
 - Keep Vietnamese text encoded cleanly. Unity-written escaped Unicode is acceptable in YAML; mojibake is not.
+- Write Vietnamese first, then fill English speaker/text fields in the same `DialogueLine`; Cat language is generated as `Meow`.
+- Keep language selector labels readable in every language: `Tiếng Việt`, `English`, and `Tiếng Mèo`.
 - Keep each dialogue line short enough for its TMP container and split long thoughts into multiple `DialogueLine` entries.
 - Preserve the dialogue input contract: while text is revealing, `E` reveals the full current line; once the line is fully visible, `E` advances.
 - Prompt copy should be short, player-facing, and action-first, such as `Ấn E để tỉnh dậy`.

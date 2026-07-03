@@ -16,20 +16,52 @@ MonoBehaviour:
   - key: settings.title
     vietnamese: "C\xE0i \u0111\u1EB7t"
     english: Settings
-    cat: Meo meo
+    cat: Meow
   - key: settings.music
     vietnamese: "Nh\u1EA1c n\u1EC1n"
     english: Background Music
-    cat: Meo meo
+    cat: Meow
   - key: settings.sfx
     vietnamese: "Hi\u1EC7u \u1EE9ng"
     english: SFX
-    cat: Meo meo
+    cat: Meow
   - key: settings.language
     vietnamese: "Ng\xF4n ng\u1EEF"
     english: Language
-    cat: Meo meo
+    cat: Meow
   - key: settings.quit
     vietnamese: "Tho\xE1t v\u1EC1 Menu"
     english: Quit to Menu
-    cat: Meo meo
+    cat: Meow
+  - key: main.start
+    vietnamese: "B\u1EAFt \u0111\u1EA7u"
+    english: Start
+    cat: Meow
+  - key: main.continue
+    vietnamese: "Ti\u1EBFp t\u1EE5c"
+    english: Continue
+    cat: Meow
+  - key: main.settings
+    vietnamese: "C\xE0i \u0111\u1EB7t"
+    english: Settings
+    cat: Meow
+  - key: main.quit
+    vietnamese: "Tho\xE1t"
+    english: Quit
+    cat: Meow
+  - key: prompt.wakeup
+    vietnamese: "\u1EA4n E \u0111\u1EC3 t\u1EC9nh d\u1EADy"
+    english: Press E to wake up
+    cat: Meow
+  - key: language.vietnamese
+    vietnamese: "Ti\u1EBFng Vi\u1EC7t"
+    english: "Ti\u1EBFng Vi\u1EC7t"
+    cat: "Ti\u1EBFng Vi\u1EC7t"
+  - key: language.english
+    vietnamese: English
+    english: English
+    cat: English
+  - key: language.cat
+    vietnamese: "Ti\u1EBFng M\xE8o"
+    english: "Ti\u1EBFng M\xE8o"
+    cat: "Ti\u1EBFng M\xE8o"
