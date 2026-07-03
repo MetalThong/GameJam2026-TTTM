@@ -10,6 +10,7 @@ For coding and architecture rules, read `RULE.md`.
 
 The project is a Unity 2D game using a small persistent core layer and scene-specific content. Startup begins in `Bootstrap.unity`, creates a persistent root prefab, initializes global managers, then loads the configured start scene.
 
+
 ```text
 Bootstrap.unity
   Bootstraper GameObject
