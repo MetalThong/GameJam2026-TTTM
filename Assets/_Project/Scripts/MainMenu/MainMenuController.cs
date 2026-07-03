@@ -92,12 +92,14 @@ public sealed class MainMenuController : MonoBehaviour
 
     private void RefreshContinueButton()
     {
-        if (continueButton == null || SaveManager.Instance == null)
+        if (continueButton == null)
         {
             return;
         }
 
-        continueButton.interactable = SaveManager.Instance.HasSaveFile;
+        bool hasSaveFile = SaveManager.Instance != null && SaveManager.Instance.HasSaveFile;
+        continueButton.gameObject.SetActive(hasSaveFile);
+        continueButton.interactable = hasSaveFile;
     }
 
     private void ResolveComponents()

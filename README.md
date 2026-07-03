@@ -83,6 +83,8 @@ Current Build Settings include:
 - `CameraManager`
 - `SaveManager`
 - `InputManager`
+- `FlagManager`
+- `LocalizationManager`
 - `UIManager`
 - `PanelCanvas`
 
@@ -94,11 +96,11 @@ The root is marked with `DontDestroyOnLoad`, so these services survive scene cha
 - Game state: `GameManager` stores `GameState` and exposes state transitions such as pause, resume, restart, and quit-to-menu.
 - Scene loading: `SceneLoader` loads scenes asynchronously with UniTask and guards against duplicate concurrent loads.
 - Input: `InputManager` wraps an `InputActionAsset`; `InputReader` exposes movement/look values and gameplay action events.
-- Audio: `AudioManager` plays music and SFX from `AudioLibrary`, supports spatial one-shot SFX, and writes volume values to an `AudioMixer`.
+- Audio: `AudioManager` plays music and SFX from `AudioLibrary`, supports spatial one-shot SFX, writes volume values to an `AudioMixer` when configured, and falls back to direct runtime `AudioSource` volume.
 - Camera: `CameraManager` manages a Cinemachine camera, follow/look-at target, zoom, priority, bounds, and impulse shake.
 - Save: `SaveManager` stores `SaveData` as JSON in `Application.persistentDataPath`; saveable objects implement `ISaveable`.
 - UI: `UIManager` opens/closes registered `UIPanelView` instances by `PanelId`.
-- Main Menu: runtime components under `Assets/_Project/Scripts/MainMenu` bind the `MainMenu.unity` buttons, control start/continue/quit flow, and toggle the basic settings panel.
+- Main Menu: runtime components under `Assets/_Project/Scripts/MainMenu` bind the `MainMenu.unity` buttons, control start/continue/quit flow, hide Continue until a save exists, and provide settings controls for music, SFX, and language.
 - Pooling: `PrefabPool<T>` wraps Unity `ObjectPool<T>` for prefab instances implementing `IPoolable`.
 - Events: `EventBus` is a static typed pub/sub helper for gameplay events.
 

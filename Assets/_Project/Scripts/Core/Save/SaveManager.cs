@@ -42,7 +42,7 @@ public sealed class SaveManager : MonoBehaviour
 
     private void OnApplicationQuit()
     {
-        if (saveOnApplicationQuit)
+        if (saveOnApplicationQuit && HasSaveFile)
         {
             SaveGame();
         }

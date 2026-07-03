@@ -14,22 +14,22 @@ MonoBehaviour:
   m_EditorClassIdentifier:
   entries:
   - key: settings.title
-    vietnamese: "C\xE0i đặt"
+    vietnamese: "Cài đặt"
     english: Settings
     cat: "Meo meo"
   - key: settings.music
-    vietnamese: "\xC2m nhạc"
-    english: Music
-    cat: "Meo~ nhạc"
+    vietnamese: "Nhạc nền"
+    english: Background Music
+    cat: "Meo nền"
   - key: settings.sfx
     vietnamese: "Hiệu ứng"
     english: SFX
     cat: "Meo hiệu ứng"
   - key: settings.language
-    vietnamese: "Ng\xF4n ngữ"
+    vietnamese: "Ngôn ngữ"
     english: Language
     cat: "Tiếng meo"
   - key: settings.quit
-    vietnamese: "Tho\xE1t về Menu"
+    vietnamese: "Thoát về Menu"
     english: Quit to Menu
-    cat: "Meo về nh\xE0"
+    cat: "Meo về nhà"

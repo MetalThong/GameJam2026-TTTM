@@ -15,6 +15,8 @@ public sealed class AudioManager : MonoBehaviour
 
     private AudioSource _musicSource;
     private AudioSource _sfxSource;
+    private float _musicVolume = 1f;
+    private float _sfxVolume = 1f;
 
     public static AudioManager Instance { get; private set; }
 
@@ -99,7 +101,14 @@ public sealed class AudioManager : MonoBehaviour
     /// </summary>
     public void SetMusicVolume(float value)
     {
-        SetMixerVolume(MusicVolumeParameter, value);
+        _musicVolume = Mathf.Clamp01(value);
+
+        if (_musicSource != null)
+        {
+            _musicSource.volume = _musicVolume;
+        }
+
+        SetMixerVolume(MusicVolumeParameter, _musicVolume);
     }
 
     /// <summary>
@@ -107,7 +116,14 @@ public sealed class AudioManager : MonoBehaviour
     /// </summary>
     public void SetSfxVolume(float value)
     {
-        SetMixerVolume(SfxVolumeParameter, value);
+        _sfxVolume = Mathf.Clamp01(value);
+
+        if (_sfxSource != null)
+        {
+            _sfxSource.volume = _sfxVolume;
+        }
+
+        SetMixerVolume(SfxVolumeParameter, _sfxVolume);
     }
 
     private void CreateAudioSources()
@@ -116,10 +132,12 @@ public sealed class AudioManager : MonoBehaviour
         _musicSource.outputAudioMixerGroup = musicGroup;
         _musicSource.playOnAwake = false;
         _musicSource.loop = true;
+        _musicSource.volume = _musicVolume;
 
         _sfxSource = gameObject.AddComponent<AudioSource>();
         _sfxSource.outputAudioMixerGroup = sfxGroup;
         _sfxSource.playOnAwake = false;
+        _sfxSource.volume = _sfxVolume;
     }
 
     private bool TryGetClip(string id, out AudioClip clip)
@@ -150,6 +168,7 @@ public sealed class AudioManager : MonoBehaviour
         audioSource.clip = clip;
         audioSource.outputAudioMixerGroup = sfxGroup;
         audioSource.spatialBlend = 1f;
+        audioSource.volume = _sfxVolume;
         audioSource.Play();
 
         Destroy(sfxObject, clip.length);
@@ -159,7 +178,6 @@ public sealed class AudioManager : MonoBehaviour
     {
         if (audioMixer == null)
         {
-            Debug.LogWarning("AudioManager: missing AudioMixer reference.");
             return;
         }
 

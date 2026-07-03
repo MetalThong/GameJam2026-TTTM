@@ -26,6 +26,8 @@ PersistantRoot.prefab
   CameraManager
   SaveManager
   InputManager
+  FlagManager
+  LocalizationManager
   UIManager
   PanelCanvas
 ```
@@ -172,6 +174,7 @@ Supported behavior:
 - non-spatial one-shot SFX
 - spatial one-shot SFX through temporary GameObjects
 - master/music/SFX volume writes to an `AudioMixer`
+- music/SFX volume also applies directly to runtime `AudioSource` volume, so settings sliders work even when no mixer asset is assigned yet
 
 Expected mixer parameters:
 
@@ -209,6 +212,8 @@ Save flow:
 2. On save, each saveable writes into the shared `SaveData`.
 3. `SaveFileHandler` serializes `SaveData` to JSON with `JsonUtility`.
 4. The save file is stored under `Application.persistentDataPath`.
+
+`SaveManager` does not create a new save file on application quit unless a save file already exists. This prevents opening and closing the main menu from creating empty progress.
 
 Current `SaveData` fields:
 
@@ -269,6 +274,16 @@ Current button flow:
 - Setting: opens the assigned settings panel.
 - Close: hides the assigned settings panel.
 - Quit: stops Play Mode in the Unity Editor or calls `Application.Quit()` in builds.
+
+The Continue button GameObject is hidden when no save file exists. It is not just disabled, so the main menu only shows Continue when saved progress is available. The main menu settings panel follows the same visual pattern as the current scene settings panel: dim overlay, centered `SettingsWindow`, and an `X` close button in the top-right corner.
+
+Main menu settings expose the same persisted controls as in-game settings:
+
+- background music volume
+- SFX volume
+- language selection: Vietnamese, English, or Cat
+
+Language is managed by `LocalizationManager` through `Assets/_Project/Resources/SO_LocalizationTable.asset` and saved in `PlayerPrefs`.
 
 The main menu scripts are split around the first two SOLID principles:
 

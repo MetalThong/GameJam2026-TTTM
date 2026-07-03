@@ -29,11 +29,13 @@ public sealed class MainMenuGameFlow : MonoBehaviour
 
     public void ContinueGame()
     {
-        if (SaveManager.Instance != null)
+        if (SaveManager.Instance == null || !SaveManager.Instance.HasSaveFile)
         {
-            SaveManager.Instance.LoadGame();
+            Debug.LogWarning("MainMenuGameFlow: cannot continue because no save file exists.");
+            return;
         }
 
+        SaveManager.Instance.LoadGame();
         LoadGameplayAsync().Forget();
     }
 
