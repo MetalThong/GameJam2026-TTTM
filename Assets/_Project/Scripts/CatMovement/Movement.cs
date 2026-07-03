@@ -99,7 +99,7 @@ public sealed class Movement : MonoBehaviour
     {
         _input.Refresh();
 
-        if (_isMovementLocked)
+        if (ShouldBlockMovement())
         {
             StopMovement();
             UpdateAnimator(Vector2.zero);
@@ -117,7 +117,7 @@ public sealed class Movement : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (_isMovementLocked)
+        if (ShouldBlockMovement())
         {
             StopMovement();
             return;
@@ -383,6 +383,16 @@ public sealed class Movement : MonoBehaviour
         {
             StopMovement();
         }
+    }
+
+    private bool ShouldBlockMovement()
+    {
+        return _isMovementLocked || IsDialogueStateActive();
+    }
+
+    private static bool IsDialogueStateActive()
+    {
+        return GameManager.Instance != null && GameManager.Instance.CurrentState == GameState.OnDialog;
     }
 
     private void StopMovement()

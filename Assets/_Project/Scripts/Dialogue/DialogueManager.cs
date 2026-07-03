@@ -68,6 +68,19 @@ public sealed class DialogueManager : MonoBehaviour
         }
 
         IsPlaying = true;
+        GameState previousState = GameState.Playing;
+        bool shouldRestoreGameState = false;
+
+        if (GameManager.Instance != null)
+        {
+            previousState = GameManager.Instance.CurrentState;
+            shouldRestoreGameState = true;
+
+            if (previousState != GameState.OnDialog)
+            {
+                GameManager.Instance.SetState(GameState.OnDialog);
+            }
+        }
 
         try
         {
@@ -86,6 +99,11 @@ public sealed class DialogueManager : MonoBehaviour
         {
             dialogueView.Hide();
             IsPlaying = false;
+
+            if (shouldRestoreGameState && GameManager.Instance != null)
+            {
+                GameManager.Instance.SetState(previousState == GameState.OnDialog ? GameState.Playing : previousState);
+            }
         }
     }
 
