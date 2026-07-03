@@ -210,6 +210,9 @@ Files:
 
 - `Assets/_Project/Scripts/Core/UI/UIManager.cs`
 - `Assets/_Project/Scripts/Core/UI/UIPanelView.cs`
+- `Assets/_Project/Scripts/Dialogue/DialogueLine.cs`
+- `Assets/_Project/Scripts/Dialogue/DialogueView.cs`
+- `Assets/_Project/Scripts/Dialogue/DialogueTestRunner.cs`
 - `Assets/_Project/Scripts/Enum/PanelId.cs`
 
 `UIManager` keeps a serialized list of `UIPanelView` instances and builds a `Dictionary<PanelId, UIPanelView>` in `Awake`.
@@ -231,6 +234,50 @@ Current panel ids:
 - `Lose`
 
 Important current limitation: `UIPanelView.Id` has only a getter and is not serialized, so derived panels need to provide an id or this base will not expose a configurable id in the Inspector.
+
+### Main Menu
+
+Files:
+
+- `Assets/_Project/Scripts/MainMenu/MainMenuController.cs`
+- `Assets/_Project/Scripts/MainMenu/MainMenuGameFlow.cs`
+- `Assets/_Project/Scripts/MainMenu/MainMenuSettingsPanel.cs`
+
+`MainMenu.unity` uses runtime-only scripts for the basic main menu. There is no retained editor builder script.
+
+Current button flow:
+
+- Start: creates a new save through `SaveManager.NewGame()` when available, then loads the configured gameplay scene.
+- Continue: loads save data through `SaveManager.LoadGame()` when available, then loads the configured gameplay scene.
+- Setting: opens the assigned settings panel.
+- Close: hides the assigned settings panel.
+- Quit: stops Play Mode in the Unity Editor or calls `Application.Quit()` in builds.
+
+The main menu scripts are split around the first two SOLID principles:
+
+- Single Responsibility: `MainMenuController` binds scene buttons and initializes the menu state, `MainMenuGameFlow` owns start/continue/quit scene flow, and `MainMenuSettingsPanel` owns panel visibility.
+- Open/Closed direction: button UI wiring is kept separate from game-flow and panel behavior, so future menu features should be added as new focused components or commands instead of growing one large menu controller.
+
+`MainMenuGameFlow` defaults to loading a scene named `Gameplay`. That scene id already exists in `SceneId`, but a gameplay scene still needs to be created and added to Build Settings before the Start/Continue buttons can load it.
+
+### Dialogue Prototype
+
+Files:
+
+- `Assets/_Project/Scripts/Dialogue/DialogueLine.cs`
+- `Assets/_Project/Scripts/Dialogue/DialogueView.cs`
+- `Assets/_Project/Scripts/Dialogue/DialogueTestRunner.cs`
+
+`DialogueTestRunner` is a temporary runtime test harness. It auto-creates itself after scene load, persists across scene transitions, and listens for the Enter key through the Unity Input System.
+
+Runtime test flow:
+
+1. Press Enter while playing.
+2. `DialogueTestRunner` opens the dialogue panel with the first test line.
+3. Further Enter presses advance through the test lines.
+4. After the final line, the panel hides.
+
+`DialogueView` builds a Screen Space Overlay canvas at runtime. The panel includes a background image, a portrait image slot, a speaker-name text label, and a body-text area. Current fallback sprites are loaded from `Assets/_Project/Resources/Dialogue` for fast prototype testing; this should be replaced with serialized references, Addressables, or feature-owned configuration when the dialogue system becomes production data.
 
 ### Event Bus
 
@@ -267,6 +314,7 @@ Current intended dependency flow:
 ```text
 Scene Content
   -> Core Managers
+  -> Feature/Scene Runtime Components
   -> Unity APIs / Packages
 
 Bootstrapper
@@ -281,6 +329,12 @@ Gameplay Scripts
   -> SaveManager/ISaveable
   -> UIManager
   -> EventBus
+
+MainMenu Scripts
+  -> SaveManager
+  -> GameManager
+  -> SceneLoader
+  -> Unity UI
 ```
 
 The architecture is manager-centric. Cross-scene infrastructure is global and scene content calls into it as needed.

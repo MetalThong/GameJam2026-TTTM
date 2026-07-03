@@ -48,6 +48,7 @@ Assets/
         Save/
         UI/
       Enum/
+      MainMenu/
   Plugins/
     Demigiant/DOTween/
   Packages/
@@ -97,6 +98,7 @@ The root is marked with `DontDestroyOnLoad`, so these services survive scene cha
 - Camera: `CameraManager` manages a Cinemachine camera, follow/look-at target, zoom, priority, bounds, and impulse shake.
 - Save: `SaveManager` stores `SaveData` as JSON in `Application.persistentDataPath`; saveable objects implement `ISaveable`.
 - UI: `UIManager` opens/closes registered `UIPanelView` instances by `PanelId`.
+- Main Menu: runtime components under `Assets/_Project/Scripts/MainMenu` bind the `MainMenu.unity` buttons, control start/continue/quit flow, and toggle the basic settings panel.
 - Pooling: `PrefabPool<T>` wraps Unity `ObjectPool<T>` for prefab instances implementing `IPoolable`.
 - Events: `EventBus` is a static typed pub/sub helper for gameplay events.
 
