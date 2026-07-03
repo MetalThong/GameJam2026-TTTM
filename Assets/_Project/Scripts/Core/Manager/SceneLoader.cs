@@ -22,17 +22,43 @@ public sealed class SceneLoader
 
         try
         {
-            AsyncOperation operation = SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Single);
+            await LoadSceneInternalAsync(sceneName);
+        }
+        finally
+        {
+            IsLoading = false;
+        }
+    }
 
-            if (operation == null)
+    public async UniTask FadeLoadAsync(SceneId sceneId)
+    {
+        await FadeLoadAsync(sceneId.ToString());
+    }
+
+    public async UniTask FadeLoadAsync(string sceneName)
+    {
+        if (IsLoading)
+        {
+            return;
+        }
+
+        IsLoading = true;
+        FadePanel fadePanel = ResolveFadePanel();
+
+        try
+        {
+            if (fadePanel != null)
             {
-                Debug.LogError($"SceneLoader: failed to load scene '{sceneName}'. Check Build Settings.");
-                return;
+                await fadePanel.FadeInAsync();
             }
 
-            while (!operation.isDone)
+            await LoadSceneInternalAsync(sceneName);
+            await UniTask.Yield();
+
+            fadePanel = ResolveFadePanel();
+            if (fadePanel != null)
             {
-                await UniTask.Yield();
+                await fadePanel.FadeOutAsync();
             }
         }
         finally
@@ -45,5 +71,38 @@ public sealed class SceneLoader
     {
         string currentSceneName = SceneManager.GetActiveScene().name;
         await LoadSceneAsync(currentSceneName);
+    }
+
+    private static async UniTask LoadSceneInternalAsync(string sceneName)
+    {
+        if (string.IsNullOrWhiteSpace(sceneName))
+        {
+            Debug.LogError("SceneLoader: failed to load because scene name is empty.");
+            return;
+        }
+
+        AsyncOperation operation = SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Single);
+
+        if (operation == null)
+        {
+            Debug.LogError($"SceneLoader: failed to load scene '{sceneName}'. Check Build Settings.");
+            return;
+        }
+
+        while (!operation.isDone)
+        {
+            await UniTask.Yield();
+        }
+    }
+
+    private static FadePanel ResolveFadePanel()
+    {
+        FadePanel fadePanel = Object.FindFirstObjectByType<FadePanel>(FindObjectsInactive.Include);
+        if (fadePanel == null)
+        {
+            Debug.LogWarning("SceneLoader: no FadePanel found. Scene will load without a fade transition.");
+        }
+
+        return fadePanel;
     }
 }

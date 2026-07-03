@@ -8,27 +8,33 @@ public class SceneLoadInteractable : MonoBehaviour, IInteractable
     private readonly SceneLoader _sceneLoader = new();
     private bool _isLoading = false;
 
-    public void TryInteract()
+    public bool TryInteract()
     {
         if (_isLoading)
         {
-            return;
+            return false;
         }
 
         LoadAsync().Forget();
+        return true;
     }
 
     private async UniTaskVoid LoadAsync()
     {
         _isLoading = true;
 
-        if (GameManager.Instance != null)
+        try
         {
-            GameManager.Instance.SetState(GameState.Playing);
+            if (GameManager.Instance != null)
+            {
+                GameManager.Instance.SetState(GameState.Playing);
+            }
+
+            await _sceneLoader.FadeLoadAsync(targetScene);
         }
-
-        await _sceneLoader.LoadSceneAsync(targetScene);
-
-        _isLoading = false;
+        finally
+        {
+            _isLoading = false;
+        }
     }
 }
