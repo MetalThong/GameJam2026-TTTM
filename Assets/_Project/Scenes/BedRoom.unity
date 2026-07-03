@@ -1903,12 +1903,23 @@ MonoBehaviour:
   dialogueManager: {fileID: 0}
   dialogue: {fileID: 11400000, guid: 548bb42f0d13dc048b6eface7ea4566f, type: 2}
   meowSfxId: cat_meow
-  ownerPrefab: {fileID: 0}
-  ownerResourcePath: Main/thang chu di
-  ownerSpawnPoint: {fileID: 1844219056}
+  ownerPrefab: {fileID: 4460802599194774219, guid: 035b606787c0fe64387e61aab294d1e5, type: 3}
+  ownerResourcePath: ""
+  ownerSpawnPoint: {fileID: 0}
   ownerSpawnOffset: {x: 0, y: 0, z: 0}
+  useOwnerSpawnPosition: 1
+  ownerSpawnPosition: {x: 2.48, y: -4.48, z: 0}
+  disableOwnerAnimatorUntilWalk: 1
+  ownerSpawnFadeDuration: 0.35
   ownerExitDialogue: {fileID: 11400000, guid: b170a1e4f6ff4ebba5db133c2fdaa746, type: 2}
-  ownerExitAnimationState: thang chu di_clip
+  ownerExitAnimationState: BossWalk
+  ownerExitPoint: {fileID: 0}
+  ownerExitOffset: {x: 0, y: 0, z: 0}
+  ownerWalkOffset: {x: 1.45, y: 0, z: 0}
+  ownerWalkDuration: 1.8
+  ownerDespawnFadeDuration: 0.25
+  faceMoveDirection: 1
+  flipOwnerWhenMovingRight: 1
   waitForOwnerAnimation: 1
   postOwnerAnimationDelay: 0
   hideOnComplete:
@@ -2723,6 +2734,79 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: acfb272cdcd1fcd49a51afedbd6f635e, type: 3}
+--- !u!1001 &7462702185196820338
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 222231669631060497, guid: 035b606787c0fe64387e61aab294d1e5, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 2.48
+      objectReference: {fileID: 0}
+    - target: {fileID: 222231669631060497, guid: 035b606787c0fe64387e61aab294d1e5, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -4.48
+      objectReference: {fileID: 0}
+    - target: {fileID: 222231669631060497, guid: 035b606787c0fe64387e61aab294d1e5, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 222231669631060497, guid: 035b606787c0fe64387e61aab294d1e5, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 222231669631060497, guid: 035b606787c0fe64387e61aab294d1e5, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 222231669631060497, guid: 035b606787c0fe64387e61aab294d1e5, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 222231669631060497, guid: 035b606787c0fe64387e61aab294d1e5, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 222231669631060497, guid: 035b606787c0fe64387e61aab294d1e5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 222231669631060497, guid: 035b606787c0fe64387e61aab294d1e5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 222231669631060497, guid: 035b606787c0fe64387e61aab294d1e5, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3203342292933049088, guid: 035b606787c0fe64387e61aab294d1e5, type: 3}
+      propertyPath: m_FlipX
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3203342292933049088, guid: 035b606787c0fe64387e61aab294d1e5, type: 3}
+      propertyPath: m_SortingOrder
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3203342292933049088, guid: 035b606787c0fe64387e61aab294d1e5, type: 3}
+      propertyPath: m_WasSpriteAssigned
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4460802599194774219, guid: 035b606787c0fe64387e61aab294d1e5, type: 3}
+      propertyPath: m_Name
+      value: Boss
+      objectReference: {fileID: 0}
+    - target: {fileID: 4460802599194774219, guid: 035b606787c0fe64387e61aab294d1e5, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 035b606787c0fe64387e61aab294d1e5, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -2735,3 +2819,4 @@ SceneRoots:
   - {fileID: 2007297185}
   - {fileID: 1844219056}
   - {fileID: 2109960583}
+  - {fileID: 7462702185196820338}

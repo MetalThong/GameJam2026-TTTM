@@ -1,6 +1,7 @@
 using System;
 using System.Threading;
 using Cysharp.Threading.Tasks;
+using DG.Tweening;
 using UnityEngine;
 
 public class CatMeowMashInteractable : MashStoryInteractable
@@ -16,10 +17,21 @@ public class CatMeowMashInteractable : MashStoryInteractable
     [SerializeField] private string ownerResourcePath = "Main/thang chu di";
     [SerializeField] private Transform ownerSpawnPoint;
     [SerializeField] private Vector3 ownerSpawnOffset;
+    [SerializeField] private bool useOwnerSpawnPosition;
+    [SerializeField] private Vector3 ownerSpawnPosition;
+    [SerializeField] private bool disableOwnerAnimatorUntilWalk = true;
+    [SerializeField, Min(0f)] private float ownerSpawnFadeDuration = 0.35f;
 
     [Header("Owner Exit")]
     [SerializeField] private DialogueSO ownerExitDialogue;
-    [SerializeField] private string ownerExitAnimationState = "thang chu di_clip";
+    [SerializeField] private string ownerExitAnimationState = "BossWalk";
+    [SerializeField] private Transform ownerExitPoint;
+    [SerializeField] private Vector3 ownerExitOffset;
+    [SerializeField] private Vector3 ownerWalkOffset;
+    [SerializeField, Min(0f)] private float ownerWalkDuration = 1.4f;
+    [SerializeField, Min(0f)] private float ownerDespawnFadeDuration = 0.35f;
+    [SerializeField] private bool faceMoveDirection = true;
+    [SerializeField] private bool flipOwnerWhenMovingRight = true;
     [SerializeField] private bool waitForOwnerAnimation = true;
     [SerializeField, Min(0f)] private float postOwnerAnimationDelay;
 
@@ -60,12 +72,14 @@ public class CatMeowMashInteractable : MashStoryInteractable
             await PlayDialogueIfAssignedAsync(dialogue, destroyToken);
 
             _spawnedOwner = SpawnOwner();
+            await FadeOwnerAsync(_spawnedOwner, 1f, ownerSpawnFadeDuration, destroyToken);
 
             await PlayDialogueIfAssignedAsync(ownerExitDialogue, destroyToken);
 
-
             float animationDuration = PlayOwnerExitAnimation(_spawnedOwner);
-            await WaitForOwnerAnimationAsync(animationDuration, destroyToken);
+            await MoveOwnerToExitAsync(_spawnedOwner, animationDuration, destroyToken);
+            await FadeOwnerAsync(_spawnedOwner, 0f, ownerDespawnFadeDuration, destroyToken);
+            DespawnOwner();
 
             ExecuteAction();
         }
@@ -125,11 +139,23 @@ public class CatMeowMashInteractable : MashStoryInteractable
             return null;
         }
 
-        Vector3 spawnPosition = ownerSpawnPoint != null ? ownerSpawnPoint.position : transform.position;
+        Vector3 spawnPosition = ResolveOwnerSpawnPosition();
         GameObject owner = Instantiate(prefab, spawnPosition + ownerSpawnOffset, Quaternion.identity);
         owner.name = prefab.name;
         owner.SetActive(true);
+        SetOwnerAnimatorsEnabled(owner, !disableOwnerAnimatorUntilWalk);
+        SetOwnerAlpha(owner, 0f);
         return owner;
+    }
+
+    private Vector3 ResolveOwnerSpawnPosition()
+    {
+        if (useOwnerSpawnPosition)
+        {
+            return ownerSpawnPosition;
+        }
+
+        return ownerSpawnPoint != null ? ownerSpawnPoint.position : transform.position;
     }
 
     private float PlayOwnerExitAnimation(GameObject owner)
@@ -171,6 +197,7 @@ public class CatMeowMashInteractable : MashStoryInteractable
         }
 
         animator.gameObject.SetActive(true);
+        animator.enabled = true;
         animator.Play(Animator.StringToHash(stateName), 0, 0f);
         animator.Update(0f);
 
@@ -265,6 +292,166 @@ public class CatMeowMashInteractable : MashStoryInteractable
         }
 
         await UniTask.Delay(TimeSpan.FromSeconds(waitDuration), cancellationToken: cancellationToken);
+    }
+
+    private async UniTask MoveOwnerToExitAsync(GameObject owner, float animationDuration, CancellationToken cancellationToken)
+    {
+        if (owner == null)
+        {
+            return;
+        }
+
+        bool hasExitPoint = ownerExitPoint != null;
+        bool hasWalkOffset = ownerWalkOffset.sqrMagnitude > 0.0001f;
+        if (!hasExitPoint && !hasWalkOffset)
+        {
+            await WaitForOwnerAnimationAsync(animationDuration, cancellationToken);
+            return;
+        }
+
+        Vector3 targetPosition = hasExitPoint
+            ? ownerExitPoint.position + ownerExitOffset
+            : owner.transform.position + ownerWalkOffset;
+        targetPosition.z = owner.transform.position.z;
+
+        OrientOwnerToward(owner, targetPosition);
+
+        float moveDuration = Mathf.Max(0f, ownerWalkDuration);
+        if (waitForOwnerAnimation)
+        {
+            moveDuration = Mathf.Max(moveDuration, animationDuration + postOwnerAnimationDelay);
+        }
+
+        if (moveDuration <= 0f)
+        {
+            owner.transform.position = targetPosition;
+            return;
+        }
+
+        Tween tween = owner.transform.DOMove(targetPosition, moveDuration).SetEase(Ease.Linear);
+        using (cancellationToken.Register(() => tween.Kill()))
+        {
+            await tween.AsyncWaitForCompletion();
+        }
+
+        cancellationToken.ThrowIfCancellationRequested();
+    }
+
+    private async UniTask FadeOwnerAsync(GameObject owner, float targetAlpha, float duration, CancellationToken cancellationToken)
+    {
+        if (owner == null)
+        {
+            return;
+        }
+
+        SpriteRenderer[] renderers = owner.GetComponentsInChildren<SpriteRenderer>(true);
+        if (renderers.Length <= 0)
+        {
+            return;
+        }
+
+        if (duration <= 0f)
+        {
+            SetOwnerAlpha(owner, targetAlpha);
+            return;
+        }
+
+        Sequence sequence = DOTween.Sequence();
+        bool hasTween = false;
+        foreach (SpriteRenderer renderer in renderers)
+        {
+            if (renderer == null)
+            {
+                continue;
+            }
+
+            DOTween.Kill(renderer);
+            sequence.Join(renderer.DOFade(targetAlpha, duration));
+            hasTween = true;
+        }
+
+        if (!hasTween)
+        {
+            sequence.Kill();
+            return;
+        }
+
+        using (cancellationToken.Register(() => sequence.Kill()))
+        {
+            await sequence.AsyncWaitForCompletion();
+        }
+
+        cancellationToken.ThrowIfCancellationRequested();
+    }
+
+    private void OrientOwnerToward(GameObject owner, Vector3 targetPosition)
+    {
+        if (!faceMoveDirection || owner == null)
+        {
+            return;
+        }
+
+        float directionX = targetPosition.x - owner.transform.position.x;
+        if (Mathf.Abs(directionX) <= 0.01f)
+        {
+            return;
+        }
+
+        bool shouldFlip = directionX > 0f ? flipOwnerWhenMovingRight : !flipOwnerWhenMovingRight;
+        foreach (SpriteRenderer renderer in owner.GetComponentsInChildren<SpriteRenderer>(true))
+        {
+            if (renderer != null)
+            {
+                renderer.flipX = shouldFlip;
+            }
+        }
+    }
+
+    private static void SetOwnerAlpha(GameObject owner, float alpha)
+    {
+        if (owner == null)
+        {
+            return;
+        }
+
+        foreach (SpriteRenderer renderer in owner.GetComponentsInChildren<SpriteRenderer>(true))
+        {
+            if (renderer == null)
+            {
+                continue;
+            }
+
+            Color color = renderer.color;
+            color.a = alpha;
+            renderer.color = color;
+        }
+    }
+
+    private static void SetOwnerAnimatorsEnabled(GameObject owner, bool enabled)
+    {
+        if (owner == null)
+        {
+            return;
+        }
+
+        foreach (Animator animator in owner.GetComponentsInChildren<Animator>(true))
+        {
+            if (animator != null)
+            {
+                animator.enabled = enabled;
+            }
+        }
+    }
+
+    private void DespawnOwner()
+    {
+        if (_spawnedOwner == null)
+        {
+            return;
+        }
+
+        Destroy(_spawnedOwner);
+        _spawnedOwner = null;
     }
 
     private DialogueManager ResolveDialogueManager()
