@@ -120,6 +120,26 @@ Files:
 
 Gameplay code should depend on `IInputReader` where possible. It exposes continuous values (`Move`, `Look`), held-state booleans, and press/release events.
 
+### Movement Prototype
+
+Files:
+
+- `Assets/_Project/Scripts/Enum/MovementForm.cs`
+- `Assets/_Project/Scripts/CatMovement/Movement.cs`
+- `Assets/_Project/Scripts/CatMovement/MovementInput.cs`
+- `Assets/_Project/Scripts/CatMovement/MovementFormBehaviour.cs`
+- `Assets/_Project/Scripts/CatMovement/CatMovementForm.cs`
+- `Assets/_Project/Scripts/CatMovement/GhostMovementForm.cs`
+
+`Movement` is the current player movement coordinator. It reads movement through `MovementInput`, switches form with the temporary `T` test key, and delegates actual movement behavior to `MovementFormBehaviour` components.
+
+Current forms:
+
+- `CatMovementForm`: horizontal platform movement with normal gravity.
+- `GhostMovementForm`: smooth free movement in the air with gravity disabled while active.
+
+`Movement` expects a `Rigidbody2D` reference on the player. Rigidbody and collider setup stays in Unity/Inspector so level and character collision rules remain designer-controlled.
+
 ### Audio
 
 Files:
