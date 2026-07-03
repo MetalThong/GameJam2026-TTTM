@@ -43,6 +43,11 @@ public class DialogueStoryInteractable : StoryInteractable
         PlaySequenceAsync().Forget();
     }
 
+    protected override bool CanInteract()
+    {
+        return !_isPlaying;
+    }
+
     private async UniTaskVoid PlaySequenceAsync()
     {
         _isPlaying = true;

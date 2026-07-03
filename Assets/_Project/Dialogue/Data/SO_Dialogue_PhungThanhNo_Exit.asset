@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0df2ddcceb2389b4d864a64d8b7d2cf4, type: 3}
+  m_Name: SO_Dialogue_PhungThanhNo_Exit
+  m_EditorClassIdentifier: 
+  background: {fileID: 0}
+  lines:
+  - speakerName: "Vũ"
+    text: "Mệt thật..."
+    portrait: {fileID: 0}
+  - speakerName: "Vũ"
+    text: "Mình phải xuống tầng cái đã."
+    portrait: {fileID: 0}

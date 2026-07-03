@@ -2,13 +2,14 @@ using DG.Tweening;
 using UnityEngine;
 
 // Visual feedback for a MashStoryInteractable: fills a progress bar (color goes toward red as it
-// fills), punches an emote transform on every press, and hides the whole group when progress is empty.
+// fills), punches an emote transform on every press, and can hide the whole group when progress is empty.
 [RequireComponent(typeof(MashStoryInteractable))]
 public class MashProgressView : MonoBehaviour
 {
     [Header("Bindings")]
-    [Tooltip("Root object shown while progress > 0 and hidden when it decays to 0.")]
+    [Tooltip("Root object used by the mash feedback. It can either stay visible for the whole phase or only appear while progress > 0.")]
     [SerializeField] private GameObject visualRoot;
+    [SerializeField] private bool hideWhenEmpty = true;
 
     [Header("Progress Bar")]
     [Tooltip("Fill sprite scaled along X from 0..1. Its pivot should be on the left edge.")]
@@ -52,7 +53,10 @@ public class MashProgressView : MonoBehaviour
         }
 
         ApplyFill(0f);
-        SetVisible(false);
+        if (hideWhenEmpty)
+        {
+            SetVisible(false);
+        }
     }
 
     private void OnEnable()
@@ -87,7 +91,7 @@ public class MashProgressView : MonoBehaviour
 
         ApplyFill(_displayedProgress);
 
-        if (_targetProgress <= 0f && _displayedProgress <= 0.001f)
+        if (hideWhenEmpty && _targetProgress <= 0f && _displayedProgress <= 0.001f)
         {
             SetVisible(false);
         }
@@ -103,7 +107,7 @@ public class MashProgressView : MonoBehaviour
     {
         _targetProgress = Mathf.Clamp01(normalized);
 
-        if (_targetProgress > 0f)
+        if (_targetProgress > 0f || !hideWhenEmpty)
         {
             SetVisible(true);
         }
