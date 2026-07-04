@@ -11,6 +11,7 @@ public sealed class LivingToyBoxDropInteractable : StoryInteractable
     [SerializeField] private Transform toyBoxTransform;
     [SerializeField] private Transform moveTarget;
     [SerializeField] private Vector3 moveOffset;
+    [SerializeField, Min(0f)] private float moveStartDelay = 0.5f;
     [SerializeField, Min(0f)] private float moveDuration = 0.5f;
     [SerializeField] private Ease moveEase = Ease.OutQuad;
     [SerializeField] private bool preserveCurrentZ = true;
@@ -138,6 +139,11 @@ public sealed class LivingToyBoxDropInteractable : StoryInteractable
         {
             Debug.LogWarning("LivingToyBoxDropInteractable: toyBoxTransform is not assigned.", this);
             return;
+        }
+
+        if (moveStartDelay > 0f)
+        {
+            await UniTask.Delay(TimeSpan.FromSeconds(moveStartDelay), cancellationToken: cancellationToken);
         }
 
         Vector3 targetPosition = moveTarget != null
