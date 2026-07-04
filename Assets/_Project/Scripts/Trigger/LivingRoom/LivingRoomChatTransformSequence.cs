@@ -128,9 +128,9 @@ public sealed class LivingRoomChatTransformSequence : MonoBehaviour
             }
 
             EnsureGameStateLocked();
-            await PlayDialogueAsync(cancellationToken);
-            EnsureGameStateLocked();
             await PlayFormChangeAsync(cancellationToken);
+            EnsureGameStateLocked();
+            await PlayDialogueAsync(cancellationToken);
             SetFlag(missionAssignedFlag);
             SetFlag(completionFlag);
         }

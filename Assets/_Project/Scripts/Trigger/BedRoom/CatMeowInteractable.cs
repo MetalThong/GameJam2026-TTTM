@@ -2,6 +2,8 @@
 // All behavior comes from DialogueStoryInteractable; this thin type keeps a scene-friendly name.
 public class CatMeowInteractable : DialogueStoryInteractable
 {
+    public override string PromptLocalizationKey => "prompt.meow";
+
     protected override void OnInteractSucceeded()
     {
         AudioFeedback.PlayCatMeow();

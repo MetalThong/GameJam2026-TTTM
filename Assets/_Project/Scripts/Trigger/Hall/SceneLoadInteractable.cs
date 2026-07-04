@@ -2,12 +2,15 @@ using System;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 
-public class SceneLoadInteractable : MonoBehaviour, IInteractable
+public class SceneLoadInteractable : MonoBehaviour, IInteractable, IInteractionPromptProvider
 {
     [SerializeField] private SceneId targetScene;
+    [SerializeField] private string promptLocalizationKey = "prompt.pass";
 
     private readonly SceneLoader _sceneLoader = new();
     private bool _isLoading = false;
+
+    public string PromptLocalizationKey => promptLocalizationKey;
 
     public virtual bool TryInteract()
     {

@@ -34,6 +34,21 @@ PersistantRoot.prefab
 
 The current start scene is `SceneId.MainMenu`, mapped to `Assets/_Project/Scenes/MainMenu.unity`.
 
+## Current Project Inventory
+
+Project-owned content lives under `Assets/_Project`.
+
+Current top-level content groups:
+
+- `Animation`: Cat, owner, and washing-cat animation clips/controllers.
+- `Dialogue/Data`: `DialogueSO` assets for wake-up, owner, cat-meow, LivingRoom, and test dialogue.
+- `Prefabs`: boss/owner prefabs, Cat/holder props, the persistent root, the washing minigame prefab, and the global UI prefab.
+- `Resources`: current prototype-loaded audio, cat/dialogue sprites, room art, minigame art, text/font assets, UI sprites, `SO_AudioLibrary`, and `SO_LocalizationTable`.
+- `Scenes`: Bootstrap, MainMenu, BedEnding, BedRoom, HallUp, HallDown, LivingRoom, GhostKitchen, Kitchen, StoreRoom, and the test trigger demo scene.
+- `Scripts`: movement, core managers, dialogue, cutscenes, menu flow, minigame logic, story triggers/interactions, enums, editor tooling, and event payloads.
+
+The README remains the short entrypoint for contributors. This file is the deeper source of truth for how those project pieces currently work together.
+
 ## Runtime Lifecycle
 
 1. Unity opens `Assets/_Project/Scenes/Bootstrap.unity`.
@@ -97,6 +112,8 @@ Current scene ids:
 - `HallUp`
 - `LivingRoom`
 - `HallDown`
+- `Kitchen`
+- `GhostKitchen`
 
 Current enabled Build Settings entries are:
 
@@ -108,8 +125,10 @@ Current enabled Build Settings entries are:
 6. `Assets/_Project/Scenes/HallUp.unity`
 7. `Assets/_Project/Scenes/LivingRoom.unity`
 8. `Assets/_Project/Scenes/HallUp.unity`
+9. `Assets/_Project/Scenes/GhostKitchen.unity`
+10. `Assets/_Project/Scenes/Kitchen.unity`
 
-`Assets/_Project/Scenes/Kitchen.unity` exists, but it is not in `SceneId` and is not currently enabled in Build Settings. `HallUp.unity` currently appears more than once in Build Settings, so scene routing should be cleaned before relying on build-index order.
+`Kitchen.unity` and `GhostKitchen.unity` are currently available through both `SceneId` and Build Settings. `BedEnding.unity`, `StoreRoom.unity`, and `Scenes/Test/SCN_TriggerDemo.unity` exist as scene assets but are not currently represented in `SceneId` or Build Settings. `HallUp.unity` currently appears more than once in Build Settings, so scene routing should be cleaned before relying on build-index order.
 
 `SceneLoader.FadeLoadAsync` wraps normal async scene loading with `FadePanel.FadeInAsync` and `FadePanel.FadeOutAsync` when a `FadePanel` exists. If no fade panel is found, it logs a warning and loads without transition.
 
@@ -246,6 +265,8 @@ Current `SaveData` fields:
 
 `Movement` implements `ISaveable` for the player. It stores the current form, facing direction, current scene name, and the last known Cat position for each scene. `SceneLoadInteractable` saves before loading the next scene, and `SaveManager` reloads flags and active scene saveables after `SceneManager.sceneLoaded`, so returning to a scene can restore the Cat position for that scene while preserving completed story state.
 
+`CarryManager` lives on `PersistantRoot.prefab` and owns one carried object across scene loads. It only accepts `Grab` while the active scene is in its serialized `paintingScenes` list, currently `GhostKitchen`. When `SceneManager.sceneLoaded` reports a transition from a painting scene to a non-painting scene, it waits until the new scene has settled, drops the object near the player, and clears carry state instead of reattaching the visual. Carried and dropped objects preserve the world scale captured from `ICarryable.CarryWorldScale`, which usually comes from the scene object's configured `carryScaleSource`.
+
 ### Story Flags, Triggers, And Interactions
 
 Files:
@@ -258,6 +279,7 @@ Files:
 - `Assets/_Project/Scripts/Trigger/StoryFlagId.cs`
 - `Assets/_Project/Scripts/Event/FlagChangedEvent.cs`
 - `Assets/_Project/Scripts/Trigger/IInteractable.cs`
+- `Assets/_Project/Scripts/Trigger/IInteractionPromptProvider.cs`
 - `Assets/_Project/Scripts/Trigger/StoryTrigger.cs`
 - `Assets/_Project/Scripts/Trigger/StoryInteractable.cs`
 - `Assets/_Project/Scripts/Trigger/MashStoryInteractable.cs`
@@ -265,6 +287,7 @@ Files:
 - `Assets/_Project/Scripts/Trigger/MashProgressView.cs`
 - `Assets/_Project/Scripts/Trigger/InteractButton.cs`
 - `Assets/_Project/Scripts/Trigger/FlagBasedObject.cs`
+- `Assets/_Project/Scripts/Trigger/PlayerFormObject.cs`
 - `Assets/_Project/Scripts/Trigger/FadeFlagObject.cs`
 - `Assets/_Project/Scripts/Trigger/DeactivateOnFlag.cs`
 - `Assets/_Project/Scripts/Trigger/Hall/TemporaryChat.cs`
@@ -298,9 +321,11 @@ The story system is flag-driven. `FlagManager` is the current singleton owner fo
 
 `MashProgressView` renders that feedback. It lives on the same GameObject as a `MashStoryInteractable` (`RequireComponent`), subscribes to its events, and serializes `visualRoot`, `hideWhenEmpty`, `fillRenderer`, and `emoteTransform`. If any references are not assigned, it can resolve `visualRoot` to its own GameObject, choose a child `SpriteRenderer` named like a full bar (for example `ProgressBarFull`) as the fill, and use the visual root transform as the punch target. It fills the bar by scaling X from 0 to the renderer's original local scale, lerps color from warning yellow/orange toward red, punch-scales on each press (DOTween), snaps to full with a stronger punch on success, and can hide the visual root when progress decays back to zero.
 
-`InteractButton` is a simple prompt helper. It toggles an assigned button/prompt GameObject when a `Player` tagged collider enters or exits its trigger. It hides the prompt in `Awake` so a button left active in the scene does not show until the player enters the trigger.
+`InteractButton` is the trigger-side prompt helper. It toggles its assigned scene-local `button` GameObject while the `Player` is inside, so existing `ButtonE`/`InteractE` scene prompts can still appear. It also shows the global `InteractionPromptView` while the player is inside and gameplay is not blocked by `GameState.OnDialog`. It reads `IInteractionPromptProvider.PromptLocalizationKey` from the same GameObject and falls back to `prompt.interact`; `StoryInteractable` exposes a serialized fallback, `CatMeowInteractable` returns `prompt.meow`, and `SceneLoadInteractable` returns `prompt.pass`. Global prompt hide calls are owner-scoped so leaving one trigger cannot clear a prompt owned by another trigger.
 
 `FlagBasedObject` listens to `FlagChangedEvent` and `FlagsLoadedEvent` and toggles an assigned target based on a required flag plus an optional blocked flag. The target is active only when the required flag condition is met and the blocked flag is absent, then inverted when `activeWhenFlagExists` is false. The listener object should stay active; if `target == gameObject` and the target would be disabled, it warns and refuses to disable itself so future flag events are not lost.
+
+`PlayerFormObject` toggles an assigned target based on the active player `Movement.CurrentForm`. `Boss.prefab` and `Boss 1.prefab` use it to show their `DontMissCat` child while the player is still `MovementForm.Ghost`, then hide it as soon as the player becomes `MovementForm.Cat`.
 
 `FadeFlagObject` extends `FlagBasedObject` by fading a target `SpriteRenderer` with DOTween before disabling it. If no sprite renderer is available, it falls back to normal active-state toggling.
 
@@ -357,6 +382,7 @@ Files:
 - `Assets/_Project/Scripts/Core/UI/UIPanelView.cs`
 - `Assets/_Project/Scripts/Core/UI/MissionDefinition.cs`
 - `Assets/_Project/Scripts/Core/UI/MissionView.cs`
+- `Assets/_Project/Scripts/Core/UI/InteractionPromptView.cs`
 - `Assets/_Project/Scripts/Core/Localization/LocalizationManager.cs`
 - `Assets/_Project/Scripts/Core/Localization/LocalizationTable.cs`
 - `Assets/_Project/Scripts/Core/Localization/LocalizedText.cs`
@@ -391,6 +417,8 @@ Important current limitation: `UIPanelView.Id` has only a getter and is not seri
 
 `UI.prefab` also owns a `Mission` HUD object with `MissionView`. `MissionView` listens to `FlagChangedEvent` and `FlagsLoadedEvent`, maps configured `MissionDefinition` entries from an assigned flag to a completed flag, and localizes mission title text through `LocalizationManager`. Missions now require a real assigned flag so they do not appear by default. When an assigned flag turns on, it fades the `(!) Mission title` text in while sliding it down into place. When the matching completed flag turns on, it wraps the text with TMP strikethrough, waits briefly, then fades the mission out while sliding it upward. On loaded saves, an assigned-but-incomplete mission is restored instantly without replaying the assignment animation. The current first Bedroom mission is `Giúp chủ nhân tỉnh dậy`, assigned by `waked_up` after the WakeUpPanel flow finishes and completed by `waked_boss_up` when the owner wakes up. The current LivingRoom mission is `Chọc giận ông chủ`, assigned by `mission_provoke_owner` after `SO_Dialogue_LivingRoomTransform` finishes and completed by `dropped_box` in LivingRoom.
 
+`UI.prefab` owns the global `Tutorial Button` prompt through `InteractionPromptView`. The view formats all interaction hints as `E : {localized action}`, refreshes when `LocalizationManager.LanguageChanged` fires, and only hides when the component that currently owns the prompt asks to hide it. `DialogueManager` uses the same view with `prompt.continue` while dialogue is open, so dialogue prompt text and trigger prompt text stay in one HUD location.
+
 `SettingsPanelController` drives the in-game settings panel. It persists `settings.musicVolume` and `settings.sfxVolume` to `PlayerPrefs`, applies them to `AudioManager`, controls the Vietnamese/English/Cat language buttons, visibly marks the selected language by disabling and highlighting its button, and can quit to `MainMenu` through `GameManager.QuitToMenu()` plus `SceneManager.LoadScene`.
 
 `LocalizationManager` owns the active `Language`, persists it to `PlayerPrefs` key `settings.language`, resolves UI keys through `LocalizationTable`, and exposes `LanguageChanged`. `LocalizedText` subscribes to that event and refreshes its attached TMP text. Cat language returns `Meow` for normal UI keys and dialogue speaker/body text, except the three language picker keys `language.vietnamese`, `language.english`, and `language.cat`, which remain readable.
@@ -406,10 +434,13 @@ All player-facing TMP text should use `Assets/_Project/Resources/Text/SVN-Determ
 Files:
 
 - `Assets/_Project/Scripts/CutScene/CutSceneDialoguePlayer.cs`
+- `Assets/_Project/Scripts/CutScene/BedEndingBookSequence.cs`
 
 `CutSceneDialoguePlayer` is scene-local and intentionally reusable across story beats. It resolves an `Animator` first, then a legacy `Animation` fallback. When playing an Animator, it requires an active GameObject and runtime controller, clamps the requested layer, resolves the requested state directly or by toggling the `_clip` suffix, plays from normalized time `0`, waits for the resolved clip length divided by animator speed, and can freeze on the final frame by playing at normalized time `0.999` and setting speed to `0`. When using legacy `Animation`, it plays the named clip or first available clip once and can sample the last frame.
 
 After animation, it waits `delayAfterAnimation`, then plays the assigned `DialogueSO` through the scene `DialogueManager`. `playOnEnable` is useful for cutscene GameObjects that become active through a flag/object flow, while `PlayAsync` lets another script activate and await the whole sequence manually. `deactivateOnComplete` can hide the cutscene object after dialogue. Presentation fades are owned by the caller when the caller needs tighter story timing; for example `LivingToyBoxDropInteractable` fades the HolderCutScene object around `PlayAsync` and delays `dropped_box` until the fade-out finishes.
+
+`BedEndingBookSequence` is specific to `Assets/_Project/Scenes/BedEnding.unity`. It is attached to the `Book` object and runs a click-stepped ending beat: hold the book on the first open-animation frame, click to play `AnimationBookOpen`, click again to reveal `Ảnh 1_0` with a memory-style fade/scale, click again to reveal `Ảnh 2_0`, then click again to fade both memories out before setting Animator bool `isFlip` and playing `BookFlip`. After the page flip, the two TMP ending texts reveal from left to right with `maxVisibleCharacters`, in serialized order.
 
 ### Minigames
 
@@ -588,7 +619,7 @@ The architecture is manager-centric. Cross-scene infrastructure is global and sc
 
 ## Current Gaps And Risks
 
-- `Kitchen.unity` exists, but `SceneId.Kitchen` does not exist and Kitchen is not currently in Build Settings.
+- `BedEnding.unity`, `StoreRoom.unity`, and `Scenes/Test/SCN_TriggerDemo.unity` exist as scene assets but are not currently in `SceneId` or Build Settings.
 - `HallUp.unity` is duplicated in Build Settings. Clean this before relying on scene list order or making a build.
 - `UIPanelView.Id` is not serialized or abstract, so the base class alone cannot configure unique panel ids in the Inspector.
 - Managers are singleton-based, which is simple for game jam speed but can make tests and scene isolation harder later.

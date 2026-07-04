@@ -735,6 +735,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CarryManager
   playerTag: Player
+  paintingScenes:
+  - 6
   carryAnchorName: CarryAnchor
   carryLocalPosition: {x: 0, y: 0.45, z: 0}
   carryLocalEulerAngles: {x: 0, y: 0, z: 0}

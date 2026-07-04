@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 [DisallowMultipleComponent]
@@ -17,7 +18,7 @@ public sealed class CarryableInteractable : MonoBehaviour, IInteractable, ICarry
     {
         get
         {
-            Transform scaleSource = carryScaleSource != null ? carryScaleSource : transform;
+            Transform scaleSource = ResolveCarryScaleSource();
             return Vector3.Scale(scaleSource.lossyScale, carriedScaleMultiplier);
         }
     }
@@ -60,7 +61,11 @@ public sealed class CarryableInteractable : MonoBehaviour, IInteractable, ICarry
             carryManager.Drop();
         }
 
-        carryManager.Grab(this);
+        bool grabbed = carryManager.Grab(this);
+        if (!grabbed)
+        {
+            return false;
+        }
 
         if (hideSourceOnGrab)
         {
@@ -68,5 +73,89 @@ public sealed class CarryableInteractable : MonoBehaviour, IInteractable, ICarry
         }
 
         return true;
+    }
+
+    private Transform ResolveCarryScaleSource()
+    {
+        if (carryScaleSource != null && carryScaleSource != transform)
+        {
+            return carryScaleSource;
+        }
+
+        Transform carriedVisual = FindCarriedVisualTransform();
+        if (carriedVisual != null)
+        {
+            return carriedVisual;
+        }
+
+        return carryScaleSource != null ? carryScaleSource : transform;
+    }
+
+    private Transform FindCarriedVisualTransform()
+    {
+        GameObject prefab = CarryPrefab;
+        if (prefab == null)
+        {
+            return null;
+        }
+
+        string prefabName = NormalizeObjectName(prefab.name);
+        Transform namedMatch = FindChildByNormalizedName(transform, prefabName);
+        if (namedMatch != null)
+        {
+            return namedMatch;
+        }
+
+        SpriteRenderer prefabRenderer = prefab.GetComponentInChildren<SpriteRenderer>(true);
+        if (prefabRenderer == null || prefabRenderer.sprite == null)
+        {
+            return null;
+        }
+
+        SpriteRenderer[] renderers = GetComponentsInChildren<SpriteRenderer>(true);
+        foreach (SpriteRenderer renderer in renderers)
+        {
+            if (renderer != null && renderer.sprite == prefabRenderer.sprite)
+            {
+                return renderer.transform;
+            }
+        }
+
+        return null;
+    }
+
+    private static Transform FindChildByNormalizedName(Transform root, string normalizedName)
+    {
+        if (root == null || string.IsNullOrEmpty(normalizedName))
+        {
+            return null;
+        }
+
+        for (int i = 0; i < root.childCount; i++)
+        {
+            Transform child = root.GetChild(i);
+            if (string.Equals(NormalizeObjectName(child.name), normalizedName, StringComparison.Ordinal))
+            {
+                return child;
+            }
+
+            Transform nestedMatch = FindChildByNormalizedName(child, normalizedName);
+            if (nestedMatch != null)
+            {
+                return nestedMatch;
+            }
+        }
+
+        return null;
+    }
+
+    private static string NormalizeObjectName(string objectName)
+    {
+        if (string.IsNullOrEmpty(objectName))
+        {
+            return string.Empty;
+        }
+
+        return objectName.Replace("(Clone)", string.Empty).Trim();
     }
 }

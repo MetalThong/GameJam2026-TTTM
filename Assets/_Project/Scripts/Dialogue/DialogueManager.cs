@@ -11,10 +11,12 @@ public sealed class DialogueManager : MonoBehaviour
 {
     [Header("Scene References")]
     [SerializeField] private DialogueView dialogueView;
+    [SerializeField] private InteractionPromptView interactionPromptView;
 
     [Header("Input")]
     [Tooltip("Key used to reveal-skip and advance dialogue lines.")]
     [SerializeField] private Key advanceKey = Key.E;
+    [SerializeField] private string advancePromptKey = "prompt.continue";
 
     public bool IsPlaying { get; private set; }
 
@@ -30,6 +32,11 @@ public sealed class DialogueManager : MonoBehaviour
         if (dialogueView == null)
         {
             TryGetComponent(out dialogueView);
+        }
+
+        if (interactionPromptView == null)
+        {
+            interactionPromptView = Object.FindFirstObjectByType<InteractionPromptView>(FindObjectsInactive.Include);
         }
     }
 
@@ -84,6 +91,8 @@ public sealed class DialogueManager : MonoBehaviour
 
         try
         {
+            ShowAdvancePrompt();
+
             if (dialogue.Background != null)
             {
                 dialogueView.SetBackground(dialogue.Background);
@@ -97,6 +106,7 @@ public sealed class DialogueManager : MonoBehaviour
         }
         finally
         {
+            HideAdvancePrompt();
             dialogueView.Hide();
             IsPlaying = false;
 
@@ -159,5 +169,33 @@ public sealed class DialogueManager : MonoBehaviour
         }
 
         return keyboard[advanceKey].wasPressedThisFrame;
+    }
+
+    private void ShowAdvancePrompt()
+    {
+        InteractionPromptView promptView = ResolvePromptView();
+        if (promptView != null)
+        {
+            promptView.Show(this, advancePromptKey);
+        }
+    }
+
+    private void HideAdvancePrompt()
+    {
+        if (interactionPromptView != null)
+        {
+            interactionPromptView.Hide(this);
+        }
+    }
+
+    private InteractionPromptView ResolvePromptView()
+    {
+        if (interactionPromptView != null)
+        {
+            return interactionPromptView;
+        }
+
+        interactionPromptView = Object.FindFirstObjectByType<InteractionPromptView>(FindObjectsInactive.Include);
+        return interactionPromptView;
     }
 }

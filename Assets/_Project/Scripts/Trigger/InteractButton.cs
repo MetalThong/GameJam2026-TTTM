@@ -4,6 +4,7 @@ using UnityEngine.Serialization;
 public class InteractButton : MonoBehaviour, IInteractionAvailability
 {
     [SerializeField] private GameObject button;
+    [SerializeField] private string fallbackPromptKey = "prompt.interact";
 
     [Header("Form Requirement")]
     [FormerlySerializedAs("requiredCatForm")]
@@ -11,13 +12,15 @@ public class InteractButton : MonoBehaviour, IInteractionAvailability
     [SerializeField] private MovementForm requiredForm = MovementForm.Cat;
 
     private bool _isPlayerInside;
+    private IInteractionPromptProvider _promptProvider;
+    private InteractionPromptView _promptView;
     private Movement _playerMovement;
 
     private void Awake()
     {
-        // Hide the prompt at startup so it only appears when the player enters the trigger,
-        // even if the button GameObject was left active in the scene.
-        SetPromptVisible(false);
+        _promptProvider = GetComponent<IInteractionPromptProvider>();
+        SetLocalPromptVisible(false);
+        HideGlobalPrompt();
     }
 
     private void OnEnable()
@@ -38,7 +41,8 @@ public class InteractButton : MonoBehaviour, IInteractionAvailability
         }
 
         SetPlayerMovement(null);
-        SetPromptVisible(false);
+        SetLocalPromptVisible(false);
+        HideGlobalPrompt();
     }
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -68,7 +72,19 @@ public class InteractButton : MonoBehaviour, IInteractionAvailability
 
     private void RefreshPrompt()
     {
-        SetPromptVisible(_isPlayerInside && !IsPromptBlocked() && IsInteractionAvailable(_playerMovement));
+        bool shouldShowPrompt = _isPlayerInside
+            && !IsPromptBlocked()
+            && IsInteractionAvailable(_playerMovement);
+
+        SetLocalPromptVisible(shouldShowPrompt);
+
+        if (shouldShowPrompt)
+        {
+            ShowGlobalPrompt();
+            return;
+        }
+
+        HideGlobalPrompt();
     }
 
     public bool IsInteractionAvailable(Movement playerMovement)
@@ -81,7 +97,41 @@ public class InteractButton : MonoBehaviour, IInteractionAvailability
         return GameManager.Instance != null && GameManager.Instance.CurrentState == GameState.OnDialog;
     }
 
-    private void SetPromptVisible(bool isVisible)
+    private void ShowGlobalPrompt()
+    {
+        InteractionPromptView promptView = ResolvePromptView();
+        if (promptView == null)
+        {
+            return;
+        }
+
+        string promptKey = _promptProvider != null
+            ? _promptProvider.PromptLocalizationKey
+            : fallbackPromptKey;
+
+        promptView.Show(this, promptKey);
+    }
+
+    private void HideGlobalPrompt()
+    {
+        if (_promptView != null)
+        {
+            _promptView.Hide(this);
+        }
+    }
+
+    private InteractionPromptView ResolvePromptView()
+    {
+        if (_promptView != null)
+        {
+            return _promptView;
+        }
+
+        _promptView = Object.FindFirstObjectByType<InteractionPromptView>(FindObjectsInactive.Include);
+        return _promptView;
+    }
+
+    private void SetLocalPromptVisible(bool isVisible)
     {
         if (button == null)
         {

@@ -396,6 +396,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SceneLoadInteractable
   targetScene: 3
+  promptLocalizationKey: prompt.pass
 --- !u!114 &466901931
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -409,6 +410,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InteractButton
   button: {fileID: 1705556465}
+  fallbackPromptKey: prompt.interact
   restrictByForm: 0
   requiredForm: 0
 --- !u!61 &466901932
@@ -799,7 +801,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4fb32b39b2d344c4b8eaa5964bc12191, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Movement
 --- !u!1001 &1151995216
 PrefabInstance:
@@ -827,7 +829,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7878350319992209165, guid: 2fc73062a259bac4095228f4464e9ca7, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.595
+      value: -0.051
       objectReference: {fileID: 0}
     - target: {fileID: 7878350319992209165, guid: 2fc73062a259bac4095228f4464e9ca7, type: 3}
       propertyPath: m_LocalPosition.y
@@ -907,6 +909,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerAnimatedSceneLoadInteractable
   targetScene: 6
+  promptLocalizationKey: prompt.pass
   playerMovement: {fileID: 877334217}
   animationTrigger: IsPicture
   animationStateName: GoToPicture
@@ -927,6 +930,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InteractButton
   button: {fileID: 1962334673}
+  fallbackPromptKey: prompt.interact
   restrictByForm: 1
   requiredForm: 1
 --- !u!61 &1209883683
@@ -1009,7 +1013,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3626916397498700004, guid: c82c7b287b6761c4fbf1507adabd5285, type: 3}
       propertyPath: m_SortingOrder
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 3626916397498700004, guid: c82c7b287b6761c4fbf1507adabd5285, type: 3}
       propertyPath: m_SortingLayerID
@@ -1017,7 +1021,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7878350319992209165, guid: c82c7b287b6761c4fbf1507adabd5285, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.06700005
+      value: -0.426
       objectReference: {fileID: 0}
     - target: {fileID: 7878350319992209165, guid: c82c7b287b6761c4fbf1507adabd5285, type: 3}
       propertyPath: m_LocalPosition.y
@@ -1640,7 +1644,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7878350319992209165, guid: 599b88a4e9877b745bce6767c1ff1418, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.202
+      value: 0.333
       objectReference: {fileID: 0}
     - target: {fileID: 7878350319992209165, guid: 599b88a4e9877b745bce6767c1ff1418, type: 3}
       propertyPath: m_LocalPosition.y

@@ -9,6 +9,7 @@ public sealed class CarryManager : MonoBehaviour
     public static CarryManager Instance { get; private set; }
 
     [SerializeField] private string playerTag = "Player";
+    [SerializeField] private SceneId[] paintingScenes = { SceneId.GhostKitchen };
     [SerializeField] private string carryAnchorName = "CarryAnchor";
     [SerializeField] private Vector3 carryLocalPosition = new(0f, 0.45f, 0f);
     [SerializeField] private Vector3 carryLocalEulerAngles;
@@ -25,6 +26,8 @@ public sealed class CarryManager : MonoBehaviour
     private GameObject _runtimeCarryTemplate;
     private GameObject _visual;
     private Vector3 _carryWorldScale = Vector3.one;
+    private SceneId _currentSceneId;
+    private bool _hasCurrentSceneId;
 
     public bool IsCarrying => _carryPrefab != null;
     public string CurrentCarryId => _carryId;
@@ -56,6 +59,7 @@ public sealed class CarryManager : MonoBehaviour
         }
 
         SceneManager.sceneLoaded += OnSceneLoaded;
+        CacheCurrentScene(SceneManager.GetActiveScene());
     }
 
     private void Start()
@@ -88,11 +92,16 @@ public sealed class CarryManager : MonoBehaviour
         Instance = null;
     }
 
-    public void Grab(ICarryable carryable)
+    public bool Grab(ICarryable carryable)
     {
         if (carryable == null)
         {
-            return;
+            return false;
+        }
+
+        if (!IsCurrentScenePainting())
+        {
+            return false;
         }
 
         GameObject requestedCarryPrefab = carryable.CarryPrefab;
@@ -100,13 +109,14 @@ public sealed class CarryManager : MonoBehaviour
         GameObject carryPrefab = ResolveCarryPrefab(requestedCarryPrefab);
         if (carryPrefab == null)
         {
-            return;
+            return false;
         }
 
         _carryId = carryable.CarryId;
         _carryPrefab = carryPrefab;
         _carryWorldScale = carryWorldScale;
         AttachToCurrentPlayer();
+        return true;
     }
 
     public void Drop()
@@ -123,6 +133,7 @@ public sealed class CarryManager : MonoBehaviour
         droppedObject.name = GetDroppedObjectName(prefabToDrop);
         ApplyDroppedScale(droppedObject);
         droppedObject.SetActive(true);
+        ApplyDroppedScale(droppedObject);
 
         ClearCarriedState();
     }
@@ -155,6 +166,15 @@ public sealed class CarryManager : MonoBehaviour
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
+        bool wasInPaintingScene = _hasCurrentSceneId && IsPaintingScene(_currentSceneId);
+        CacheCurrentScene(scene);
+
+        if (IsCarrying && wasInPaintingScene && !IsCurrentScenePainting())
+        {
+            DropAfterSceneLoadAsync().Forget();
+            return;
+        }
+
         AttachToCurrentPlayerNextFrameAsync().Forget();
     }
 
@@ -209,10 +229,22 @@ public sealed class CarryManager : MonoBehaviour
         AttachToCurrentPlayer();
     }
 
+    private async UniTaskVoid DropAfterSceneLoadAsync()
+    {
+        await UniTask.Yield(PlayerLoopTiming.LastPostLateUpdate);
+        Drop();
+    }
+
     private void AttachToCurrentPlayer()
     {
         if (_carryPrefab == null)
         {
+            return;
+        }
+
+        if (!IsCurrentScenePainting())
+        {
+            DestroyVisual();
             return;
         }
 
@@ -222,10 +254,7 @@ public sealed class CarryManager : MonoBehaviour
             return;
         }
 
-        if (_visual != null)
-        {
-            Destroy(_visual);
-        }
+        DestroyVisual();
 
         _visual = Instantiate(_carryPrefab, anchor);
         _visual.name = _carryPrefab.name;
@@ -233,8 +262,20 @@ public sealed class CarryManager : MonoBehaviour
         _visual.transform.localRotation = Quaternion.Euler(carryLocalEulerAngles);
         ApplyCarriedScale(_visual.transform);
         _visual.SetActive(true);
+        ApplyCarriedScale(_visual.transform);
 
         PrepareCarriedVisual(_visual);
+    }
+
+    private void DestroyVisual()
+    {
+        if (_visual == null)
+        {
+            return;
+        }
+
+        Destroy(_visual);
+        _visual = null;
     }
 
     private Transform FindCarryAnchor()
@@ -417,5 +458,45 @@ public sealed class CarryManager : MonoBehaviour
         return !Mathf.Approximately(scale.x, 0f)
             && !Mathf.Approximately(scale.y, 0f)
             && !Mathf.Approximately(scale.z, 0f);
+    }
+
+    private void CacheCurrentScene(Scene scene)
+    {
+        if (scene.IsValid() && Enum.TryParse(scene.name, out SceneId sceneId))
+        {
+            _currentSceneId = sceneId;
+            _hasCurrentSceneId = true;
+            return;
+        }
+
+        _hasCurrentSceneId = false;
+    }
+
+    private bool IsCurrentScenePainting()
+    {
+        if (!_hasCurrentSceneId)
+        {
+            CacheCurrentScene(SceneManager.GetActiveScene());
+        }
+
+        return _hasCurrentSceneId && IsPaintingScene(_currentSceneId);
+    }
+
+    private bool IsPaintingScene(SceneId sceneId)
+    {
+        if (paintingScenes == null)
+        {
+            return false;
+        }
+
+        for (int i = 0; i < paintingScenes.Length; i++)
+        {
+            if (paintingScenes[i] == sceneId)
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

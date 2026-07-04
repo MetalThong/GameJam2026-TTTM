@@ -41,11 +41,15 @@ Assets/
     Scenes/
       Bootstrap.unity
       MainMenu.unity
+      BedEnding.unity
       BedRoom.unity
       HallUp.unity
       HallDown.unity
+      GhostKitchen.unity
       Kitchen.unity
       LivingRoom.unity
+      StoreRoom.unity
+      Test/SCN_TriggerDemo.unity
     Scripts/
       CatMovement/
       Core/
@@ -90,12 +94,14 @@ Current Build Settings include:
 6. `Assets/_Project/Scenes/HallUp.unity`
 7. `Assets/_Project/Scenes/LivingRoom.unity`
 8. `Assets/_Project/Scenes/HallUp.unity`
+9. `Assets/_Project/Scenes/GhostKitchen.unity`
+10. `Assets/_Project/Scenes/Kitchen.unity`
 
 `Bootstrap.unity` owns the startup object `Bootstraper`. It instantiates `Assets/_Project/Prefabs/Core/PersistantRoot.prefab` if the persistent root is not already present, initializes managers, then loads the configured start scene.
 
 `MainMenu.unity` is currently the configured start scene through `SceneId.MainMenu`.
 
-`Kitchen.unity` exists under `Assets/_Project/Scenes`, but there is currently no `SceneId.Kitchen` and Kitchen is not currently enabled in Build Settings. `HallUp.unity` is listed multiple times in Build Settings; clean this up when scene routing settles.
+`Kitchen.unity` and `GhostKitchen.unity` are currently present in both `SceneId` and Build Settings. `BedEnding.unity`, `StoreRoom.unity`, and `Scenes/Test/SCN_TriggerDemo.unity` exist as project scene assets but are not currently represented in `SceneId` or Build Settings. `HallUp.unity` is listed multiple times in Build Settings; clean this up when scene routing settles.
 
 ## Core Prefab
 
@@ -123,14 +129,15 @@ The root is marked with `DontDestroyOnLoad`, so these services survive scene cha
 - Audio: `AudioManager` plays music and SFX from `AudioLibrary`, supports spatial one-shot SFX, writes volume values to an `AudioMixer` when configured, and falls back to direct runtime `AudioSource` volume.
 - Camera: `CameraManager` manages a Cinemachine camera, follow/look-at target, zoom, priority, bounds, and impulse shake.
 - Save: `SaveManager` stores `SaveData` as JSON in `Application.persistentDataPath`; saveable objects implement `ISaveable`.
-- UI: `UIManager` opens/closes registered `UIPanelView` instances by `PanelId`.
+- UI: `UIManager` opens/closes registered `UIPanelView` instances by `PanelId`; `InteractionPromptView` owns the global `E : ...` tutorial prompt in `UI.prefab`.
 - Dialogue: `DialogueSO` assets feed the scene `DialogueManager` and `DialogueView`; `E` reveals the current typed line first, then advances once the line is fully visible. Dialogue locks movement with `GameState.OnDialog` and restores the previous state when complete.
 - Main Menu: runtime components under `Assets/_Project/Scripts/MainMenu` bind the `MainMenu.unity` buttons, control start/continue/quit flow, hide Continue until a save exists, and provide settings controls for music, SFX, and language.
 - Story flags and triggers: runtime components under `Assets/_Project/Scripts/Trigger` store story flags, gate triggers/interactions with required and blocked flag conditions, execute set/unset flag actions, refresh flag-based objects through events, and persist flags through `SaveData`.
-- Interaction: `CatInteractor` tracks overlapping `IInteractable` targets, skips gameplay interactions while dialogue is playing or just closed, and calls the first valid `TryInteract()` on `E`; `InteractButton` shows or hides an assigned prompt object while the Player is in range.
+- Interaction: `CatInteractor` tracks overlapping `IInteractable` targets, skips gameplay interactions while dialogue is playing or just closed, and calls the first valid `TryInteract()` on `E`; `InteractButton` uses `IInteractionPromptProvider` to show the global prompt while still toggling any assigned scene-local `ButtonE`/`InteractE` object in range.
+- Carry: `CarryManager` lets ghost carry objects only in configured painting scenes, currently `GhostKitchen`, preserves carried world scale, and drops the object after leaving a painting scene.
 - Localization: `LocalizationManager`, `LocalizationTable`, and `LocalizedText` support Vietnamese, English, and Cat language. Cat language returns `Meow` for normal strings/dialogue except the three readable language picker labels.
 - Mission HUD: `MissionView` watches story flags and shows assigned missions with fade/slide animation, then strikethrough and fades completed missions out.
-- Cutscenes: `CutSceneDialoguePlayer` can play an Animator or legacy Animation once, optionally freeze on the last frame, then play a `DialogueSO`.
+- Cutscenes: `CutSceneDialoguePlayer` can play an Animator or legacy Animation once, optionally freeze on the last frame, then play a `DialogueSO`. `BedEndingBookSequence` drives the click-stepped BedEnding book/memory/text beat.
 - Minigames: `WashingMinigameController` currently drives the Kitchen washing prototype. `Washing.prefab` stays hidden until `Enter`/numpad Enter, then uses `E` for timing hits and opens `Lose` on fail.
 - LivingRoom story flow: `LivingRoomChatTransformSequence` handles the form-change/dialogue/mission beat after the first ChatTrigger bubble completes, while `LivingToyBoxDropInteractable`, `OwnerBoxPickupSequence`, and `PushFlagObject` handle the toy-box/drop-owner pickup sequence with flags, SFX, tweening, cutscene, and dialogue.
 - Pooling: `PrefabPool<T>` wraps Unity `ObjectPool<T>` for prefab instances implementing `IPoolable`.
@@ -138,7 +145,7 @@ The root is marked with `DontDestroyOnLoad`, so these services survive scene cha
 
 ## Current Enums
 
-- `SceneId`: `MainMenu`, `BedRoom`, `HallUp`, `LivingRoom`, `HallDown`
+- `SceneId`: `MainMenu`, `BedRoom`, `HallUp`, `LivingRoom`, `HallDown`, `Kitchen`, `GhostKitchen`
 - `GameState`: `Booting`, `MainMenu`, `Playing`, `Paused`, `GameOver`, `OnDialog`
 - `PanelId`: `Loading`, `Settings`, `Pause`, `Win`, `Lose`
 - `Language`: `Vietnamese`, `English`, `Cat`

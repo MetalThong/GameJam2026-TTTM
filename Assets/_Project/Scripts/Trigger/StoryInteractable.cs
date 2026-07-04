@@ -1,13 +1,16 @@
 using UnityEngine;
 
-public class StoryInteractable : MonoBehaviour, IInteractable
+public class StoryInteractable : MonoBehaviour, IInteractable, IInteractionPromptProvider
 {
     [SerializeField] private string interactId;
     [SerializeField] private bool interactOnce = true;
     [SerializeField] private StoryFlagCondition condition = new();
     [SerializeField] private StoryFlagAction action = new();
+    [SerializeField] private string promptLocalizationKey = "prompt.interact";
 
     private Collider2D[] _interactionColliders;
+
+    public virtual string PromptLocalizationKey => promptLocalizationKey;
 
     private string CompletedFlagId => string.IsNullOrWhiteSpace(interactId)
         ? string.Empty
