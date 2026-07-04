@@ -20,7 +20,7 @@ GameObject:
   - component: {fileID: 5752015450905729549}
   m_Layer: 0
   m_Name: Cat
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -91,7 +91,7 @@ SpriteRenderer:
   m_MaskInteraction: 0
   m_Sprite: {fileID: 7385054169387925901, guid: 3c3d560c2feda264bba3534e99a5c589, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 0.53333336}
-  m_FlipX: 0
+  m_FlipX: 1
   m_FlipY: 0
   m_DrawMode: 0
   m_Size: {x: 1.41, y: 0.87}
@@ -203,14 +203,15 @@ MonoBehaviour:
   startingForm: 0
   shouldLockMovementUntilFlag: 0
   unlockMovementFlag: waked_up
+  restoreSavedScenePosition: 1
   inputActions: {fileID: 0}
   targetRigidbody: {fileID: 4256983220511756980}
   bodyCollider: {fileID: 1773647264048704139}
   catBodyCollider: {fileID: 1773647264048704139}
   ghostBodyCollider: {fileID: 0}
   catCollider:
-    Size: {x: 1.41, y: 0.87}
-    Offset: {x: 0, y: 0}
+    Size: {x: 0.9, y: 0.65}
+    Offset: {x: -0.1, y: -0.1}
   ghostCollider:
     Size: {x: 0.68, y: 0.82}
     Offset: {x: 0, y: 0}
@@ -220,8 +221,19 @@ MonoBehaviour:
   spriteRenderer: {fileID: 3945847660262370715}
   movingThreshold: 0.05
   spriteFacesRightByDefault: 0
+  snapAnimatorOnFormChange: 1
+  catIdleStateName: CatIdle
+  catWalkStateName: CatWalk
+  ghostStateName: GhostCat
   interactJumpTrigger: IsJump
+  interactGroundedTrigger: IsGrounded
   interactJumpingBool: 
+  interactJumpGroundMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  interactJumpGroundCheckDistance: 0.35
+  interactJumpGroundCheckWidthRatio: 0.9
+  allowCatHorizontalMovementDuringInteractJump: 1
 --- !u!61 &1773647264048704139
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -256,7 +268,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: -0.15312505, y: -0.08294284}
+  m_Offset: {x: -0.1, y: -0.1}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -266,7 +278,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 1.0016661, y: 0.7041143}
+  m_Size: {x: 0.9, y: 0.65}
   m_EdgeRadius: 0
 --- !u!114 &5752015450905729549
 MonoBehaviour:
