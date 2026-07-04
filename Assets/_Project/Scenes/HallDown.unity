@@ -372,7 +372,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e8f1d4ba77b04db49c756b52ac2b7bb5, type: 3}
-  m_Name: ""
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SpeakerDanceInteractable
   playerMovement: {fileID: 0}
   promptLocalizationKey: prompt.dance
@@ -390,7 +390,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9e0190c97ad07c94c820958bd3a509d3, type: 3}
-  m_Name: ""
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InteractButton
   button: {fileID: 310601105}
   extraPromptObjects: []
@@ -531,7 +531,7 @@ Transform:
   m_GameObject: {fileID: 310601105}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.1, y: 1.65, z: 0}
+  m_LocalPosition: {x: 0.04, y: 1.41, z: 0}
   m_LocalScale: {x: 4, y: 4, z: 5.3333335}
   m_ConstrainProportionsScale: 1
   m_Children: []
@@ -624,7 +624,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0.40714276, y: 0.46876514}
+  m_Offset: {x: 0.40714276, y: 0.374286}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -634,7 +634,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 0.7598412, y: 2.9678113}
+  m_Size: {x: 0.7598412, y: 3.1567698}
   m_EdgeRadius: 0
 --- !u!4 &363020326
 Transform:
@@ -645,12 +645,12 @@ Transform:
   m_GameObject: {fileID: 363020322}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 5.23, y: 0.63, z: 0}
+  m_LocalPosition: {x: -0.20266008, y: -0.59652996, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 732221311}
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 1621900199}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &423929231
 PrefabInstance:
@@ -982,8 +982,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9a9274549eee44c8997865350bb45d96, type: 3}
-  m_Name: ""
-  m_EditorClassIdentifier: ""
+  m_Name: 
+  m_EditorClassIdentifier: 
   key: chat.hall_down.sleep_lost
 --- !u!1 &596520282
 GameObject:
@@ -2376,6 +2376,55 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 7878350319992209165, guid: 2ecc5234569c9e440ac4c11954c18682, type: 3}
   m_PrefabInstance: {fileID: 1579188158}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1621900197
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1621900199}
+  - component: {fileID: 1621900198}
+  m_Layer: 0
+  m_Name: Holder
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1621900198
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1621900197}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 27dbe4b6646beb24bbd2838499029c91, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FlagBasedObject
+  target: {fileID: 363020322}
+  requiredFlag: kitchen_bowl_taken
+  blockedFlag: 
+  activeWhenFlagExists: 1
+--- !u!4 &1621900199
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1621900197}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 5.43266, y: 1.22653, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 363020326}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1726484076
 GameObject:
   m_ObjectHideFlags: 0
@@ -2752,6 +2801,6 @@ SceneRoots:
   - {fileID: 1726484080}
   - {fileID: 1226786580}
   - {fileID: 947290379}
+  - {fileID: 1621900199}
   - {fileID: 423929231}
   - {fileID: 2114607017}
-  - {fileID: 363020326}
