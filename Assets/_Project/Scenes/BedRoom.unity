@@ -929,7 +929,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3626916397498700004, guid: 29b411c0403626d419d3bf5640556efe, type: 3}
       propertyPath: m_Sprite
-      value:
+      value: 
       objectReference: {fileID: -3062456089376325957, guid: 0113a8b3d98fbd14eb4beb4a8ae1aaff, type: 3}
     - target: {fileID: 3626916397498700004, guid: 29b411c0403626d419d3bf5640556efe, type: 3}
       propertyPath: m_SortingLayer
@@ -1880,8 +1880,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8d6da6302ed24ad4b8b4792ab0164f01, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   flagId: boss_wake_up
   targetRenderer: {fileID: 678343398}
   targetChildName: Bedr bed
@@ -2083,7 +2083,7 @@ MonoBehaviour:
   sfxId: 
   hideBeforeDialogue: {fileID: 2007685521}
   hideBeforeDialogueFadeDuration: 1
-  dialogueDelayAfterHide: 2
+  dialogueDelayAfterHide: 1.1
   deactivateOnComplete: 0
 --- !u!114 &1307963231
 MonoBehaviour:
@@ -2292,19 +2292,6 @@ RectTransform:
   m_AnchoredPosition: {x: -31, y: -2}
   m_SizeDelta: {x: 444.1822, y: 109.3777}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1408278770
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1408278766}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9a9274549eee44c8997865350bb45d96, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
-  key: prompt.wakeup
 --- !u!114 &1408278768
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2405,6 +2392,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1408278766}
   m_CullTransparentMesh: 1
+--- !u!114 &1408278770
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1408278766}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a9274549eee44c8997865350bb45d96, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  key: prompt.wakeup
 --- !u!1 &1427161035
 GameObject:
   m_ObjectHideFlags: 0
