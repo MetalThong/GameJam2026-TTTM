@@ -16,6 +16,8 @@ public sealed class RadialTimerUI : MonoBehaviour
 
     [Header("Image Setup")]
     [SerializeField] private bool configureImageAsRadial = true;
+    [SerializeField] private Image.Origin360 fillOrigin = Image.Origin360.Top;
+    [SerializeField] private bool fillClockwise = true;
 
     [Header("Completion")]
     [SerializeField] private bool hideWhenComplete;
@@ -169,6 +171,8 @@ public sealed class RadialTimerUI : MonoBehaviour
 
         fillImage.type = Image.Type.Filled;
         fillImage.fillMethod = Image.FillMethod.Radial360;
+        fillImage.fillOrigin = (int)fillOrigin;
+        fillImage.fillClockwise = fillClockwise;
     }
 
 #if UNITY_EDITOR

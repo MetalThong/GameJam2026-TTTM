@@ -169,7 +169,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InteractButton
   button: {fileID: 397226019}
+  extraPromptObjects: []
   fallbackPromptKey: prompt.interact
+  animateExtraPromptObjects: 1
+  extraPromptFadeInDuration: 0.2
+  extraPromptFadeOutDuration: 0.12
   restrictByForm: 1
   requiredForm: 0
 --- !u!61 &111619342
@@ -964,7 +968,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InteractButton
   button: {fileID: 385079089}
+  extraPromptObjects: []
   fallbackPromptKey: prompt.interact
+  animateExtraPromptObjects: 1
+  extraPromptFadeInDuration: 0.2
+  extraPromptFadeOutDuration: 0.12
   restrictByForm: 1
   requiredForm: 0
 --- !u!61 &418282695
@@ -1220,7 +1228,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InteractButton
   button: {fileID: 1090678877}
+  extraPromptObjects: []
   fallbackPromptKey: prompt.interact
+  animateExtraPromptObjects: 1
+  extraPromptFadeInDuration: 0.2
+  extraPromptFadeOutDuration: 0.12
   restrictByForm: 1
   requiredForm: 0
 --- !u!61 &720133271
@@ -1605,7 +1617,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InteractButton
   button: {fileID: 983865897}
+  extraPromptObjects: []
   fallbackPromptKey: prompt.interact
+  animateExtraPromptObjects: 1
+  extraPromptFadeInDuration: 0.2
+  extraPromptFadeOutDuration: 0.12
   restrictByForm: 1
   requiredForm: 0
 --- !u!61 &827546830
@@ -2148,7 +2164,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InteractButton
   button: {fileID: 725717522}
+  extraPromptObjects: []
   fallbackPromptKey: prompt.interact
+  animateExtraPromptObjects: 1
+  extraPromptFadeInDuration: 0.2
+  extraPromptFadeOutDuration: 0.12
   restrictByForm: 1
   requiredForm: 0
 --- !u!61 &900345989
@@ -2247,7 +2267,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InteractButton
   button: {fileID: 1395152506}
+  extraPromptObjects: []
   fallbackPromptKey: prompt.interact
+  animateExtraPromptObjects: 1
+  extraPromptFadeInDuration: 0.2
+  extraPromptFadeOutDuration: 0.12
   restrictByForm: 1
   requiredForm: 0
 --- !u!61 &944444910
@@ -3145,7 +3169,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InteractButton
   button: {fileID: 2009949803}
+  extraPromptObjects: []
   fallbackPromptKey: prompt.interact
+  animateExtraPromptObjects: 1
+  extraPromptFadeInDuration: 0.2
+  extraPromptFadeOutDuration: 0.12
   restrictByForm: 1
   requiredForm: 0
 --- !u!61 &1346087814
@@ -3526,6 +3554,7 @@ GameObject:
   - component: {fileID: 1610814772}
   - component: {fileID: 1610814771}
   - component: {fileID: 1610814770}
+  - component: {fileID: 1610814773}
   m_Layer: 5
   m_Name: ProgressBar
   m_TagString: Untagged
@@ -3567,10 +3596,12 @@ MonoBehaviour:
   fillImage: {fileID: 1610814771}
   duration: 5
   countDown: 1
-  playOnEnable: 1
+  playOnEnable: 0
   useUnscaledTime: 0
   configureImageAsRadial: 1
-  hideWhenComplete: 1
+  fillOrigin: 2
+  fillClockwise: 1
+  hideWhenComplete: 0
   completed:
     m_PersistentCalls:
       m_Calls: []
@@ -3594,14 +3625,14 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 3660981987449516005, guid: 29aea9b9dc86f6145a87f92d02df47cc, type: 3}
+  m_Sprite: {fileID: 5018751251402189302, guid: bd64a71cf9aa5ff4794eaf8cc583a8bf, type: 3}
   m_Type: 3
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
   m_FillAmount: 1
   m_FillClockwise: 1
-  m_FillOrigin: 0
+  m_FillOrigin: 2
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
 --- !u!222 &1610814772
@@ -3612,6 +3643,26 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1610814768}
   m_CullTransparentMesh: 1
+--- !u!114 &1610814773
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1610814768}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: af4219b4d1cd4b49bc81b7bd9b300e03, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WorldTargetUIFollow
+  target: {fileID: 728833758}
+  canvas: {fileID: 1647037718}
+  worldCamera: {fileID: 831481640}
+  worldOffset: {x: 0, y: 1.25, z: 0}
+  screenOffset: {x: 0, y: 0}
+  autoResolvePlayerTarget: 1
+  hideWhenTargetMissing: 1
+  hideWhenBehindCamera: 1
 --- !u!1 &1647037715
 GameObject:
   m_ObjectHideFlags: 0
@@ -4593,7 +4644,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InteractButton
   button: {fileID: 1721997433}
+  extraPromptObjects: []
   fallbackPromptKey: prompt.interact
+  animateExtraPromptObjects: 1
+  extraPromptFadeInDuration: 0.2
+  extraPromptFadeOutDuration: 0.12
   restrictByForm: 1
   requiredForm: 0
 --- !u!61 &1860276430
@@ -4748,7 +4803,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InteractButton
   button: {fileID: 821962576}
+  extraPromptObjects: []
   fallbackPromptKey: prompt.interact
+  animateExtraPromptObjects: 1
+  extraPromptFadeInDuration: 0.2
+  extraPromptFadeOutDuration: 0.12
   restrictByForm: 0
   requiredForm: 0
 --- !u!61 &1920179376
