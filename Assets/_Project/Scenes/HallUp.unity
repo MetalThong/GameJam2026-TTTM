@@ -710,7 +710,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: -0.08287084, y: 0}
+  m_Offset: {x: -0.45912123, y: 1.2427671}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -720,7 +720,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 1.7398684, y: 2.0302813}
+  m_Size: {x: 0.98736763, y: 4.5158153}
   m_EdgeRadius: 0
 --- !u!4 &768667617
 Transform:
@@ -1148,7 +1148,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3626916397498700004, guid: de121ded066802640945dff9e252d0f6, type: 3}
       propertyPath: m_SortingLayer
-      value: 5
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 3626916397498700004, guid: de121ded066802640945dff9e252d0f6, type: 3}
       propertyPath: m_SortingOrder
@@ -1156,7 +1156,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3626916397498700004, guid: de121ded066802640945dff9e252d0f6, type: 3}
       propertyPath: m_SortingLayerID
-      value: 1843868011
+      value: -55839667
       objectReference: {fileID: 0}
     - target: {fileID: 7878350319992209165, guid: de121ded066802640945dff9e252d0f6, type: 3}
       propertyPath: m_LocalScale.x
@@ -1415,7 +1415,7 @@ Transform:
   m_GameObject: {fileID: 1408704172}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.02, y: 1.35, z: 0}
+  m_LocalPosition: {x: -0.05, y: -1.52, z: 0}
   m_LocalScale: {x: 4, y: 4, z: 5.3333335}
   m_ConstrainProportionsScale: 1
   m_Children: []
@@ -1849,7 +1849,7 @@ Transform:
   m_GameObject: {fileID: 2114878268}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.1, y: 1.47, z: 0}
+  m_LocalPosition: {x: -0.03, y: 1.22, z: 0}
   m_LocalScale: {x: 4, y: 4, z: 5.3333335}
   m_ConstrainProportionsScale: 1
   m_Children: []

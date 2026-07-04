@@ -86,6 +86,22 @@ public sealed class CutSceneDialoguePlayer : MonoBehaviour
         }
     }
 
+    public void PrepareForManualPlayback()
+    {
+        ResolveReferences();
+
+        if (animator != null)
+        {
+            PrepareAnimatorStartFrame();
+            return;
+        }
+
+        if (legacyAnimation != null)
+        {
+            PrepareLegacyAnimationStartFrame();
+        }
+    }
+
     private async UniTaskVoid PlaySequenceFromOnEnableAsync(CancellationToken cancellationToken)
     {
         try
@@ -205,6 +221,33 @@ public sealed class CutSceneDialoguePlayer : MonoBehaviour
         animator.speed = 0f;
     }
 
+    private void PrepareAnimatorStartFrame()
+    {
+        if (animator == null || !animator.gameObject.activeInHierarchy)
+        {
+            return;
+        }
+
+        RuntimeAnimatorController controller = animator.runtimeAnimatorController;
+        if (controller == null || animator.layerCount <= 0)
+        {
+            return;
+        }
+
+        int layer = Mathf.Clamp(animatorLayer, 0, animator.layerCount - 1);
+        string stateName = ResolveAnimatorStateName(animator, layer);
+        if (string.IsNullOrWhiteSpace(stateName))
+        {
+            return;
+        }
+
+        CacheAnimatorSpeed();
+        animator.enabled = true;
+        animator.speed = 0f;
+        animator.Play(Animator.StringToHash(stateName), layer, 0f);
+        animator.Update(0f);
+    }
+
     private async UniTask PlayLegacyAnimationOnceAsync(CancellationToken cancellationToken)
     {
         AnimationClip clip = ResolveLegacyClip(legacyAnimation);
@@ -239,6 +282,20 @@ public sealed class CutSceneDialoguePlayer : MonoBehaviour
         }
 
         clip.SampleAnimation(legacyAnimation.gameObject, clip.length);
+        legacyAnimation.Stop();
+    }
+
+    private void PrepareLegacyAnimationStartFrame()
+    {
+        AnimationClip clip = ResolveLegacyClip(legacyAnimation);
+        if (clip == null)
+        {
+            return;
+        }
+
+        legacyAnimation.gameObject.SetActive(true);
+        legacyAnimation.clip = clip;
+        clip.SampleAnimation(legacyAnimation.gameObject, 0f);
         legacyAnimation.Stop();
     }
 

@@ -175,6 +175,7 @@ public sealed class LivingToyBoxDropInteractable : StoryInteractable
         {
             SetRendererAlphas(cutSceneRenderers, 0f);
             cutSceneObject.SetActive(true);
+            player.PrepareForManualPlayback();
             await FadeRenderersAsync(cutSceneRenderers, originalAlphas, cutSceneFadeInDuration, cancellationToken);
         }
 
