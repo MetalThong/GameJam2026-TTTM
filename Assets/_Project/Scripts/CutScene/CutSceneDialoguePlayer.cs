@@ -18,13 +18,19 @@ public sealed class CutSceneDialoguePlayer : MonoBehaviour
     [SerializeField] private DialogueManager dialogueManager;
     [SerializeField] private DialogueSO dialogue;
 
+    [Header("Playback")]
+    [SerializeField] private bool playOnEnable = true;
+
     [Header("Completion")]
     [SerializeField] private bool deactivateOnComplete;
 
     private CancellationTokenSource _enableCts;
     private bool _isPlaying;
+    private bool _isStartingManually;
     private bool _hasCachedAnimatorSpeed;
     private float _cachedAnimatorSpeed = 1f;
+
+    public bool IsPlaying => _isPlaying;
 
     private void Awake()
     {
@@ -34,11 +40,16 @@ public sealed class CutSceneDialoguePlayer : MonoBehaviour
 
     private void OnEnable()
     {
+        if (_isStartingManually || !playOnEnable)
+        {
+            return;
+        }
+
         CancelSequence();
         _isPlaying = false;
         ResolveReferences();
         _enableCts = new CancellationTokenSource();
-        PlaySequenceAsync(_enableCts.Token).Forget();
+        PlaySequenceFromOnEnableAsync(_enableCts.Token).Forget();
     }
 
     private void OnDisable()
@@ -52,7 +63,41 @@ public sealed class CutSceneDialoguePlayer : MonoBehaviour
         CancelSequence();
     }
 
-    private async UniTaskVoid PlaySequenceAsync(CancellationToken cancellationToken)
+    public async UniTask PlayAsync(CancellationToken cancellationToken = default)
+    {
+        CancelSequence();
+        _isPlaying = false;
+        ResolveReferences();
+        _enableCts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+
+        try
+        {
+            if (!gameObject.activeSelf)
+            {
+                _isStartingManually = true;
+                gameObject.SetActive(true);
+            }
+
+            await PlaySequenceAsync(_enableCts.Token);
+        }
+        finally
+        {
+            _isStartingManually = false;
+        }
+    }
+
+    private async UniTaskVoid PlaySequenceFromOnEnableAsync(CancellationToken cancellationToken)
+    {
+        try
+        {
+            await PlaySequenceAsync(cancellationToken);
+        }
+        catch (OperationCanceledException)
+        {
+        }
+    }
+
+    private async UniTask PlaySequenceAsync(CancellationToken cancellationToken)
     {
         if (_isPlaying)
         {
@@ -76,9 +121,6 @@ public sealed class CutSceneDialoguePlayer : MonoBehaviour
             {
                 gameObject.SetActive(false);
             }
-        }
-        catch (OperationCanceledException)
-        {
         }
         finally
         {
@@ -105,13 +147,32 @@ public sealed class CutSceneDialoguePlayer : MonoBehaviour
 
     private async UniTask PlayAnimatorOnceAsync(CancellationToken cancellationToken)
     {
-        if (animator.runtimeAnimatorController == null || animator.layerCount <= 0)
+        if (animator == null)
+        {
+            return;
+        }
+
+        if (!animator.gameObject.activeInHierarchy || !animator.isActiveAndEnabled)
+        {
+            Debug.LogWarning("CutSceneDialoguePlayer: Animator must be active in the hierarchy before playback.", animator);
+            return;
+        }
+
+        RuntimeAnimatorController controller = animator.runtimeAnimatorController;
+        if (controller == null)
         {
             Debug.LogWarning("CutSceneDialoguePlayer: Animator has no controller.", animator);
             return;
         }
 
-        int layer = Mathf.Clamp(animatorLayer, 0, animator.layerCount - 1);
+        int layerCount = animator.layerCount;
+        if (layerCount <= 0)
+        {
+            Debug.LogWarning("CutSceneDialoguePlayer: Animator has no playable layers.", animator);
+            return;
+        }
+
+        int layer = Mathf.Clamp(animatorLayer, 0, layerCount - 1);
         string stateName = ResolveAnimatorStateName(animator, layer);
         if (string.IsNullOrWhiteSpace(stateName))
         {

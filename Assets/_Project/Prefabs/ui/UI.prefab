@@ -138,7 +138,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bb8f5e85b8ff4a0b8f29be07c15ac79a, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MissionView
   panel: {fileID: 4285869095127973740}
   canvasGroup: {fileID: 7100000000000000190}
@@ -150,6 +150,12 @@ MonoBehaviour:
     completedFlag: waked_boss_up
     vietnameseTitle: "Gi\xFAp ch\u1EE7 nh\xE2n t\u1EC9nh d\u1EADy"
     englishTitle: Help your owner wake up
+    restoreWhenAssignedOnLoad: 1
+  - missionId: living_drop_box
+    assignedFlag: went_living_room
+    completedFlag: dropped_box
+    vietnameseTitle: "G\xE2y s\u1EF1 ch\xFA \xFD v\u1EDBi ch\u1EE7"
+    englishTitle: Atract the attention of the boss
     restoreWhenAssignedOnLoad: 1
   visibleAlpha: 1
   assignStartOffset: {x: 0, y: 42}
@@ -640,7 +646,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}

@@ -501,8 +501,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TemporaryChat
   spr: {fileID: 484845393}
+  showDelay: 0
   exsitsTime: 2
   fadeDuration: 0.5
+  lockMovementWhileVisible: 0
+  deactivateAfterFade: 0
+  completionFlag: 
+  deactivateTarget: {fileID: 0}
 --- !u!1 &534949471
 GameObject:
   m_ObjectHideFlags: 0
@@ -1343,7 +1348,8 @@ MonoBehaviour:
   triggerOnce: 1
   condition:
     requiredFlags: []
-    blockedFlags: []
+    blockedFlags:
+    - went_down_hall
   action:
     setFlags:
     - went_down_hall

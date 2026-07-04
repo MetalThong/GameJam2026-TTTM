@@ -68,6 +68,12 @@ public sealed class MissionView : MonoBehaviour
 
     private void OnFlagChanged(FlagChangedEvent eventData)
     {
+        if (ShouldSuppressMissionUi())
+        {
+            SetHiddenInstant();
+            return;
+        }
+
         if (!eventData.Value)
         {
             return;
@@ -99,6 +105,12 @@ public sealed class MissionView : MonoBehaviour
 
     private void RefreshFromFlags()
     {
+        if (ShouldSuppressMissionUi())
+        {
+            SetHiddenInstant();
+            return;
+        }
+
         MissionDefinition activeMission = FindActiveMissionFromFlags();
         if (activeMission != null)
         {
@@ -107,6 +119,11 @@ public sealed class MissionView : MonoBehaviour
         }
 
         SetHiddenInstant();
+    }
+
+    private static bool ShouldSuppressMissionUi()
+    {
+        return GameManager.Instance != null && GameManager.Instance.CurrentState == GameState.MainMenu;
     }
 
     private void ShowMission(MissionDefinition mission, bool animate)
