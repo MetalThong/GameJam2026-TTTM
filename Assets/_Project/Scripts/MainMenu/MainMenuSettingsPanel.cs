@@ -1,3 +1,4 @@
+using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -6,6 +7,7 @@ public sealed class MainMenuSettingsPanel : MonoBehaviour
 {
     private const string MusicVolumePrefKey = "settings.musicVolume";
     private const string SfxVolumePrefKey = "settings.sfxVolume";
+    private const string DeterminationFontResourcePath = "Text/SVN-Determination Sans SDF";
     private const float DefaultVolume = 0.8f;
 
     private static readonly Color LanguageNormalColor = new(0.16f, 0.18f, 0.2f, 1f);
@@ -102,10 +104,10 @@ public sealed class MainMenuSettingsPanel : MonoBehaviour
             window = panel.transform as RectTransform;
         }
 
-        TMP_Text[] texts = panel.GetComponentsInChildren<TMP_Text>(includeInactive: true);
-        TMP_FontAsset sharedFont = texts.Length > 0 ? texts[0].font : null;
+        TMP_FontAsset sharedFont = ResolveSharedFont(panel);
 
         _titleText = FindChildText(panel.transform, "SettingsTitle");
+        ApplyFont(_titleText, sharedFont);
         HideLegacyPlaceholder(panel.transform);
 
         _musicLabel = CreateLabel(window, "MusicLabel", new Vector2(42f, -92f), sharedFont);
@@ -224,10 +226,10 @@ public sealed class MainMenuSettingsPanel : MonoBehaviour
             return;
         }
 
-        SetText(_titleText, GetText("settings.title", "Cai dat"));
-        SetText(_musicLabel, GetText("settings.music", "Nhac nen"));
-        SetText(_sfxLabel, GetText("settings.sfx", "Hieu ung"));
-        SetText(_languageLabel, GetText("settings.language", "Ngon ngu"));
+        SetText(_titleText, GetText("settings.title", "C\u00E0i \u0111\u1EB7t"));
+        SetText(_musicLabel, GetText("settings.music", "Nh\u1EA1c n\u1EC1n"));
+        SetText(_sfxLabel, GetText("settings.sfx", "Hi\u1EC7u \u1EE9ng"));
+        SetText(_languageLabel, GetText("settings.language", "Ng\u00F4n ng\u1EEF"));
     }
 
     private void RefreshLanguageButtons()
@@ -345,6 +347,29 @@ public sealed class MainMenuSettingsPanel : MonoBehaviour
     {
         Transform child = FindChild(root, childName);
         return child != null ? child.GetComponent<TMP_Text>() : null;
+    }
+
+    private static TMP_FontAsset ResolveSharedFont(GameObject root)
+    {
+        TMP_FontAsset determinationFont = Resources.Load<TMP_FontAsset>(DeterminationFontResourcePath);
+        if (determinationFont != null)
+        {
+            return determinationFont;
+        }
+
+        TMP_Text[] texts = root != null
+            ? root.GetComponentsInChildren<TMP_Text>(includeInactive: true)
+            : Array.Empty<TMP_Text>();
+
+        return texts.Length > 0 ? texts[0].font : null;
+    }
+
+    private static void ApplyFont(TMP_Text text, TMP_FontAsset font)
+    {
+        if (text != null && font != null)
+        {
+            text.font = font;
+        }
     }
 
     private static RectTransform FindChildRect(Transform root, string childName)

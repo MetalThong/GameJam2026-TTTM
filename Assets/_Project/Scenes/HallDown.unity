@@ -519,6 +519,7 @@ GameObject:
   - component: {fileID: 534949472}
   - component: {fileID: 534949474}
   - component: {fileID: 534949473}
+  - component: {fileID: 534949475}
   m_Layer: 5
   m_Name: Text (TMP)
   m_TagString: Untagged
@@ -545,6 +546,19 @@ RectTransform:
   m_AnchoredPosition: {x: -442.10236, y: 246.52405}
   m_SizeDelta: {x: 233.7952, y: 132.9519}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &534949475
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 534949471}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a9274549eee44c8997865350bb45d96, type: 3}
+  m_Name:
+  m_EditorClassIdentifier:
+  key: chat.hall_down.sleep_lost
 --- !u!114 &534949473
 MonoBehaviour:
   m_ObjectHideFlags: 0

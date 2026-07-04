@@ -148,13 +148,13 @@ MonoBehaviour:
   - missionId: bedroom_wake_owner
     assignedFlag: waked_up
     completedFlag: waked_boss_up
-    vietnameseTitle: "Gi\xFAp ch\u1EE7 nh\xE2n t\u1EC9nh d\u1EADy"
+    vietnameseTitle: "Gi\u00FAp ch\u1EE7 nh\u00E2n t\u1EC9nh d\u1EADy"
     englishTitle: Help your owner wake up
     restoreWhenAssignedOnLoad: 1
   - missionId: living_drop_box
     assignedFlag: mission_provoke_owner
     completedFlag: dropped_box
-    vietnameseTitle: "Ch\u1ECDc gi\u1EADn \xF4ng ch\u1EE7"
+    vietnameseTitle: "Ch\u1ECDc gi\u1EADn \u00F4ng ch\u1EE7"
     englishTitle: Make the owner angry
     restoreWhenAssignedOnLoad: 1
   visibleAlpha: 1
@@ -308,8 +308,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: X
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: db2f30d1738f57942b06368b2427df89, type: 2}
+  m_sharedMaterial: {fileID: 5364150349029207964, guid: db2f30d1738f57942b06368b2427df89, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -1352,8 +1352,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: 
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: db2f30d1738f57942b06368b2427df89, type: 2}
+  m_sharedMaterial: {fileID: 5364150349029207964, guid: db2f30d1738f57942b06368b2427df89, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -1899,8 +1899,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: 
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: db2f30d1738f57942b06368b2427df89, type: 2}
+  m_sharedMaterial: {fileID: 5364150349029207964, guid: db2f30d1738f57942b06368b2427df89, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -2446,8 +2446,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: 
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: db2f30d1738f57942b06368b2427df89, type: 2}
+  m_sharedMaterial: {fileID: 5364150349029207964, guid: db2f30d1738f57942b06368b2427df89, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -3231,7 +3231,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "Ti\u1EBFng M\xE8o"
+  m_text: "Ti\u1EBFng M\u00E8o"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: db2f30d1738f57942b06368b2427df89, type: 2}
   m_sharedMaterial: {fileID: 5364150349029207964, guid: db2f30d1738f57942b06368b2427df89, type: 2}

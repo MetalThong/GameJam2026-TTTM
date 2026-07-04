@@ -16,16 +16,16 @@ MonoBehaviour:
   lines:
   - speakerName: Silly
     englishSpeakerName: Silly
-    text: "Meow...S\xE1ng r\u1ED3i \xE0"
+    text: "Meow...S\u00E1ng r\u1ED3i \u00E0"
     englishText: Meow... Is it morning already?
     portrait: {fileID: 6468568510307345621, guid: 0c05e137063d43e429af4b01ffae35ac, type: 3}
   - speakerName: Silly
     englishSpeakerName: Silly
-    text: "Sao m\xECnh l\u1EA1i l\u01A1 l\u1EEDng th\u1EBF n\xE0y nh\u1EC9 ..."
+    text: "Sao m\u00ECnh l\u1EA1i l\u01A1 l\u1EEDng th\u1EBF n\u00E0y nh\u1EC9 ..."
     englishText: Why am I floating like this...?
     portrait: {fileID: 6468568510307345621, guid: 0c05e137063d43e429af4b01ffae35ac, type: 3}
   - speakerName: Silly
     englishSpeakerName: Silly
-    text: "Th\xF4i k\u1EC7, ph\u1EA3i g\u1ECDi anh \u1EA5y d\u1EADy \u0111\xE3 !"
+    text: "Th\u00F4i k\u1EC7, ph\u1EA3i g\u1ECDi anh \u1EA5y d\u1EADy \u0111\u00E3 !"
     englishText: Never mind, I need to wake him up first!
     portrait: {fileID: 6468568510307345621, guid: 0c05e137063d43e429af4b01ffae35ac, type: 3}

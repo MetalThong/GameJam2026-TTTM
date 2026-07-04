@@ -1024,6 +1024,7 @@ GameObject:
   - component: {fileID: 549355904}
   - component: {fileID: 549355906}
   - component: {fileID: 549355905}
+  - component: {fileID: 549355907}
   m_Layer: 5
   m_Name: Text (TMP)
   m_TagString: Untagged
@@ -1150,6 +1151,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 549355903}
   m_CullTransparentMesh: 1
+--- !u!114 &549355907
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 549355903}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a9274549eee44c8997865350bb45d96, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  key: chat.living_room.familiar_sound
 --- !u!1 &615659591
 GameObject:
   m_ObjectHideFlags: 0
@@ -2396,7 +2410,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b20e1251c96249f2bc1e8800630f2d83, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::OwnerBoxPickupSequence
-  ownerPrefab: {fileID: 4460802599194774219, guid: 035b606787c0fe64387e61aab294d1e5, type: 3}
+  ownerPrefab: {fileID: 4460802599194774219, guid: 2c539dc50d7288b43bc82f74b6b46729, type: 3}
   ownerResourcePath: Main/thang chu di
   spawnPoint: {fileID: 1559023431}
   spawnOffset: {x: 0, y: 0, z: 0}
@@ -2677,7 +2691,7 @@ MonoBehaviour:
   freezeOnLastFrame: 1
   delayAfterAnimation: 0
   dialogueManager: {fileID: 0}
-  dialogue: {fileID: 0}
+  dialogue: {fileID: 11400000, guid: 5fd339ced3064031b486ba80ffac7bdc, type: 2}
   playOnEnable: 0
   deactivateOnComplete: 0
 --- !u!95 &1853164398

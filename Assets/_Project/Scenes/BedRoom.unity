@@ -928,6 +928,10 @@ PrefabInstance:
       value: Bedr bed
       objectReference: {fileID: 0}
     - target: {fileID: 3626916397498700004, guid: 29b411c0403626d419d3bf5640556efe, type: 3}
+      propertyPath: m_Sprite
+      value:
+      objectReference: {fileID: -3062456089376325957, guid: 0113a8b3d98fbd14eb4beb4a8ae1aaff, type: 3}
+    - target: {fileID: 3626916397498700004, guid: 29b411c0403626d419d3bf5640556efe, type: 3}
       propertyPath: m_SortingLayer
       value: 1
       objectReference: {fileID: 0}
@@ -999,6 +1003,11 @@ PrefabInstance:
 --- !u!4 &678343397 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7878350319992209165, guid: 29b411c0403626d419d3bf5640556efe, type: 3}
+  m_PrefabInstance: {fileID: 678343396}
+  m_PrefabAsset: {fileID: 0}
+--- !u!212 &678343398 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: 3626916397498700004, guid: 29b411c0403626d419d3bf5640556efe, type: 3}
   m_PrefabInstance: {fileID: 678343396}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &761985027
@@ -1827,6 +1836,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1160165177}
+  - component: {fileID: 1160165178}
   m_Layer: 0
   m_Name: Bed
   m_TagString: Untagged
@@ -1860,6 +1870,23 @@ Transform:
   - {fileID: 1512726537}
   m_Father: {fileID: 1741538775}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1160165178
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1160165176}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8d6da6302ed24ad4b8b4792ab0164f01, type: 3}
+  m_Name:
+  m_EditorClassIdentifier:
+  flagId: boss_wake_up
+  targetRenderer: {fileID: 678343398}
+  targetChildName: Bedr bed
+  flaggedSprite: {fileID: -4947170946669361385, guid: 29b411c0403626d419d3bf5640556efe, type: 3}
+  restoreOriginalWhenFlagMissing: 1
 --- !u!1001 &1272847354
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2238,6 +2265,7 @@ GameObject:
   - component: {fileID: 1408278767}
   - component: {fileID: 1408278769}
   - component: {fileID: 1408278768}
+  - component: {fileID: 1408278770}
   m_Layer: 5
   m_Name: Text (TMP)
   m_TagString: Untagged
@@ -2264,6 +2292,19 @@ RectTransform:
   m_AnchoredPosition: {x: -31, y: -2}
   m_SizeDelta: {x: 444.1822, y: 109.3777}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1408278770
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1408278766}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a9274549eee44c8997865350bb45d96, type: 3}
+  m_Name:
+  m_EditorClassIdentifier:
+  key: prompt.wakeup
 --- !u!114 &1408278768
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2630,6 +2671,7 @@ MonoBehaviour:
   ownerSpawnPosition: {x: 2.48, y: -4.48, z: 0}
   disableOwnerAnimatorUntilWalk: 1
   ownerSpawnFadeDuration: 0.35
+  ownerSpawnedFlag: boss_wake_up
   ownerExitDialogue: {fileID: 11400000, guid: b170a1e4f6ff4ebba5db133c2fdaa746, type: 2}
   ownerExitAnimationState: BossWalk
   ownerExitPoint: {fileID: 0}

@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   entries:
   - key: settings.title
-    vietnamese: "C\xE0i \u0111\u1EB7t"
+    vietnamese: "C\u00E0i \u0111\u1EB7t"
     english: Settings
     cat: Meow
   - key: settings.music
@@ -26,11 +26,11 @@ MonoBehaviour:
     english: SFX
     cat: Meow
   - key: settings.language
-    vietnamese: "Ng\xF4n ng\u1EEF"
+    vietnamese: "Ng\u00F4n ng\u1EEF"
     english: Language
     cat: Meow
   - key: settings.quit
-    vietnamese: "Tho\xE1t v\u1EC1 Menu"
+    vietnamese: "Tho\u00E1t v\u1EC1 Menu"
     english: Quit to Menu
     cat: Meow
   - key: main.start
@@ -42,16 +42,24 @@ MonoBehaviour:
     english: Continue
     cat: Meow
   - key: main.settings
-    vietnamese: "C\xE0i \u0111\u1EB7t"
+    vietnamese: "C\u00E0i \u0111\u1EB7t"
     english: Settings
     cat: Meow
   - key: main.quit
-    vietnamese: "Tho\xE1t"
+    vietnamese: "Tho\u00E1t"
     english: Quit
     cat: Meow
   - key: prompt.wakeup
     vietnamese: "\u1EA4n E \u0111\u1EC3 t\u1EC9nh d\u1EADy"
     english: Press E to wake up
+    cat: Meow
+  - key: chat.hall_down.sleep_lost
+    vietnamese: "M\u1EDBi s\u1EDBm ra, m\u1EA5t gi\u1EA5c th\u1EADt..."
+    english: So early... there goes my sleep.
+    cat: Meow
+  - key: chat.living_room.familiar_sound
+    vietnamese: "Nh\u01B0ng ti\u1EBFng \u0111\u1EA5y nghe quen th\u1EADt..."
+    english: But that sound feels familiar...
     cat: Meow
   - key: language.vietnamese
     vietnamese: "Ti\u1EBFng Vi\u1EC7t"
@@ -62,6 +70,6 @@ MonoBehaviour:
     english: English
     cat: English
   - key: language.cat
-    vietnamese: "Ti\u1EBFng M\xE8o"
-    english: "Ti\u1EBFng M\xE8o"
-    cat: "Ti\u1EBFng M\xE8o"
+    vietnamese: "Ti\u1EBFng M\u00E8o"
+    english: "Ti\u1EBFng M\u00E8o"
+    cat: "Ti\u1EBFng M\u00E8o"

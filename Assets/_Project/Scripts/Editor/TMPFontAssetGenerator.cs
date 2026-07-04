@@ -8,6 +8,7 @@ namespace TTTM.EditorTools
     {
         private const string SourceFontPath = "Assets/_Project/Resources/Text/SVN-Determination Sans.otf";
         private const string OutputFontAssetPath = "Assets/_Project/Resources/Text/SVN-Determination Sans SDF.asset";
+        private const string FallbackFontAssetPath = "Assets/TextMesh Pro/Resources/Fonts & Materials/LiberationSans SDF - Fallback.asset";
 
         [InitializeOnLoadMethod]
         private static void GenerateMissingFontsOnEditorLoad()
@@ -55,6 +56,7 @@ namespace TTTM.EditorTools
             TMP_FontAsset fontAsset = TMP_FontAsset.CreateFontAsset(sourceFont);
             fontAsset.name = "SVN-Determination Sans SDF";
             fontAsset.atlasPopulationMode = AtlasPopulationMode.Dynamic;
+            AssignFallbackFont(fontAsset);
 
             Texture2D atlasTexture = fontAsset.atlasTexture;
             if (atlasTexture != null)
@@ -84,6 +86,19 @@ namespace TTTM.EditorTools
             AssetDatabase.Refresh();
 
             Debug.Log($"Generated TMP font asset: {OutputFontAssetPath}");
+        }
+
+        private static void AssignFallbackFont(TMP_FontAsset fontAsset)
+        {
+            TMP_FontAsset fallbackFont = AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(FallbackFontAssetPath);
+            if (fallbackFont == null)
+            {
+                Debug.LogWarning($"Generated {fontAsset.name} without fallback font. Missing asset at {FallbackFontAssetPath}");
+                return;
+            }
+
+            fontAsset.fallbackFontAssetTable.Clear();
+            fontAsset.fallbackFontAssetTable.Add(fallbackFont);
         }
     }
 }

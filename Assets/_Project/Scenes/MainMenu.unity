@@ -178,8 +178,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Dang cap nhat tuy chinh am thanh va man hinh.
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: db2f30d1738f57942b06368b2427df89, type: 2}
+  m_sharedMaterial: {fileID: 5364150349029207964, guid: db2f30d1738f57942b06368b2427df89, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -1062,8 +1062,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: SETTING
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: db2f30d1738f57942b06368b2427df89, type: 2}
+  m_sharedMaterial: {fileID: 5364150349029207964, guid: db2f30d1738f57942b06368b2427df89, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -1465,8 +1465,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: X
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: db2f30d1738f57942b06368b2427df89, type: 2}
+  m_sharedMaterial: {fileID: 5364150349029207964, guid: db2f30d1738f57942b06368b2427df89, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -2238,8 +2238,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Silly
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: db2f30d1738f57942b06368b2427df89, type: 2}
+  m_sharedMaterial: {fileID: 5364150349029207964, guid: db2f30d1738f57942b06368b2427df89, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []

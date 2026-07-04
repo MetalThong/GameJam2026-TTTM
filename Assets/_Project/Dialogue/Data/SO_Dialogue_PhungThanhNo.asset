@@ -16,16 +16,16 @@ MonoBehaviour:
   lines:
   - speakerName: "V\u0169"
     englishSpeakerName: Vu
-    text: "M\xE8o \u1EDF \u0111\xE2u v\u1EADy !!!"
+    text: "M\u00E8o \u1EDF \u0111\u00E2u v\u1EADy !!!"
     englishText: Where is that cat?!
     portrait: {fileID: -4254258901546231152, guid: c5d997eca51e38d418373f1e8fdc90ce, type: 3}
   - speakerName: "V\u0169"
     englishSpeakerName: Vu
-    text: "Nay ng\xE0y ngh\u1EC9 m\xE0 sao m\xE8o m\xE9o meo v\u1EADy !!!"
+    text: "Nay ng\u00E0y ngh\u1EC9 m\u00E0 sao m\u00E8o m\u00E9o meo v\u1EADy !!!"
     englishText: It's my day off, why is a cat meowing like that?!
     portrait: {fileID: -4254258901546231152, guid: c5d997eca51e38d418373f1e8fdc90ce, type: 3}
   - speakerName: "V\u0169"
     englishSpeakerName: Vu
-    text: "Phi\u1EC1n qu\xE1 h\xE0 ! M\u1EA5t c\u1EA3 gi\u1EA5c"
+    text: "Phi\u1EC1n qu\u00E1 h\u00E0 ! M\u1EA5t c\u1EA3 gi\u1EA5c"
     englishText: So annoying! There goes my sleep.
     portrait: {fileID: -4254258901546231152, guid: c5d997eca51e38d418373f1e8fdc90ce, type: 3}

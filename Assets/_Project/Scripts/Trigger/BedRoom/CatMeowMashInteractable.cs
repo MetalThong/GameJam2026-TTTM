@@ -21,6 +21,7 @@ public class CatMeowMashInteractable : MashStoryInteractable
     [SerializeField] private Vector3 ownerSpawnPosition;
     [SerializeField] private bool disableOwnerAnimatorUntilWalk = true;
     [SerializeField, Min(0f)] private float ownerSpawnFadeDuration = 0.35f;
+    [SerializeField] private string ownerSpawnedFlag = "boss_wake_up";
 
     [Header("Owner Exit")]
     [SerializeField] private DialogueSO ownerExitDialogue;
@@ -72,6 +73,7 @@ public class CatMeowMashInteractable : MashStoryInteractable
             await PlayDialogueIfAssignedAsync(dialogue, destroyToken);
 
             _spawnedOwner = SpawnOwner();
+            SetOwnerSpawnedFlag(_spawnedOwner);
             await FadeOwnerAsync(_spawnedOwner, 1f, ownerSpawnFadeDuration, destroyToken);
 
             await PlayDialogueIfAssignedAsync(ownerExitDialogue, destroyToken);
@@ -146,6 +148,16 @@ public class CatMeowMashInteractable : MashStoryInteractable
         SetOwnerAnimatorsEnabled(owner, !disableOwnerAnimatorUntilWalk);
         SetOwnerAlpha(owner, 0f);
         return owner;
+    }
+
+    private void SetOwnerSpawnedFlag(GameObject owner)
+    {
+        if (owner == null || string.IsNullOrWhiteSpace(ownerSpawnedFlag) || FlagManager.Instance == null)
+        {
+            return;
+        }
+
+        FlagManager.Instance.SetFlag(ownerSpawnedFlag, true);
     }
 
     private Vector3 ResolveOwnerSpawnPosition()
