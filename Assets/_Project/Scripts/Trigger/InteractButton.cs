@@ -1,10 +1,17 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 
-public class InteractButton : MonoBehaviour
+public class InteractButton : MonoBehaviour, IInteractionAvailability
 {
     [SerializeField] private GameObject button;
 
+    [Header("Form Requirement")]
+    [FormerlySerializedAs("requiredCatForm")]
+    [SerializeField] private bool restrictByForm;
+    [SerializeField] private MovementForm requiredForm = MovementForm.Cat;
+
     private bool _isPlayerInside;
+    private Movement _playerMovement;
 
     private void Awake()
     {
@@ -30,6 +37,7 @@ public class InteractButton : MonoBehaviour
             GameManager.Instance.StateChanged -= OnGameStateChanged;
         }
 
+        SetPlayerMovement(null);
         SetPromptVisible(false);
     }
 
@@ -38,6 +46,7 @@ public class InteractButton : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             _isPlayerInside = true;
+            SetPlayerMovement(other.GetComponentInParent<Movement>());
             RefreshPrompt();
         }
     }
@@ -47,6 +56,7 @@ public class InteractButton : MonoBehaviour
         if (other.CompareTag("Player"))
         {
             _isPlayerInside = false;
+            SetPlayerMovement(null);
             RefreshPrompt();
         }
     }
@@ -58,7 +68,12 @@ public class InteractButton : MonoBehaviour
 
     private void RefreshPrompt()
     {
-        SetPromptVisible(_isPlayerInside && !IsPromptBlocked());
+        SetPromptVisible(_isPlayerInside && !IsPromptBlocked() && IsInteractionAvailable(_playerMovement));
+    }
+
+    public bool IsInteractionAvailable(Movement playerMovement)
+    {
+        return !restrictByForm || (playerMovement != null && playerMovement.CurrentForm == requiredForm);
     }
 
     private static bool IsPromptBlocked()
@@ -74,5 +89,30 @@ public class InteractButton : MonoBehaviour
         }
 
         button.SetActive(isVisible);
+    }
+
+    private void SetPlayerMovement(Movement playerMovement)
+    {
+        if (_playerMovement == playerMovement)
+        {
+            return;
+        }
+
+        if (_playerMovement != null)
+        {
+            _playerMovement.FormChanged -= OnPlayerFormChanged;
+        }
+
+        _playerMovement = playerMovement;
+
+        if (_playerMovement != null)
+        {
+            _playerMovement.FormChanged += OnPlayerFormChanged;
+        }
+    }
+
+    private void OnPlayerFormChanged(MovementForm previousForm, MovementForm currentForm)
+    {
+        RefreshPrompt();
     }
 }

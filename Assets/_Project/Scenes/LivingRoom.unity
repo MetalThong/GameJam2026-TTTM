@@ -160,6 +160,8 @@ MonoBehaviour:
     setFlags:
     - went_living_room
     unsetFlags: []
+  lockGameStateAfterTrigger: 0
+  unlockGameStateFlag: 
 --- !u!114 &34329112
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -360,7 +362,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!212 &121360872
 SpriteRenderer:
   serializedVersion: 2
@@ -429,7 +431,7 @@ Transform:
   m_GameObject: {fileID: 121360871}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.78, y: 3.83, z: 0}
+  m_LocalPosition: {x: 1.83, y: 3.84, z: 0}
   m_LocalScale: {x: 4, y: 4, z: 5.3333335}
   m_ConstrainProportionsScale: 1
   m_Children: []
@@ -1478,6 +1480,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InteractButton
   button: {fileID: 2144297272}
+  restrictByForm: 0
+  requiredForm: 0
 --- !u!61 &815857768
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -1731,6 +1735,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InteractButton
   button: {fileID: 247842110}
+  restrictByForm: 0
+  requiredForm: 0
 --- !u!61 &1015589339
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -1933,6 +1939,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InteractButton
   button: {fileID: 1689855178}
+  restrictByForm: 1
+  requiredForm: 0
 --- !u!61 &1147377917
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -2297,7 +2305,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1530424297
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2311,6 +2319,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InteractButton
   button: {fileID: 121360871}
+  restrictByForm: 1
+  requiredForm: 0
 --- !u!61 &1530424298
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -2345,7 +2355,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 1.6705968, y: 3.5790367}
+  m_Offset: {x: 2.313286, y: 3.5790367}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -2355,7 +2365,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 1.3530879, y: 1.1869135}
+  m_Size: {x: 0.2775674, y: 1.1869135}
   m_EdgeRadius: 0
 --- !u!4 &1530424299
 Transform:
@@ -2396,12 +2406,17 @@ MonoBehaviour:
   toyBoxTransform: {fileID: 1118575981}
   moveTarget: {fileID: 0}
   moveOffset: {x: 0.25, y: 0, z: 0}
-  moveDuration: 0.5
+  moveDuration: 0.85
   moveEase: 6
   preserveCurrentZ: 1
   sfxId: drop_box
   playSpatialSfx: 0
   playSfxAfterMove: 1
+  playPullAnimationOnInteract: 1
+  pullAnimationTrigger: IsPull
+  requireCatFormForPullAnimation: 1
+  waitForPullAnimationBeforeContinuing: 1
+  pullAnimationMinimumDuration: 0.85
   cutSceneObject: {fileID: 1854062712}
   cutScenePlayer: {fileID: 1853164397}
   hideCutSceneObjectOnComplete: 1
@@ -3635,6 +3650,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InteractButton
   button: {fileID: 404213126}
+  restrictByForm: 1
+  requiredForm: 0
 --- !u!61 &2098560833
 BoxCollider2D:
   m_ObjectHideFlags: 0

@@ -409,6 +409,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InteractButton
   button: {fileID: 1705556465}
+  restrictByForm: 0
+  requiredForm: 0
 --- !u!61 &466901932
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -788,6 +790,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: acfb272cdcd1fcd49a51afedbd6f635e, type: 3}
+--- !u!114 &877334217 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2689432705537179304, guid: acfb272cdcd1fcd49a51afedbd6f635e, type: 3}
+  m_PrefabInstance: {fileID: 877334216}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4fb32b39b2d344c4b8eaa5964bc12191, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::Movement
 --- !u!1001 &1151995216
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -890,10 +903,17 @@ MonoBehaviour:
   m_GameObject: {fileID: 1209883680}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1c6580f15c5098346b1dc8ffaf80cc17, type: 3}
+  m_Script: {fileID: 11500000, guid: b7aa72e6987349f3bb069d8851f8f2f1, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SceneLoadInteractable
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerAnimatedSceneLoadInteractable
   targetScene: 6
+  playerMovement: {fileID: 877334217}
+  animationTrigger: IsPicture
+  animationStateName: GoToPicture
+  requireCatForm: 0
+  lockMovementDuringAnimation: 1
+  hidePlayerAfterAnimation: 1
+  fallbackAnimationDuration: 0.6
 --- !u!114 &1209883682
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -907,6 +927,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InteractButton
   button: {fileID: 1962334673}
+  restrictByForm: 1
+  requiredForm: 1
 --- !u!61 &1209883683
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -941,7 +963,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: -0.28024864, y: 0.6280386}
+  m_Offset: {x: -0.30304563, y: 0.63563764}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -951,7 +973,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 1.7405615, y: 1.7593626}
+  m_Size: {x: 1.4517963, y: 1.5313904}
   m_EdgeRadius: 0
 --- !u!4 &1209883684
 Transform:

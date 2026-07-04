@@ -20,6 +20,13 @@ public sealed class LivingToyBoxDropInteractable : StoryInteractable
     [SerializeField] private bool playSpatialSfx;
     [SerializeField] private bool playSfxAfterMove = true;
 
+    [Header("Player Pull Animation")]
+    [SerializeField] private bool playPullAnimationOnInteract = true;
+    [SerializeField] private string pullAnimationTrigger = "IsPull";
+    [SerializeField] private bool requireCatFormForPullAnimation = true;
+    [SerializeField] private bool waitForPullAnimationBeforeContinuing = true;
+    [SerializeField, Min(0f)] private float pullAnimationMinimumDuration = 0.8f;
+
     [Header("Cut Scene")]
     [SerializeField] private GameObject cutSceneObject;
     [SerializeField] private CutSceneDialoguePlayer cutScenePlayer;
@@ -83,7 +90,20 @@ public sealed class LivingToyBoxDropInteractable : StoryInteractable
                 PlaySfx();
             }
 
-            await MoveToyBoxAsync(destroyToken);
+            bool playedPullAnimation = PlayPullAnimation();
+            UniTask moveTask = MoveToyBoxAsync(destroyToken);
+            if (playedPullAnimation && waitForPullAnimationBeforeContinuing && pullAnimationMinimumDuration > 0f)
+            {
+                UniTask pullDelayTask = UniTask.Delay(
+                    TimeSpan.FromSeconds(pullAnimationMinimumDuration),
+                    cancellationToken: destroyToken
+                );
+                await UniTask.WhenAll(moveTask, pullDelayTask);
+            }
+            else
+            {
+                await moveTask;
+            }
 
             if (playSfxAfterMove)
             {
@@ -144,6 +164,18 @@ public sealed class LivingToyBoxDropInteractable : StoryInteractable
         }
 
         cancellationToken.ThrowIfCancellationRequested();
+    }
+
+    private bool PlayPullAnimation()
+    {
+        if (!playPullAnimationOnInteract || string.IsNullOrWhiteSpace(pullAnimationTrigger))
+        {
+            return false;
+        }
+
+        Movement movement = ResolvePlayerMovement();
+        return movement != null
+            && movement.TryPlayAnimationTrigger(pullAnimationTrigger, requireCatFormForPullAnimation);
     }
 
     private void PlaySfx()

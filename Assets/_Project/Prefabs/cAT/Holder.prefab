@@ -102,7 +102,6 @@ GameObject:
   - component: {fileID: 6658462399439070772}
   - component: {fileID: 1021147114606840890}
   - component: {fileID: 1543462954959192638}
-  - component: {fileID: 1302966737208963260}
   m_Layer: 0
   m_Name: Holder
   m_TagString: Untagged
@@ -187,22 +186,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CarryableInteractable
   carryId: cat_bowl
   carryPrefab: {fileID: 7705160456123337343, guid: 22bac8f94c41fa8428335e4eec15866a, type: 3}
+  carryScaleSource: {fileID: 0}
+  carriedScaleMultiplier: {x: 1, y: 1, z: 1}
   hideSourceOnGrab: 1
   hideSourceWhenAlreadyCarried: 1
   allowReplaceCurrentCarry: 0
---- !u!114 &1302966737208963260
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8653748832145511496}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9e0190c97ad07c94c820958bd3a509d3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::InteractButton
-  button: {fileID: 123591796738715558}
 --- !u!1001 &5801356881294988327
 PrefabInstance:
   m_ObjectHideFlags: 0

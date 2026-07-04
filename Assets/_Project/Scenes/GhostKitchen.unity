@@ -846,6 +846,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: acfb272cdcd1fcd49a51afedbd6f635e, type: 3}
+--- !u!114 &865066913 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2689432705537179304, guid: acfb272cdcd1fcd49a51afedbd6f635e, type: 3}
+  m_PrefabInstance: {fileID: 865066912}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4fb32b39b2d344c4b8eaa5964bc12191, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Movement
 --- !u!1 &874427216
 GameObject:
   m_ObjectHideFlags: 0
@@ -1581,7 +1592,7 @@ GameObject:
   - component: {fileID: 1969541583}
   - component: {fileID: 1969541582}
   - component: {fileID: 1969541581}
-  - component: {fileID: 1969541580}
+  - component: {fileID: 1969541584}
   m_Layer: 0
   m_Name: GoInto
   m_TagString: Untagged
@@ -1589,19 +1600,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1969541580
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1969541579}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1c6580f15c5098346b1dc8ffaf80cc17, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SceneLoadInteractable
-  targetScene: 5
 --- !u!114 &1969541581
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1615,6 +1613,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InteractButton
   button: {fileID: 2013918363}
+  restrictByForm: 0
+  requiredForm: 0
 --- !u!61 &1969541582
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -1649,7 +1649,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: -0.28024864, y: 0.6280386}
+  m_Offset: {x: -0.2650503, y: 0.6812321}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -1659,7 +1659,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 1.7405615, y: 1.7593626}
+  m_Size: {x: 1.3758056, y: 1.470598}
   m_EdgeRadius: 0
 --- !u!4 &1969541583
 Transform:
@@ -1677,6 +1677,26 @@ Transform:
   - {fileID: 2013918365}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1969541584
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1969541579}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b7aa72e6987349f3bb069d8851f8f2f1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerAnimatedSceneLoadInteractable
+  targetScene: 5
+  playerMovement: {fileID: 865066913}
+  animationTrigger: IsPicture
+  animationStateName: GoToPicture
+  requireCatForm: 0
+  lockMovementDuringAnimation: 1
+  hidePlayerAfterAnimation: 1
+  fallbackAnimationDuration: 0.6
 --- !u!1 &2013918363
 GameObject:
   m_ObjectHideFlags: 0
@@ -2036,6 +2056,22 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 153834658342999837, guid: 98aed88c798876c4ca1ede5ce9981c85, type: 3}
+      propertyPath: targetScene
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 153834658342999837, guid: 98aed88c798876c4ca1ede5ce9981c85, type: 3}
+      propertyPath: playerMovement
+      value: 
+      objectReference: {fileID: 865066913}
+    - target: {fileID: 1302966737208963260, guid: 98aed88c798876c4ca1ede5ce9981c85, type: 3}
+      propertyPath: requiredForm
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1302966737208963260, guid: 98aed88c798876c4ca1ede5ce9981c85, type: 3}
+      propertyPath: restrictByForm
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1543462954959192638, guid: 98aed88c798876c4ca1ede5ce9981c85, type: 3}
       propertyPath: carryPrefab
       value: 
@@ -2044,6 +2080,10 @@ PrefabInstance:
       propertyPath: carryScaleSource
       value: 
       objectReference: {fileID: 7810780135023821534}
+    - target: {fileID: 1543462954959192638, guid: 98aed88c798876c4ca1ede5ce9981c85, type: 3}
+      propertyPath: allowReplaceCurrentCarry
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6658462399439070772, guid: 98aed88c798876c4ca1ede5ce9981c85, type: 3}
       propertyPath: m_LocalPosition.x
       value: 2

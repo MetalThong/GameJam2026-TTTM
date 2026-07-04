@@ -1,3 +1,4 @@
+using System;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 
@@ -8,7 +9,7 @@ public class SceneLoadInteractable : MonoBehaviour, IInteractable
     private readonly SceneLoader _sceneLoader = new();
     private bool _isLoading = false;
 
-    public bool TryInteract()
+    public virtual bool TryInteract()
     {
         if (_isLoading)
         {
@@ -25,6 +26,8 @@ public class SceneLoadInteractable : MonoBehaviour, IInteractable
 
         try
         {
+            await BeforeLoadAsync();
+
             if (GameManager.Instance != null)
             {
                 GameManager.Instance.SetState(GameState.Playing);
@@ -37,9 +40,17 @@ public class SceneLoadInteractable : MonoBehaviour, IInteractable
 
             await _sceneLoader.FadeLoadAsync(targetScene);
         }
+        catch (OperationCanceledException)
+        {
+        }
         finally
         {
             _isLoading = false;
         }
+    }
+
+    protected virtual UniTask BeforeLoadAsync()
+    {
+        return UniTask.CompletedTask;
     }
 }
