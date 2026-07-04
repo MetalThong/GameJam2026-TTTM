@@ -346,6 +346,17 @@ Important current limitation: `UIPanelView.Id` has only a getter and is not seri
 
 `UI.prefab` also owns a `Mission` HUD object with `MissionView`. `MissionView` listens to `FlagChangedEvent` and `FlagsLoadedEvent`, maps configured `MissionDefinition` entries from an assigned flag to a completed flag, and localizes mission title text through `LocalizationManager`. Missions now require a real assigned flag so they do not appear by default. When an assigned flag turns on, it fades the `(!) Mission title` text in while sliding it down into place. When the matching completed flag turns on, it wraps the text with TMP strikethrough, waits briefly, then fades the mission out while sliding it upward. On loaded saves, an assigned-but-incomplete mission is restored instantly without replaying the assignment animation. The current first Bedroom mission is `Giúp chủ nhân tỉnh dậy`, assigned by `waked_up` after the WakeUpPanel flow finishes and completed by `waked_boss_up` when the owner wakes up.
 
+### Minigames
+
+Files:
+
+- `Assets/_Project/Scripts/Minigame/WashingMinigameController.cs`
+- `Assets/_Project/Prefabs/Minigame/Washing.prefab`
+
+`WashingMinigameController` drives the current Kitchen washing prototype. For testing, `Washing.prefab` keeps its root active but hides all minigame children until the player presses `Enter` or numpad Enter; then it reveals the minigame, locks movement by putting `GameManager` into `OnDialog`, and starts the tutorial. It reads `Keyboard.current.eKey.wasPressedThisFrame` directly like the current interaction/dialogue code. The first dish is a tutorial round: `DirtyDish (1)` moves from its starting point to the `Check` collider with an ease-out slowdown, stops at the valid overlap, then fades/pulses `ButtonE` to ask for input. Later dishes start from the same point, move through a fail point past `Check`, and get faster after every success. Pressing `E` inside the timing window around the moving dish hitbox and `Check` trigger plays the `WashingCat` `Wash` animation once, fades/scales the dish as consumed, then starts another round. The window is measured on local X from both collider widths plus a small padding so faster rounds do not miss because of narrow frame-by-frame bounds overlap. Pressing outside the window during active input or letting a normal dish pass the fail point sets `GameState.GameOver` and opens `PanelId.Lose` through `UIManager`.
+
+Default washing tuning is endless-until-fail for testing: tutorial travel duration `3` seconds, normal travel duration `2` seconds, speed multiplier `0.9` per success, minimum travel duration `0.75` seconds, wash lockout `0.33` seconds, and fail distance `1.2` local units past the check point. Story/interact/flag gating is intentionally left for a later pass.
+
 ### Main Menu
 
 Files:

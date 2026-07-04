@@ -501,13 +501,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TemporaryChat
   spr: {fileID: 484845393}
-  showDelay: 0
+  showDelay: 3
   exsitsTime: 2
   fadeDuration: 0.5
-  lockMovementWhileVisible: 0
-  deactivateAfterFade: 0
-  completionFlag: 
-  deactivateTarget: {fileID: 0}
+  lockMovementWhileVisible: 1
+  deactivateAfterFade: 1
+  completionFlag: chat_completed_go_down_hall
+  deactivateTarget: {fileID: 484845392}
 --- !u!1 &534949471
 GameObject:
   m_ObjectHideFlags: 0
@@ -1368,7 +1368,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::FlagBasedObject
   target: {fileID: 484845392}
   requiredFlag: went_down_hall
-  blockedFlag: 
+  blockedFlag: chat_completed_go_down_hall
   activeWhenFlagExists: 1
 --- !u!61 &947290378
 BoxCollider2D:
