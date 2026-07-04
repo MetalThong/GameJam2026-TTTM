@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0df2ddcceb2389b4d864a64d8b7d2cf4, type: 3}
+  m_Name: SO_Dialogue_StoreRoomCleanCobwebsIntro
+  m_EditorClassIdentifier: 
+  background: {fileID: 0}
+  lines:
+  - speakerName: Silly
+    englishSpeakerName: Silly
+    text: "C\u1EADu ch\u1EE7 \u1EDF \u0111\u00E2y... ph\u00F2ng kho nhi\u1EC1u m\u1EA1ng nh\u1EC7n qu\u00E1."
+    englishText: He is here... the storage room is full of cobwebs.
+    portrait: {fileID: 6468568510307345621, guid: 0c05e137063d43e429af4b01ffae35ac, type: 3}
+  - speakerName: Silly
+    englishSpeakerName: Silly
+    text: "\u00C0, m\u00ECnh s\u1EBD gi\u00FAp c\u1EADu \u1EA5y b\u1EB1ng c\u00E1ch d\u1ECDn h\u1EBFt m\u1EA1ng nh\u1EC7n trong ph\u00F2ng."
+    englishText: Oh, I can help him by clearing all the cobwebs in this room.
+    portrait: {fileID: 6468568510307345621, guid: 0c05e137063d43e429af4b01ffae35ac, type: 3}

@@ -10,6 +10,7 @@ public class CatMeowMashInteractable : MashStoryInteractable
     [SerializeField] private DialogueManager dialogueManager;
     [SerializeField] private DialogueSO dialogue;
     [SerializeField] private string meowSfxId = "cat_meow";
+    [SerializeField, Min(0f)] private float meowSfxCooldown = 0.25f;
 
     [Header("Owner Spawn")]
     [Tooltip("Optional direct prefab reference. If empty, ownerResourcePath is loaded from Resources.")]
@@ -41,6 +42,7 @@ public class CatMeowMashInteractable : MashStoryInteractable
 
     private bool _isPlaying;
     private GameObject _spawnedOwner;
+    private float _lastMeowSfxTime = float.NegativeInfinity;
 
     protected override void Interact()
     {
@@ -153,6 +155,12 @@ public class CatMeowMashInteractable : MashStoryInteractable
 
     private void PlayMeowSfx()
     {
+        if (Time.time < _lastMeowSfxTime + meowSfxCooldown)
+        {
+            return;
+        }
+
+        _lastMeowSfxTime = Time.time;
         AudioFeedback.PlaySfx(meowSfxId);
     }
 
