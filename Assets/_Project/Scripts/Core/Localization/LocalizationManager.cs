@@ -61,6 +61,11 @@ public sealed class LocalizationManager : MonoBehaviour
     /// </summary>
     public string Get(string key)
     {
+        if (string.IsNullOrWhiteSpace(key))
+        {
+            return string.Empty;
+        }
+
         if (CurrentLanguage == Language.Cat && !IsCatLanguageExemptKey(key))
         {
             return CatText;
@@ -104,8 +109,8 @@ public sealed class LocalizationManager : MonoBehaviour
         return language switch
         {
             Language.English => "English",
-            Language.Cat => "Tiếng Mèo",
-            _ => "Tiếng Việt"
+            Language.Cat => "Ti\u1EBFng M\u00E8o",
+            _ => "Ti\u1EBFng Vi\u1EC7t"
         };
     }
 

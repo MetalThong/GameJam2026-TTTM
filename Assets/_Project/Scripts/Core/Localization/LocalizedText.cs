@@ -49,7 +49,7 @@ public sealed class LocalizedText : MonoBehaviour
 
     private void Refresh()
     {
-        if (_text == null || LocalizationManager.Instance == null)
+        if (_text == null || LocalizationManager.Instance == null || string.IsNullOrWhiteSpace(key))
         {
             return;
         }
