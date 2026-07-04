@@ -11,7 +11,7 @@ public sealed class SpeakerDanceInteractable : MonoBehaviour, IInteractable, IIn
     [SerializeField] private string promptLocalizationKey = "prompt.dance";
     [SerializeField] private string danceStateName = "DancingText";
     [SerializeField, Min(0.05f)] private float fallbackDanceDuration = 1f;
-    [SerializeField] private bool requireCatForm = true;
+    [SerializeField] private bool requireCatForm;
     [SerializeField] private bool lockGameStateDuringDance = true;
 
     private bool _isDancing;

@@ -19,6 +19,11 @@ public class SceneLoadInteractable : MonoBehaviour, IInteractable, IInteractionP
             return false;
         }
 
+        if (TryGetComponent(out InteractButton interactButton))
+        {
+            interactButton.HidePromptImmediately();
+        }
+
         LoadAsync().Forget();
         return true;
     }
