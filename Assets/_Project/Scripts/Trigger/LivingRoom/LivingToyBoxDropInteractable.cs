@@ -24,21 +24,29 @@ public sealed class LivingToyBoxDropInteractable : StoryInteractable
     [SerializeField] private GameObject cutSceneObject;
     [SerializeField] private CutSceneDialoguePlayer cutScenePlayer;
     [SerializeField] private bool hideCutSceneObjectOnComplete = true;
+    [SerializeField, Min(0f)] private float cutSceneFadeInDuration = 0.18f;
+    [SerializeField, Min(0f)] private float cutSceneHoldAfterPlayback = 0.2f;
+    [SerializeField, Min(0f)] private float cutSceneFadeOutDuration = 0.28f;
+    [SerializeField] private Ease cutSceneFadeEase = Ease.OutQuad;
 
     [Header("Flags")]
     [SerializeField] private string completionFlagId = "dropped_box";
 
     [Header("Visibility")]
     [SerializeField] private GameObject[] hideOnStart;
+    [SerializeField] private GameObject[] hideOnComplete;
+    [SerializeField] private bool hideToyBoxOnComplete = true;
     [SerializeField] private GameObject[] showOnComplete;
     [SerializeField] private bool deactivateOnComplete;
 
     private bool _isPlaying;
     private Tween _moveTween;
+    private Tween _cutSceneFadeTween;
 
     private void OnDestroy()
     {
         _moveTween?.Kill();
+        _cutSceneFadeTween?.Kill();
     }
 
     protected override bool CanInteract()
@@ -79,6 +87,7 @@ public sealed class LivingToyBoxDropInteractable : StoryInteractable
 
             await PlayCutSceneAsync(destroyToken);
 
+            HideCompletionTargets();
             ExecuteAction();
             SetCompletionFlag();
             SetTargetsActive(showOnComplete, true);
@@ -151,15 +160,22 @@ public sealed class LivingToyBoxDropInteractable : StoryInteractable
 
     private async UniTask PlayCutSceneAsync(CancellationToken cancellationToken)
     {
-        if (cutSceneObject != null)
-        {
-            cutSceneObject.SetActive(true);
-        }
-
         CutSceneDialoguePlayer player = ResolveCutScenePlayer();
         if (player == null)
         {
             return;
+        }
+
+        SpriteRenderer[] cutSceneRenderers = cutSceneObject != null
+            ? cutSceneObject.GetComponentsInChildren<SpriteRenderer>(true)
+            : player.GetComponentsInChildren<SpriteRenderer>(true);
+        float[] originalAlphas = CaptureRendererAlphas(cutSceneRenderers);
+
+        if (cutSceneObject != null)
+        {
+            SetRendererAlphas(cutSceneRenderers, 0f);
+            cutSceneObject.SetActive(true);
+            await FadeRenderersAsync(cutSceneRenderers, originalAlphas, cutSceneFadeInDuration, cancellationToken);
         }
 
         if (!player.gameObject.activeSelf)
@@ -169,9 +185,147 @@ public sealed class LivingToyBoxDropInteractable : StoryInteractable
 
         await player.PlayAsync(cancellationToken);
 
+        if (cutSceneHoldAfterPlayback > 0f)
+        {
+            await UniTask.Delay(TimeSpan.FromSeconds(cutSceneHoldAfterPlayback), cancellationToken: cancellationToken);
+        }
+
         if (hideCutSceneObjectOnComplete && cutSceneObject != null && !cancellationToken.IsCancellationRequested)
         {
+            await FadeRenderersToAlphaAsync(cutSceneRenderers, 0f, cutSceneFadeOutDuration, cancellationToken);
             cutSceneObject.SetActive(false);
+            RestoreRendererAlphas(cutSceneRenderers, originalAlphas);
+        }
+    }
+
+    private async UniTask FadeRenderersToAlphaAsync(
+        SpriteRenderer[] renderers,
+        float alpha,
+        float duration,
+        CancellationToken cancellationToken)
+    {
+        if (renderers == null || renderers.Length == 0)
+        {
+            return;
+        }
+
+        float[] targetAlphas = new float[renderers.Length];
+        for (int i = 0; i < targetAlphas.Length; i++)
+        {
+            targetAlphas[i] = alpha;
+        }
+
+        await FadeRenderersAsync(renderers, targetAlphas, duration, cancellationToken);
+    }
+
+    private async UniTask FadeRenderersAsync(
+        SpriteRenderer[] renderers,
+        float[] targetAlphas,
+        float duration,
+        CancellationToken cancellationToken)
+    {
+        if (renderers == null || renderers.Length == 0 || targetAlphas == null)
+        {
+            return;
+        }
+
+        if (duration <= 0f)
+        {
+            RestoreRendererAlphas(renderers, targetAlphas);
+            return;
+        }
+
+        _cutSceneFadeTween?.Kill();
+        Sequence sequence = DOTween.Sequence();
+        bool hasTween = false;
+
+        for (int i = 0; i < renderers.Length && i < targetAlphas.Length; i++)
+        {
+            SpriteRenderer renderer = renderers[i];
+            if (renderer == null)
+            {
+                continue;
+            }
+
+            sequence.Join(renderer.DOFade(targetAlphas[i], duration).SetEase(cutSceneFadeEase));
+            hasTween = true;
+        }
+
+        if (!hasTween)
+        {
+            sequence.Kill();
+            return;
+        }
+
+        _cutSceneFadeTween = sequence;
+        using (cancellationToken.Register(() => sequence.Kill()))
+        {
+            await sequence.AsyncWaitForCompletion();
+        }
+
+        if (_cutSceneFadeTween == sequence)
+        {
+            _cutSceneFadeTween = null;
+        }
+
+        cancellationToken.ThrowIfCancellationRequested();
+    }
+
+    private static float[] CaptureRendererAlphas(SpriteRenderer[] renderers)
+    {
+        if (renderers == null)
+        {
+            return Array.Empty<float>();
+        }
+
+        float[] alphas = new float[renderers.Length];
+        for (int i = 0; i < renderers.Length; i++)
+        {
+            alphas[i] = renderers[i] != null ? renderers[i].color.a : 1f;
+        }
+
+        return alphas;
+    }
+
+    private static void SetRendererAlphas(SpriteRenderer[] renderers, float alpha)
+    {
+        if (renderers == null)
+        {
+            return;
+        }
+
+        for (int i = 0; i < renderers.Length; i++)
+        {
+            SpriteRenderer renderer = renderers[i];
+            if (renderer == null)
+            {
+                continue;
+            }
+
+            Color color = renderer.color;
+            color.a = alpha;
+            renderer.color = color;
+        }
+    }
+
+    private static void RestoreRendererAlphas(SpriteRenderer[] renderers, float[] alphas)
+    {
+        if (renderers == null || alphas == null)
+        {
+            return;
+        }
+
+        for (int i = 0; i < renderers.Length && i < alphas.Length; i++)
+        {
+            SpriteRenderer renderer = renderers[i];
+            if (renderer == null)
+            {
+                continue;
+            }
+
+            Color color = renderer.color;
+            color.a = alphas[i];
+            renderer.color = color;
         }
     }
 
@@ -203,6 +357,16 @@ public sealed class LivingToyBoxDropInteractable : StoryInteractable
         }
 
         FlagManager.Instance.SetFlag(completionFlagId, true);
+    }
+
+    private void HideCompletionTargets()
+    {
+        SetTargetsActive(hideOnComplete, false);
+
+        if (hideToyBoxOnComplete && toyBoxTransform != null)
+        {
+            toyBoxTransform.gameObject.SetActive(false);
+        }
     }
 
     private static void SetTargetsActive(GameObject[] targets, bool active)

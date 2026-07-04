@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0df2ddcceb2389b4d864a64d8b7d2cf4, type: 3}
+  m_Name: SO_Dialogue_LivingRoomTransform
+  m_EditorClassIdentifier: 
+  background: {fileID: 0}
+  lines:
+  - speakerName: Silly
+    englishSpeakerName: Silly
+    text: "Ơ... sao tự nhiên mình lại biến thành dạng này?"
+    englishText: "Huh... why did I suddenly turn into this form?"
+    portrait: {fileID: 6468568510307345621, guid: 0c05e137063d43e429af4b01ffae35ac, type: 3}
+  - speakerName: Silly
+    englishSpeakerName: Silly
+    text: "Phải chọc giận ông chủ mới được."
+    englishText: "I need to make the owner angry."
+    portrait: {fileID: 6468568510307345621, guid: 0c05e137063d43e429af4b01ffae35ac, type: 3}
+  - speakerName: Silly
+    englishSpeakerName: Silly
+    text: "DÁM KHÔNG VUỐT VE CẢM ƠN TA."
+    englishText: "How dare he refuse to pet me and thank me."
+    portrait: {fileID: 6468568510307345621, guid: 0c05e137063d43e429af4b01ffae35ac, type: 3}

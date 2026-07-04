@@ -31,8 +31,10 @@ If a user asks for a code change and the change affects architecture, assume `AR
 Assets/
   _Project/
     Prefabs/
+      Boss/
       Core/
         PersistantRoot.prefab
+      Minigame/
       cAT/
       ui/
     Resources/
@@ -40,7 +42,10 @@ Assets/
       Bootstrap.unity
       MainMenu.unity
       BedRoom.unity
-      Hall.unity
+      HallUp.unity
+      HallDown.unity
+      Kitchen.unity
+      LivingRoom.unity
     Scripts/
       CatMovement/
       Core/
@@ -56,7 +61,9 @@ Assets/
       Dialogue/
       Enum/
       Event/
+      CutScene/
       MainMenu/
+      Minigame/
       Trigger/
   Plugins/
     Demigiant/DOTween/
@@ -78,12 +85,17 @@ Current Build Settings include:
 1. `Assets/_Project/Scenes/Bootstrap.unity`
 2. `Assets/_Project/Scenes/MainMenu.unity`
 3. `Assets/_Project/Scenes/BedRoom.unity`
+4. `Assets/_Project/Scenes/HallUp.unity`
+5. `Assets/_Project/Scenes/HallDown.unity`
+6. `Assets/_Project/Scenes/HallUp.unity`
+7. `Assets/_Project/Scenes/LivingRoom.unity`
+8. `Assets/_Project/Scenes/HallUp.unity`
 
 `Bootstrap.unity` owns the startup object `Bootstraper`. It instantiates `Assets/_Project/Prefabs/Core/PersistantRoot.prefab` if the persistent root is not already present, initializes managers, then loads the configured start scene.
 
 `MainMenu.unity` is currently the configured start scene through `SceneId.MainMenu`.
 
-`Hall.unity` exists under `Assets/_Project/Scenes`, and `SceneId.Hall` exists in code, but Hall is not currently enabled in Build Settings.
+`Kitchen.unity` exists under `Assets/_Project/Scenes`, but there is currently no `SceneId.Kitchen` and Kitchen is not currently enabled in Build Settings. `HallUp.unity` is listed multiple times in Build Settings; clean this up when scene routing settles.
 
 ## Core Prefab
 
@@ -106,24 +118,30 @@ The root is marked with `DontDestroyOnLoad`, so these services survive scene cha
 
 - Bootstrap: `Bootstrapper` creates the persistent root, initializes `GameManager`, and loads the start scene with `SceneLoader`.
 - Game state: `GameManager` stores `GameState` and exposes state transitions such as pause, resume, restart, and quit-to-menu.
-- Scene loading: `SceneLoader` loads scenes asynchronously with UniTask and guards against duplicate concurrent loads.
+- Scene loading: `SceneLoader` loads scenes asynchronously with UniTask, guards against duplicate concurrent loads, and supports fade transitions through `FadePanel`.
 - Input: `InputManager` wraps an `InputActionAsset`; `InputReader` exposes movement/look values and gameplay action events.
 - Audio: `AudioManager` plays music and SFX from `AudioLibrary`, supports spatial one-shot SFX, writes volume values to an `AudioMixer` when configured, and falls back to direct runtime `AudioSource` volume.
 - Camera: `CameraManager` manages a Cinemachine camera, follow/look-at target, zoom, priority, bounds, and impulse shake.
 - Save: `SaveManager` stores `SaveData` as JSON in `Application.persistentDataPath`; saveable objects implement `ISaveable`.
 - UI: `UIManager` opens/closes registered `UIPanelView` instances by `PanelId`.
-- Dialogue: `DialogueSO` assets feed the scene `DialogueManager` and `DialogueView`; `E` reveals the current typed line first, then advances once the line is fully visible.
+- Dialogue: `DialogueSO` assets feed the scene `DialogueManager` and `DialogueView`; `E` reveals the current typed line first, then advances once the line is fully visible. Dialogue locks movement with `GameState.OnDialog` and restores the previous state when complete.
 - Main Menu: runtime components under `Assets/_Project/Scripts/MainMenu` bind the `MainMenu.unity` buttons, control start/continue/quit flow, hide Continue until a save exists, and provide settings controls for music, SFX, and language.
 - Story flags and triggers: runtime components under `Assets/_Project/Scripts/Trigger` store story flags, gate triggers/interactions with required and blocked flag conditions, execute set/unset flag actions, refresh flag-based objects through events, and persist flags through `SaveData`.
 - Interaction: `CatInteractor` tracks overlapping `IInteractable` targets, skips gameplay interactions while dialogue is playing or just closed, and calls the first valid `TryInteract()` on `E`; `InteractButton` shows or hides an assigned prompt object while the Player is in range.
+- Localization: `LocalizationManager`, `LocalizationTable`, and `LocalizedText` support Vietnamese, English, and Cat language. Cat language returns `Meow` for normal strings/dialogue except the three readable language picker labels.
+- Mission HUD: `MissionView` watches story flags and shows assigned missions with fade/slide animation, then strikethrough and fades completed missions out.
+- Cutscenes: `CutSceneDialoguePlayer` can play an Animator or legacy Animation once, optionally freeze on the last frame, then play a `DialogueSO`.
+- Minigames: `WashingMinigameController` currently drives the Kitchen washing prototype. `Washing.prefab` stays hidden until `Enter`/numpad Enter, then uses `E` for timing hits and opens `Lose` on fail.
+- LivingRoom story flow: `LivingRoomChatTransformSequence` handles the form-change/dialogue/mission beat after the first ChatTrigger bubble completes, while `LivingToyBoxDropInteractable`, `OwnerBoxPickupSequence`, and `PushFlagObject` handle the toy-box/drop-owner pickup sequence with flags, SFX, tweening, cutscene, and dialogue.
 - Pooling: `PrefabPool<T>` wraps Unity `ObjectPool<T>` for prefab instances implementing `IPoolable`.
 - Events: `EventBus` is a static typed pub/sub helper for gameplay events.
 
 ## Current Enums
 
-- `SceneId`: `MainMenu`, `BedRoom`, `Hall`
-- `GameState`: `Booting`, `MainMenu`, `Playing`, `Paused`, `GameOver`
+- `SceneId`: `MainMenu`, `BedRoom`, `HallUp`, `LivingRoom`, `HallDown`
+- `GameState`: `Booting`, `MainMenu`, `Playing`, `Paused`, `GameOver`, `OnDialog`
 - `PanelId`: `Loading`, `Settings`, `Pause`, `Win`, `Lose`
+- `Language`: `Vietnamese`, `English`, `Cat`
 
 ## Setup
 
