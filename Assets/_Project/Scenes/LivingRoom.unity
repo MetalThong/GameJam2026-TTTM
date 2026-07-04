@@ -149,7 +149,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: cee527b7e00ac94478642d638ad43148, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StoryTrigger
   triggerId: go_living_room
   triggerOnce: 1
@@ -172,7 +172,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 27dbe4b6646beb24bbd2838499029c91, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FlagBasedObject
   target: {fileID: 924448120}
   requiredFlag: went_living_room
@@ -250,7 +250,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5f9c4e9c91a64e0f99d2d64b8e6a5a21, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LivingRoomChatTransformSequence
   startFlag: chat_completed_go_living_room
   completionFlag: post_chat_go_living_room_complete
@@ -692,11 +692,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7878350319992209165, guid: 8a4fc9da7577ba9448dd5b4ad1297202, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -1.017
+      value: -0.88
       objectReference: {fileID: 0}
     - target: {fileID: 7878350319992209165, guid: 8a4fc9da7577ba9448dd5b4ad1297202, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.168
+      value: 0.175
       objectReference: {fileID: 0}
     - target: {fileID: 7878350319992209165, guid: 8a4fc9da7577ba9448dd5b4ad1297202, type: 3}
       propertyPath: m_LocalPosition.z
@@ -1484,7 +1484,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InteractButton
   button: {fileID: 2144297272}
+  extraPromptObjects: []
   fallbackPromptKey: prompt.interact
+  animateExtraPromptObjects: 1
+  extraPromptFadeInDuration: 0.2
+  extraPromptFadeOutDuration: 0.12
   restrictByForm: 0
   requiredForm: 0
 --- !u!61 &815857768
@@ -1632,9 +1636,9 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
-  m_SortingLayerID: 1346041461
-  m_SortingLayer: 3
-  m_SortingOrder: 0
+  m_SortingLayerID: 1582462807
+  m_SortingLayer: 6
+  m_SortingOrder: 10
   m_MaskInteraction: 0
   m_Sprite: {fileID: 2708747827404127620, guid: fe63a3153710a4c4d83d16a520e4936d, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -1741,7 +1745,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InteractButton
   button: {fileID: 247842110}
+  extraPromptObjects: []
   fallbackPromptKey: prompt.interact
+  animateExtraPromptObjects: 1
+  extraPromptFadeInDuration: 0.2
+  extraPromptFadeOutDuration: 0.12
   restrictByForm: 0
   requiredForm: 0
 --- !u!61 &1015589339
@@ -1949,7 +1957,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InteractButton
   button: {fileID: 1689855178}
+  extraPromptObjects: []
   fallbackPromptKey: prompt.interact
+  animateExtraPromptObjects: 1
+  extraPromptFadeInDuration: 0.2
+  extraPromptFadeOutDuration: 0.12
   restrictByForm: 1
   requiredForm: 0
 --- !u!61 &1147377917
@@ -2054,11 +2066,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7878350319992209165, guid: 8d4d1054e91f85d458f4f9d93af3f14a, type: 3}
       propertyPath: m_LocalScale.x
-      value: 1.2430869
+      value: 1.3181694
       objectReference: {fileID: 0}
     - target: {fileID: 7878350319992209165, guid: 8d4d1054e91f85d458f4f9d93af3f14a, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.0028
+      value: -0.0749
       objectReference: {fileID: 0}
     - target: {fileID: 7878350319992209165, guid: 8d4d1054e91f85d458f4f9d93af3f14a, type: 3}
       propertyPath: m_LocalPosition.y
@@ -2142,6 +2154,7 @@ Transform:
   - {fileID: 1118575981}
   - {fileID: 297157437}
   - {fileID: 630304110}
+  - {fileID: 1443474076}
   m_Father: {fileID: 945319116}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1369435205
@@ -2298,6 +2311,97 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
+--- !u!1 &1443474075
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1443474076}
+  - component: {fileID: 1443474077}
+  m_Layer: 0
+  m_Name: Living door
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1443474076
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1443474075}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -1.271, y: 0.084, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 1
+  m_Children: []
+  m_Father: {fileID: 1369435204}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!212 &1443474077
+SpriteRenderer:
+  serializedVersion: 2
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1443474075}
+  m_Enabled: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 0
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 0
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 0
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
+  m_SortingLayerID: 1843868011
+  m_SortingLayer: 5
+  m_SortingOrder: 0
+  m_MaskInteraction: 0
+  m_Sprite: {fileID: -6054700944055236759, guid: b0ac12e75fd75ec4ba1d83294811b029, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_FlipX: 0
+  m_FlipY: 0
+  m_DrawMode: 0
+  m_Size: {x: 0.15, y: 1}
+  m_AdaptiveModeThreshold: 0.5
+  m_SpriteTileMode: 0
+  m_WasSpriteAssigned: 1
+  m_SpriteSortPoint: 0
 --- !u!1 &1530424295
 GameObject:
   m_ObjectHideFlags: 0
@@ -2330,7 +2434,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InteractButton
   button: {fileID: 121360871}
+  extraPromptObjects: []
   fallbackPromptKey: prompt.interact
+  animateExtraPromptObjects: 1
+  extraPromptFadeInDuration: 0.2
+  extraPromptFadeOutDuration: 0.12
   restrictByForm: 1
   requiredForm: 0
 --- !u!61 &1530424298
@@ -2419,6 +2527,7 @@ MonoBehaviour:
   toyBoxTransform: {fileID: 1118575981}
   moveTarget: {fileID: 0}
   moveOffset: {x: 0.25, y: 0, z: 0}
+  moveStartDelay: 0.5
   moveDuration: 0.85
   moveEase: 6
   preserveCurrentZ: 1
@@ -2439,6 +2548,11 @@ MonoBehaviour:
   cutSceneFadeEase: 6
   playerMovement: {fileID: 1960256532}
   changePlayerFormAfterDialogue: 1
+  postDialogueFormDelay: 1
+  playerSprite: {fileID: 0}
+  postDialogueFormFadeOutDuration: 0.2
+  postDialogueFormHoldDuration: 0.08
+  postDialogueFormFadeInDuration: 0.25
   postDialogueForm: 1
   completionFlagId: dropped_box
   hideOnStart: []
@@ -2500,12 +2614,24 @@ MonoBehaviour:
   flipOwnerOnSpawn: 1
   disableAnimatorOnSpawn: 1
   spawnFadeDuration: 0.25
-  pickupAnimationState: 
-  waitForPickupAnimation: 0
-  fallbackAnimationDuration: 0
+  pickupAnimationState: BossBeDo
+  waitForPickupAnimation: 1
+  fallbackAnimationDuration: 0.8
   postAnimationDelay: 0
+  playExitAfterPickup: 1
+  exitAnimationState: BossWalk
+  exitMoveOffset: {x: 2.4, y: 0, z: 0}
+  exitMoveDuration: 1.45
+  exitFadeOutDuration: 0.45
+  waitForExitAnimation: 0
+  exitFallbackAnimationDuration: 0.8
+  exitPostAnimationDelay: 0
+  destroyOwnerAfterExit: 1
+  faceExitMoveDirection: 1
+  flipOwnerWhenMovingRight: 1
   dialogueManager: {fileID: 0}
   dialogue: {fileID: 0}
+  postExitDialogue: {fileID: 11400000, guid: 74c18aace7de412f8d07d94e6effd379, type: 2}
   completionFlagId: picked_up_box
   deactivateOnComplete: 1
 --- !u!1 &1689855178
@@ -2728,7 +2854,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a9b2e5a9874f45b79cb16c601d8f3073, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GhostPassThroughCollider
   targetCollider: {fileID: 1842993551}
   includeChildColliders: 0
@@ -3023,7 +3149,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a9b2e5a9874f45b79cb16c601d8f3073, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GhostPassThroughCollider
   targetCollider: {fileID: 1864635310}
   includeChildColliders: 0
@@ -3572,7 +3698,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a9b2e5a9874f45b79cb16c601d8f3073, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GhostPassThroughCollider
   targetCollider: {fileID: 2015690245}
   includeChildColliders: 0
@@ -3711,7 +3837,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InteractButton
   button: {fileID: 404213126}
+  extraPromptObjects: []
   fallbackPromptKey: prompt.interact
+  animateExtraPromptObjects: 1
+  extraPromptFadeInDuration: 0.2
+  extraPromptFadeOutDuration: 0.12
   restrictByForm: 1
   requiredForm: 0
 --- !u!61 &2098560833

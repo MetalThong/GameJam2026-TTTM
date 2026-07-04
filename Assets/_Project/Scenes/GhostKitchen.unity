@@ -785,13 +785,29 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1773647264048704139, guid: acfb272cdcd1fcd49a51afedbd6f635e, type: 3}
+      propertyPath: m_Size.x
+      value: 0.68
+      objectReference: {fileID: 0}
+    - target: {fileID: 1773647264048704139, guid: acfb272cdcd1fcd49a51afedbd6f635e, type: 3}
+      propertyPath: m_Size.y
+      value: 0.82
+      objectReference: {fileID: 0}
+    - target: {fileID: 1773647264048704139, guid: acfb272cdcd1fcd49a51afedbd6f635e, type: 3}
+      propertyPath: m_Offset.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1773647264048704139, guid: acfb272cdcd1fcd49a51afedbd6f635e, type: 3}
+      propertyPath: m_Offset.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2291035196233133428, guid: acfb272cdcd1fcd49a51afedbd6f635e, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 4.4
+      value: 2.96
       objectReference: {fileID: 0}
     - target: {fileID: 2291035196233133428, guid: acfb272cdcd1fcd49a51afedbd6f635e, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -2.76
+      value: -3.11
       objectReference: {fileID: 0}
     - target: {fileID: 2291035196233133428, guid: acfb272cdcd1fcd49a51afedbd6f635e, type: 3}
       propertyPath: m_LocalPosition.z
@@ -824,6 +840,10 @@ PrefabInstance:
     - target: {fileID: 2291035196233133428, guid: acfb272cdcd1fcd49a51afedbd6f635e, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2689432705537179304, guid: acfb272cdcd1fcd49a51afedbd6f635e, type: 3}
+      propertyPath: startingForm
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3944025776184687024, guid: acfb272cdcd1fcd49a51afedbd6f635e, type: 3}
       propertyPath: m_Name
@@ -1156,6 +1176,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5890123172026945067, guid: 22bac8f94c41fa8428335e4eec15866a, type: 3}
+      propertyPath: m_SortingOrder
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 7705160456123337343, guid: 22bac8f94c41fa8428335e4eec15866a, type: 3}
       propertyPath: m_Name
       value: SillyBow
@@ -1163,13 +1187,41 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 7705160456123337343, guid: 22bac8f94c41fa8428335e4eec15866a, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1047619555}
   m_SourcePrefab: {fileID: 100100000, guid: 22bac8f94c41fa8428335e4eec15866a, type: 3}
 --- !u!4 &1047619552 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4031173738817651412, guid: 22bac8f94c41fa8428335e4eec15866a, type: 3}
   m_PrefabInstance: {fileID: 1047619551}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1047619553 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7705160456123337343, guid: 22bac8f94c41fa8428335e4eec15866a, type: 3}
+  m_PrefabInstance: {fileID: 1047619551}
+  m_PrefabAsset: {fileID: 0}
+--- !u!61 &1047619554 stripped
+BoxCollider2D:
+  m_CorrespondingSourceObject: {fileID: 4830347334930217937, guid: 22bac8f94c41fa8428335e4eec15866a, type: 3}
+  m_PrefabInstance: {fileID: 1047619551}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1047619555
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1047619553}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a9b2e5a9874f45b79cb16c601d8f3073, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GhostPassThroughCollider
+  targetCollider: {fileID: 1047619554}
+  includeChildColliders: 0
+  ignoreTriggerColliders: 1
 --- !u!1001 &1186977510
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1613,6 +1665,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InteractButton
   button: {fileID: 2013918363}
+  extraPromptObjects: []
+  fallbackPromptKey: prompt.interact
+  animateExtraPromptObjects: 1
+  extraPromptFadeInDuration: 0.2
+  extraPromptFadeOutDuration: 0.12
   restrictByForm: 0
   requiredForm: 0
 --- !u!61 &1969541582
@@ -1690,6 +1747,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerAnimatedSceneLoadInteractable
   targetScene: 5
+  promptLocalizationKey: prompt.pass
   playerMovement: {fileID: 865066913}
   animationTrigger: IsPicture
   animationStateName: GoToPicture
@@ -1700,7 +1758,7 @@ MonoBehaviour:
   freezeFinalFrameBeforeLoad: 1
   finalFrameNormalizedTime: 0.98
   animationStateWaitTimeout: 0.25
-  setFormBeforeLoad: 1
+  setFormBeforeLoad: 0
   formBeforeLoad: 0
 --- !u!1 &2013918363
 GameObject:

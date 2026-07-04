@@ -158,7 +158,7 @@ MonoBehaviour:
     englishTitle: Make the owner angry
     restoreWhenAssignedOnLoad: 1
   - missionId: picked_up_box
-    assignedFlag: dropped_box
+    assignedFlag: picked_up_box
     completedFlag: other
     vietnameseTitle: "\u0110i l\u1EA5y c\xE1i b\xE1t gi\xFAp c\u1EADu ch\u1EE7"
     englishTitle: 

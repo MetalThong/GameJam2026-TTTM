@@ -14,6 +14,13 @@ public class DialogueStoryInteractable : StoryInteractable
     [SerializeField] private DialogueSO dialogue;
     [SerializeField] private string sfxId;
 
+    [Header("Pre Hide Animation")]
+    [SerializeField] private bool playPreHideAnimationBeforeFade;
+    [SerializeField] private Animator preHideAnimator;
+    [SerializeField] private string preHideAnimationStateName = "OpenEye";
+    [SerializeField, Min(0f)] private float preHideAnimationFallbackDuration = 0.92f;
+    [SerializeField] private bool disablePreHideAnimatorUntilPlayed = true;
+
     [Header("Pre Dialogue")]
     [Tooltip("Optional visual hidden right after the press, before the dialogue starts (e.g. WakeUpPanel Visual).")]
     [SerializeField] private GameObject hideBeforeDialogue;
@@ -26,6 +33,18 @@ public class DialogueStoryInteractable : StoryInteractable
 
     private bool _isPlaying;
     private Tween _hideBeforeDialogueTween;
+
+    private void OnEnable()
+    {
+        if (playPreHideAnimationBeforeFade && disablePreHideAnimatorUntilPlayed)
+        {
+            Animator animator = ResolvePreHideAnimator();
+            if (animator != null)
+            {
+                animator.enabled = false;
+            }
+        }
+    }
 
     private void OnDestroy()
     {
@@ -63,6 +82,8 @@ public class DialogueStoryInteractable : StoryInteractable
             // Hide the visual first (e.g. WakeUpPanel), then show the dialogue.
             if (hideBeforeDialogue != null)
             {
+                hideBeforeDialogue.SetActive(true);
+                await PlayPreHideAnimationAsync(destroyToken);
                 await HideBeforeDialogueAsync(destroyToken);
 
                 if (dialogueDelayAfterHide > 0f)
@@ -97,6 +118,87 @@ public class DialogueStoryInteractable : StoryInteractable
         {
             _isPlaying = false;
         }
+    }
+
+    private async UniTask PlayPreHideAnimationAsync(CancellationToken cancellationToken)
+    {
+        if (!playPreHideAnimationBeforeFade)
+        {
+            return;
+        }
+
+        Animator animator = ResolvePreHideAnimator();
+        if (animator == null)
+        {
+            return;
+        }
+
+        animator.enabled = true;
+        animator.speed = 1f;
+
+        if (!string.IsNullOrWhiteSpace(preHideAnimationStateName))
+        {
+            int stateHash = Animator.StringToHash(preHideAnimationStateName);
+            if (animator.HasState(0, stateHash))
+            {
+                animator.Play(stateHash, 0, 0f);
+                animator.Update(0f);
+            }
+        }
+
+        float waitDuration = ResolvePreHideAnimationDuration(animator);
+        if (waitDuration <= 0f)
+        {
+            waitDuration = preHideAnimationFallbackDuration;
+        }
+
+        if (waitDuration > 0f)
+        {
+            await UniTask.Delay(TimeSpan.FromSeconds(waitDuration), cancellationToken: cancellationToken);
+        }
+    }
+
+    private float ResolvePreHideAnimationDuration(Animator animator)
+    {
+        RuntimeAnimatorController controller = animator != null ? animator.runtimeAnimatorController : null;
+        if (controller == null || string.IsNullOrWhiteSpace(preHideAnimationStateName))
+        {
+            return 0f;
+        }
+
+        foreach (AnimationClip clip in controller.animationClips)
+        {
+            if (clip == null || !MatchesAnimationName(clip.name, preHideAnimationStateName))
+            {
+                continue;
+            }
+
+            float speed = Mathf.Abs(animator.speed);
+            if (Mathf.Approximately(speed, 0f))
+            {
+                speed = 1f;
+            }
+
+            return clip.length / speed;
+        }
+
+        return 0f;
+    }
+
+    private Animator ResolvePreHideAnimator()
+    {
+        if (preHideAnimator != null)
+        {
+            return preHideAnimator;
+        }
+
+        if (hideBeforeDialogue == null)
+        {
+            return null;
+        }
+
+        preHideAnimator = hideBeforeDialogue.GetComponentInChildren<Animator>(true);
+        return preHideAnimator;
     }
 
     private async UniTask HideBeforeDialogueAsync(CancellationToken cancellationToken)
@@ -149,6 +251,13 @@ public class DialogueStoryInteractable : StoryInteractable
         }
 
         hideBeforeDialogue.SetActive(false);
+    }
+
+    private static bool MatchesAnimationName(string clipName, string stateName)
+    {
+        return string.Equals(clipName, stateName, StringComparison.Ordinal)
+            || clipName.Contains(stateName, StringComparison.Ordinal)
+            || stateName.Contains(clipName, StringComparison.Ordinal);
     }
 
     private static void SetVisualAlpha(GameObject visual, float alpha)

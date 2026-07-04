@@ -26,9 +26,23 @@ public sealed class OwnerBoxPickupSequence : MonoBehaviour
     [SerializeField, Min(0f)] private float fallbackAnimationDuration = 0.8f;
     [SerializeField, Min(0f)] private float postAnimationDelay;
 
+    [Header("Exit")]
+    [SerializeField] private bool playExitAfterPickup;
+    [SerializeField] private string exitAnimationState = "BossWalk";
+    [SerializeField] private Vector3 exitMoveOffset = new(1.6f, 0f, 0f);
+    [SerializeField, Min(0f)] private float exitMoveDuration = 1.4f;
+    [SerializeField, Min(0f)] private float exitFadeOutDuration = 0.35f;
+    [SerializeField] private bool waitForExitAnimation;
+    [SerializeField, Min(0f)] private float exitFallbackAnimationDuration = 0.8f;
+    [SerializeField, Min(0f)] private float exitPostAnimationDelay;
+    [SerializeField] private bool destroyOwnerAfterExit = true;
+    [SerializeField] private bool faceExitMoveDirection = true;
+    [SerializeField] private bool flipOwnerWhenMovingRight = true;
+
     [Header("Dialogue")]
     [SerializeField] private DialogueManager dialogueManager;
     [SerializeField] private DialogueSO dialogue;
+    [SerializeField] private DialogueSO postExitDialogue;
 
     [Header("Completion")]
     [SerializeField] private string completionFlagId = "picked_up_box";
@@ -66,6 +80,8 @@ public sealed class OwnerBoxPickupSequence : MonoBehaviour
             await FadeOwnerAsync(_spawnedOwner, 1f, spawnFadeDuration, cancellationToken);
             await PlayPickupAnimationAsync(_spawnedOwner, cancellationToken);
             await PlayDialogueIfAssignedAsync(cancellationToken);
+            await PlayExitSequenceAsync(_spawnedOwner, cancellationToken);
+            await PlayDialogueIfAssignedAsync(postExitDialogue, cancellationToken);
             SetCompletionFlag();
 
             if (deactivateOnComplete && !cancellationToken.IsCancellationRequested)
@@ -80,6 +96,92 @@ public sealed class OwnerBoxPickupSequence : MonoBehaviour
         {
             _isPlaying = false;
         }
+    }
+
+    private async UniTask PlayExitSequenceAsync(GameObject owner, CancellationToken cancellationToken)
+    {
+        if (!playExitAfterPickup || owner == null)
+        {
+            return;
+        }
+
+        float animationDuration = PlayOwnerAnimation(owner, exitAnimationState);
+        if (waitForExitAnimation)
+        {
+            await WaitForDurationAsync(
+                animationDuration > 0f ? animationDuration : exitFallbackAnimationDuration,
+                exitPostAnimationDelay,
+                cancellationToken);
+        }
+
+        await MoveOwnerByOffsetAsync(owner, animationDuration, cancellationToken);
+        await FadeOwnerAsync(owner, 0f, exitFadeOutDuration, cancellationToken);
+
+        if (destroyOwnerAfterExit && owner != null)
+        {
+            Destroy(owner);
+            if (_spawnedOwner == owner)
+            {
+                _spawnedOwner = null;
+            }
+        }
+    }
+
+    private float PlayOwnerAnimation(GameObject owner, string stateName)
+    {
+        if (owner == null || string.IsNullOrWhiteSpace(stateName))
+        {
+            return 0f;
+        }
+
+        Animator animator = FindAnimatorWithState(owner, stateName);
+        if (animator != null)
+        {
+            return PlayAnimatorState(animator, stateName);
+        }
+
+        Animation animation = owner.GetComponentInChildren<Animation>(true);
+        if (animation != null)
+        {
+            return PlayLegacyAnimation(animation, stateName);
+        }
+
+        return 0f;
+    }
+
+    private async UniTask MoveOwnerByOffsetAsync(
+        GameObject owner,
+        float animationDuration,
+        CancellationToken cancellationToken)
+    {
+        if (owner == null || exitMoveOffset.sqrMagnitude <= 0.0001f)
+        {
+            return;
+        }
+
+        Vector3 targetPosition = owner.transform.position + exitMoveOffset;
+        targetPosition.z = owner.transform.position.z;
+        OrientOwnerToward(owner, targetPosition);
+
+        float moveDuration = Mathf.Max(0f, exitMoveDuration);
+        if (!waitForExitAnimation)
+        {
+            moveDuration = Mathf.Max(moveDuration, animationDuration + exitPostAnimationDelay);
+        }
+
+        if (moveDuration <= 0f)
+        {
+            owner.transform.position = targetPosition;
+            return;
+        }
+
+        Tween moveTween = owner.transform.DOMove(targetPosition, moveDuration).SetEase(Ease.Linear);
+        using (cancellationToken.Register(() => moveTween.Kill()))
+        {
+            await moveTween.AsyncWaitForCompletion();
+        }
+
+        cancellationToken.ThrowIfCancellationRequested();
     }
 
     private GameObject SpawnOwner()
@@ -154,7 +256,7 @@ public sealed class OwnerBoxPickupSequence : MonoBehaviour
             return;
         }
 
-        Animator animator = owner.GetComponentInChildren<Animator>(true);
+        Animator animator = FindAnimatorWithState(owner, pickupAnimationState);
         if (animator != null)
         {
             float duration = PlayAnimatorState(animator);
@@ -175,6 +277,36 @@ public sealed class OwnerBoxPickupSequence : MonoBehaviour
 
     private float PlayAnimatorState(Animator animator)
     {
+        return PlayAnimatorState(animator, pickupAnimationState);
+    }
+
+    private Animator FindAnimatorWithState(GameObject owner, string stateName)
+    {
+        if (owner == null)
+        {
+            return null;
+        }
+
+        Animator fallbackAnimator = null;
+        foreach (Animator animator in owner.GetComponentsInChildren<Animator>(true))
+        {
+            if (animator == null)
+            {
+                continue;
+            }
+
+            fallbackAnimator ??= animator;
+            if (!string.IsNullOrWhiteSpace(ResolveAnimatorStateName(animator, stateName)))
+            {
+                return animator;
+            }
+        }
+
+        return fallbackAnimator;
+    }
+
+    private float PlayAnimatorState(Animator animator, string requestedState)
+    {
         if (animator == null || animator.runtimeAnimatorController == null)
         {
             return 0f;
@@ -183,7 +315,7 @@ public sealed class OwnerBoxPickupSequence : MonoBehaviour
         animator.gameObject.SetActive(true);
         animator.enabled = true;
 
-        string stateName = ResolveAnimatorStateName(animator);
+        string stateName = ResolveAnimatorStateName(animator, requestedState);
         if (string.IsNullOrWhiteSpace(stateName))
         {
             return 0f;
@@ -191,19 +323,29 @@ public sealed class OwnerBoxPickupSequence : MonoBehaviour
 
         animator.Play(Animator.StringToHash(stateName), 0, 0f);
         animator.Update(0f);
-        return ResolveClipLength(animator, stateName);
+        return ResolveClipLength(animator, stateName, requestedState);
     }
 
     private string ResolveAnimatorStateName(Animator animator)
     {
-        if (animator.HasState(0, Animator.StringToHash(pickupAnimationState)))
+        return ResolveAnimatorStateName(animator, pickupAnimationState);
+    }
+
+    private string ResolveAnimatorStateName(Animator animator, string requestedState)
+    {
+        if (string.IsNullOrWhiteSpace(requestedState))
         {
-            return pickupAnimationState;
+            return null;
         }
 
-        string alternateState = pickupAnimationState.EndsWith("_clip", StringComparison.Ordinal)
-            ? pickupAnimationState[..^"_clip".Length]
-            : $"{pickupAnimationState}_clip";
+        if (animator.HasState(0, Animator.StringToHash(requestedState)))
+        {
+            return requestedState;
+        }
+
+        string alternateState = requestedState.EndsWith("_clip", StringComparison.Ordinal)
+            ? requestedState[..^"_clip".Length]
+            : $"{requestedState}_clip";
 
         if (animator.HasState(0, Animator.StringToHash(alternateState)))
         {
@@ -215,6 +357,11 @@ public sealed class OwnerBoxPickupSequence : MonoBehaviour
 
     private float ResolveClipLength(Animator animator, string stateName)
     {
+        return ResolveClipLength(animator, stateName, pickupAnimationState);
+    }
+
+    private float ResolveClipLength(Animator animator, string stateName, string requestedState)
+    {
         RuntimeAnimatorController controller = animator.runtimeAnimatorController;
         foreach (AnimationClip clip in controller.animationClips)
         {
@@ -223,7 +370,7 @@ public sealed class OwnerBoxPickupSequence : MonoBehaviour
                 continue;
             }
 
-            if (string.Equals(clip.name, pickupAnimationState, StringComparison.Ordinal)
+            if (string.Equals(clip.name, requestedState, StringComparison.Ordinal)
                 || string.Equals(clip.name, stateName, StringComparison.Ordinal)
                 || stateName.Contains(clip.name, StringComparison.Ordinal)
                 || clip.name.Contains(stateName, StringComparison.Ordinal))
@@ -237,7 +384,17 @@ public sealed class OwnerBoxPickupSequence : MonoBehaviour
 
     private float PlayLegacyAnimation(Animation animation)
     {
-        AnimationClip clip = animation.GetClip(pickupAnimationState);
+        return PlayLegacyAnimation(animation, pickupAnimationState);
+    }
+
+    private float PlayLegacyAnimation(Animation animation, string stateName)
+    {
+        if (string.IsNullOrWhiteSpace(stateName))
+        {
+            return 0f;
+        }
+
+        AnimationClip clip = animation.GetClip(stateName);
         if (clip == null)
         {
             return 0f;
@@ -257,12 +414,7 @@ public sealed class OwnerBoxPickupSequence : MonoBehaviour
 
         float waitDuration = animationDuration > 0f ? animationDuration : fallbackAnimationDuration;
         waitDuration += postAnimationDelay;
-        if (waitDuration <= 0f)
-        {
-            return;
-        }
-
-        await UniTask.Delay(TimeSpan.FromSeconds(waitDuration), cancellationToken: cancellationToken);
+        await WaitForDurationAsync(waitDuration, 0f, cancellationToken);
     }
 
     private async UniTask WaitFallbackAnimationAsync(CancellationToken cancellationToken)
@@ -272,12 +424,31 @@ public sealed class OwnerBoxPickupSequence : MonoBehaviour
             return;
         }
 
-        await UniTask.Delay(TimeSpan.FromSeconds(fallbackAnimationDuration + postAnimationDelay), cancellationToken: cancellationToken);
+        await WaitForDurationAsync(fallbackAnimationDuration, postAnimationDelay, cancellationToken);
+    }
+
+    private static async UniTask WaitForDurationAsync(
+        float duration,
+        float postDelay,
+        CancellationToken cancellationToken)
+    {
+        float waitDuration = duration + postDelay;
+        if (waitDuration <= 0f)
+        {
+            return;
+        }
+
+        await UniTask.Delay(TimeSpan.FromSeconds(waitDuration), cancellationToken: cancellationToken);
     }
 
     private async UniTask PlayDialogueIfAssignedAsync(CancellationToken cancellationToken)
     {
-        if (dialogue == null)
+        await PlayDialogueIfAssignedAsync(dialogue, cancellationToken);
+    }
+
+    private async UniTask PlayDialogueIfAssignedAsync(DialogueSO dialogueToPlay, CancellationToken cancellationToken)
+    {
+        if (dialogueToPlay == null)
         {
             return;
         }
@@ -289,7 +460,7 @@ public sealed class OwnerBoxPickupSequence : MonoBehaviour
             return;
         }
 
-        await manager.PlayDialogueAsync(dialogue, cancellationToken);
+        await manager.PlayDialogueAsync(dialogueToPlay, cancellationToken);
     }
 
     private DialogueManager ResolveDialogueManager()
@@ -385,5 +556,25 @@ public sealed class OwnerBoxPickupSequence : MonoBehaviour
             color.a = alpha;
             renderer.color = color;
         }
+    }
+
+    private void OrientOwnerToward(GameObject owner, Vector3 targetPosition)
+    {
+        if (!faceExitMoveDirection || owner == null)
+        {
+            return;
+        }
+
+        float directionX = targetPosition.x - owner.transform.position.x;
+        if (Mathf.Approximately(directionX, 0f))
+        {
+            return;
+        }
+
+        Vector3 scale = owner.transform.localScale;
+        float xScale = Mathf.Approximately(scale.x, 0f) ? 1f : Mathf.Abs(scale.x);
+        bool shouldFlip = directionX > 0f ? flipOwnerWhenMovingRight : !flipOwnerWhenMovingRight;
+        scale.x = shouldFlip ? -xScale : xScale;
+        owner.transform.localScale = scale;
     }
 }

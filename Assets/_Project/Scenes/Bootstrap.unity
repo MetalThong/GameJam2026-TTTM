@@ -149,7 +149,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Bootstrapper
   persistentRootPrefab: {fileID: 2596577047134587957, guid: 8aba452fc29e53f488ed3c4427bf4f69, type: 3}
-  startScene: 7
+  startScene: 0
 --- !u!4 &602459880
 Transform:
   m_ObjectHideFlags: 0

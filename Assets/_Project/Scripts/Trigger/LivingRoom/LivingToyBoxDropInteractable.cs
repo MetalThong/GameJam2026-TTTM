@@ -40,6 +40,11 @@ public sealed class LivingToyBoxDropInteractable : StoryInteractable
     [Header("Post Dialogue Form")]
     [SerializeField] private Movement playerMovement;
     [SerializeField] private bool changePlayerFormAfterDialogue = true;
+    [SerializeField, Min(0f)] private float postDialogueFormDelay;
+    [SerializeField] private SpriteRenderer playerSprite;
+    [SerializeField, Min(0f)] private float postDialogueFormFadeOutDuration = 0.12f;
+    [SerializeField, Min(0f)] private float postDialogueFormHoldDuration = 0.08f;
+    [SerializeField, Min(0f)] private float postDialogueFormFadeInDuration = 0.18f;
     [SerializeField] private MovementForm postDialogueForm = MovementForm.Ghost;
 
     [Header("Flags")]
@@ -55,11 +60,13 @@ public sealed class LivingToyBoxDropInteractable : StoryInteractable
     private bool _isPlaying;
     private Tween _moveTween;
     private Tween _cutSceneFadeTween;
+    private Tween _postDialogueFormTween;
 
     private void OnDestroy()
     {
         _moveTween?.Kill();
         _cutSceneFadeTween?.Kill();
+        _postDialogueFormTween?.Kill();
     }
 
     protected override bool CanInteract()
@@ -228,7 +235,7 @@ public sealed class LivingToyBoxDropInteractable : StoryInteractable
         }
 
         await player.PlayAsync(cancellationToken);
-        ChangePlayerFormAfterDialogue();
+        HideToyBoxIfConfigured();
 
         if (cutSceneHoldAfterPlayback > 0f)
         {
@@ -241,6 +248,8 @@ public sealed class LivingToyBoxDropInteractable : StoryInteractable
             cutSceneObject.SetActive(false);
             RestoreRendererAlphas(cutSceneRenderers, originalAlphas);
         }
+
+        await ChangePlayerFormAfterDialogueAsync(cancellationToken);
     }
 
     private async UniTask FadeRenderersToAlphaAsync(
@@ -394,17 +403,45 @@ public sealed class LivingToyBoxDropInteractable : StoryInteractable
         return cutScenePlayer;
     }
 
-    private void ChangePlayerFormAfterDialogue()
+    private async UniTask ChangePlayerFormAfterDialogueAsync(CancellationToken cancellationToken)
     {
         if (!changePlayerFormAfterDialogue)
         {
             return;
         }
 
-        Movement movement = ResolvePlayerMovement();
-        if (movement != null)
+        if (postDialogueFormDelay > 0f)
         {
+            await UniTask.Delay(TimeSpan.FromSeconds(postDialogueFormDelay), cancellationToken: cancellationToken);
+        }
+
+        Movement movement = ResolvePlayerMovement();
+        if (movement == null)
+        {
+            return;
+        }
+
+        SpriteRenderer spriteRenderer = ResolvePlayerSprite();
+        float originalAlpha = spriteRenderer != null ? spriteRenderer.color.a : 1f;
+
+        try
+        {
+            await FadePlayerSpriteAsync(spriteRenderer, 0f, postDialogueFormFadeOutDuration, cancellationToken);
             movement.SetForm(postDialogueForm);
+
+            if (postDialogueFormHoldDuration > 0f)
+            {
+                await UniTask.Delay(TimeSpan.FromSeconds(postDialogueFormHoldDuration), cancellationToken: cancellationToken);
+            }
+
+            await FadePlayerSpriteAsync(spriteRenderer, originalAlpha, postDialogueFormFadeInDuration, cancellationToken);
+        }
+        finally
+        {
+            if (cancellationToken.IsCancellationRequested)
+            {
+                SetSpriteAlpha(spriteRenderer, originalAlpha);
+            }
         }
     }
 
@@ -416,6 +453,68 @@ public sealed class LivingToyBoxDropInteractable : StoryInteractable
         }
 
         return playerMovement;
+    }
+
+    private SpriteRenderer ResolvePlayerSprite()
+    {
+        if (playerSprite == null)
+        {
+            Movement movement = ResolvePlayerMovement();
+            if (movement != null)
+            {
+                playerSprite = movement.GetComponentInChildren<SpriteRenderer>(true);
+            }
+        }
+
+        return playerSprite;
+    }
+
+    private async UniTask FadePlayerSpriteAsync(
+        SpriteRenderer spriteRenderer,
+        float targetAlpha,
+        float duration,
+        CancellationToken cancellationToken)
+    {
+        if (spriteRenderer == null)
+        {
+            return;
+        }
+
+        if (duration <= 0f)
+        {
+            SetSpriteAlpha(spriteRenderer, targetAlpha);
+            return;
+        }
+
+        _postDialogueFormTween?.Kill();
+        Tween tween = spriteRenderer.DOFade(targetAlpha, duration)
+            .SetTarget(spriteRenderer)
+            .SetLink(spriteRenderer.gameObject, LinkBehaviour.KillOnDestroy);
+
+        _postDialogueFormTween = tween;
+        using (cancellationToken.Register(() => tween.Kill()))
+        {
+            await tween.AsyncWaitForCompletion();
+        }
+
+        if (_postDialogueFormTween == tween)
+        {
+            _postDialogueFormTween = null;
+        }
+
+        cancellationToken.ThrowIfCancellationRequested();
+    }
+
+    private static void SetSpriteAlpha(SpriteRenderer spriteRenderer, float alpha)
+    {
+        if (spriteRenderer == null)
+        {
+            return;
+        }
+
+        Color color = spriteRenderer.color;
+        color.a = alpha;
+        spriteRenderer.color = color;
     }
 
     private void SetCompletionFlag()
@@ -431,7 +530,11 @@ public sealed class LivingToyBoxDropInteractable : StoryInteractable
     private void HideCompletionTargets()
     {
         SetTargetsActive(hideOnComplete, false);
+        HideToyBoxIfConfigured();
+    }
 
+    private void HideToyBoxIfConfigured()
+    {
         if (hideToyBoxOnComplete && toyBoxTransform != null)
         {
             toyBoxTransform.gameObject.SetActive(false);

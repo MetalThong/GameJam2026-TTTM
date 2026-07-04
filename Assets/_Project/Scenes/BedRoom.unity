@@ -1305,6 +1305,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SceneLoadInteractable
   targetScene: 2
+  promptLocalizationKey: prompt.pass
 --- !u!114 &837205677
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1318,6 +1319,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InteractButton
   button: {fileID: 1774933826}
+  fallbackPromptKey: prompt.interact
   restrictByForm: 0
   requiredForm: 0
 --- !u!61 &837205678
@@ -2080,9 +2082,15 @@ MonoBehaviour:
     setFlags:
     - waked_up
     unsetFlags: []
+  promptLocalizationKey: prompt.interact
   dialogueManager: {fileID: 0}
   dialogue: {fileID: 11400000, guid: a1b2c3d4e5f6470809102a3b4c5d6e7f, type: 2}
   sfxId: 
+  playPreHideAnimationBeforeFade: 1
+  preHideAnimator: {fileID: 2007685525}
+  preHideAnimationStateName: OpenEye
+  preHideAnimationFallbackDuration: 0.92
+  disablePreHideAnimatorUntilPlayed: 1
   hideBeforeDialogue: {fileID: 2007685521}
   hideBeforeDialogueFadeDuration: 1
   dialogueDelayAfterHide: 1.1
@@ -2291,8 +2299,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 18.76651, y: 0}
-  m_SizeDelta: {x: 1070.9697, y: 109.3777}
+  m_AnchoredPosition: {x: -0.0050659, y: 0}
+  m_SizeDelta: {x: 1920, y: 109.3777}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1408278768
 MonoBehaviour:
@@ -2439,6 +2447,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InteractButton
   button: {fileID: 467572461}
+  fallbackPromptKey: prompt.interact
   restrictByForm: 1
   requiredForm: 1
 --- !u!61 &1427161039
@@ -2525,9 +2534,15 @@ MonoBehaviour:
     setFlags:
     - met_boss
     unsetFlags: []
+  promptLocalizationKey: prompt.interact
   dialogueManager: {fileID: 0}
   dialogue: {fileID: 11400000, guid: e72e207d684440048df1b84e460ef6f5, type: 2}
   sfxId: 
+  playPreHideAnimationBeforeFade: 0
+  preHideAnimator: {fileID: 0}
+  preHideAnimationStateName: OpenEye
+  preHideAnimationFallbackDuration: 0.92
+  disablePreHideAnimatorUntilPlayed: 1
   hideBeforeDialogue: {fileID: 0}
   hideBeforeDialogueFadeDuration: 1
   dialogueDelayAfterHide: 2
@@ -2660,6 +2675,7 @@ MonoBehaviour:
     setFlags:
     - waked_boss_up
     unsetFlags: []
+  promptLocalizationKey: prompt.interact
   requiredPressCount: 12
   decayDelay: 0.3
   decayPerSecond: 3.5
@@ -2703,6 +2719,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InteractButton
   button: {fileID: 112448343}
+  fallbackPromptKey: prompt.interact
   restrictByForm: 1
   requiredForm: 1
 --- !u!61 &1528064482
@@ -3510,6 +3527,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2007685524}
   - component: {fileID: 2007685523}
+  - component: {fileID: 2007685525}
   m_Layer: 0
   m_Name: Visual
   m_TagString: Untagged
@@ -3566,7 +3584,7 @@ SpriteRenderer:
   m_SortingLayer: 5
   m_SortingOrder: 0
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 7482667652216324306, guid: 311925a002f4447b3a28927169b83ea6, type: 3}
+  m_Sprite: {fileID: -4636930223644993188, guid: 60fd5dcd703545e438c13b95b306bbab, type: 3}
   m_Color: {r: 0, g: 0, b: 0, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -3585,13 +3603,35 @@ Transform:
   m_GameObject: {fileID: 2007685521}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_LocalPosition: {x: -0.00267, y: 0.00976, z: 0}
+  m_LocalScale: {x: 0.76, y: 0.76, z: 0.76}
+  m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 1967197500}
   m_Father: {fileID: 1307963229}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!95 &2007685525
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2007685521}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 38134efa08656684080ffabf65b399d6, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage:
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1001 &2109960583
 PrefabInstance:
   m_ObjectHideFlags: 0
