@@ -501,7 +501,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TemporaryChat
   spr: {fileID: 484845393}
-  showDelay: 3
+  showDelay: 0
   exsitsTime: 2
   fadeDuration: 0.5
   lockMovementWhileVisible: 1
@@ -1348,8 +1348,7 @@ MonoBehaviour:
   triggerOnce: 1
   condition:
     requiredFlags: []
-    blockedFlags:
-    - went_down_hall
+    blockedFlags: []
   action:
     setFlags:
     - went_down_hall
@@ -1404,7 +1403,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: -0.09040749, y: 0.27122205}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -1414,7 +1413,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 1.9944832, y: 1.5424441}
   m_EdgeRadius: 0
 --- !u!4 &947290379
 Transform:

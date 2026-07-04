@@ -699,7 +699,7 @@ GameObject:
   - component: {fileID: 1209883682}
   - component: {fileID: 1209883681}
   m_Layer: 0
-  m_Name: GoRight
+  m_Name: GoInto
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -717,7 +717,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1c6580f15c5098346b1dc8ffaf80cc17, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SceneLoadInteractable
-  targetScene: 4
+  targetScene: 6
 --- !u!114 &1209883682
 MonoBehaviour:
   m_ObjectHideFlags: 0

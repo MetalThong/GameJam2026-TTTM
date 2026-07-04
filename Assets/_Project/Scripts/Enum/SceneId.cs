@@ -4,5 +4,7 @@ public enum SceneId
     BedRoom = 1,
     HallUp = 2,
     LivingRoom = 3,
-    HallDown = 4
+    HallDown = 4,
+    Kitchen = 5,
+    GhostKitchen = 6
 }
