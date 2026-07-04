@@ -1,5 +1,9 @@
 fileFormatVersion: 2
+<<<<<<<< HEAD:Assets/_Project/Animation/ThangChu.meta
 guid: e6e681d95a94fb34288a46d2b36fa683
+========
+guid: 28b7f96d94274fe7bfac8a4870df4be8
+>>>>>>>> refs/remotes/origin/feat/Living-Room-Scene:Assets/_Project/Scripts/CutScene.meta
 folderAsset: yes
 DefaultImporter:
   externalObjects: {}

@@ -57,6 +57,9 @@ TagManager:
   - name: Foreground
     uniqueID: 1843868011
     locked: 0
+  - name: CutScene
+    uniqueID: 1582462807
+    locked: 0
   m_RenderingLayers:
   - Default
   - Cat

@@ -15,11 +15,20 @@ EditorBuildSettings:
     path: Assets/_Project/Scenes/BedRoom.unity
     guid: bf440f02bf0b2334890828630d6d8f59
   - enabled: 1
-    path: Assets/_Project/Scenes/Hall2.unity
+    path: Assets/_Project/Scenes/HallUp.unity
+    guid: 5da481c347b729a44a5953dfb0b5eae5
+  - enabled: 1
+    path: Assets/_Project/Scenes/HallDown.unity
+    guid: 095305dfaa499b64d963af78413c68ce
+  - enabled: 1
+    path: Assets/_Project/Scenes/HallUp.unity
     guid: 5da481c347b729a44a5953dfb0b5eae5
   - enabled: 1
     path: Assets/_Project/Scenes/LivingRoom.unity
     guid: 97a489973f249cf4db8b861a283e572f
+  - enabled: 1
+    path: Assets/_Project/Scenes/HallUp.unity
+    guid: 5da481c347b729a44a5953dfb0b5eae5
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0

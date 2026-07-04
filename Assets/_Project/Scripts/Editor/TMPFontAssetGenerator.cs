@@ -1,0 +1,71 @@
+using TMPro;
+using UnityEditor;
+using UnityEngine;
+
+namespace TTTM.EditorTools
+{
+    public static class TMPFontAssetGenerator
+    {
+        private const string SourceFontPath = "Assets/_Project/Resources/Text/SVN-Determination Sans.otf";
+        private const string OutputFontAssetPath = "Assets/_Project/Resources/Text/SVN-Determination Sans SDF.asset";
+
+        [InitializeOnLoadMethod]
+        private static void GenerateMissingFontsOnEditorLoad()
+        {
+            EditorApplication.delayCall += GenerateDeterminationSansIfMissing;
+        }
+
+        [MenuItem("Tools/TTTM/Generate TMP Font Assets/SVN Determination Sans")]
+        public static void GenerateDeterminationSans()
+        {
+            GenerateDeterminationSans(overwriteExisting: true);
+        }
+
+        private static void GenerateDeterminationSansIfMissing()
+        {
+            if (AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(OutputFontAssetPath) != null)
+            {
+                return;
+            }
+
+            GenerateDeterminationSans(overwriteExisting: false);
+        }
+
+        private static void GenerateDeterminationSans(bool overwriteExisting)
+        {
+            Font sourceFont = AssetDatabase.LoadAssetAtPath<Font>(SourceFontPath);
+            if (sourceFont == null)
+            {
+                throw new MissingReferenceException($"Cannot find source font at {SourceFontPath}");
+            }
+
+            if (AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(OutputFontAssetPath) != null)
+            {
+                if (!overwriteExisting)
+                {
+                    return;
+                }
+
+                if (!AssetDatabase.DeleteAsset(OutputFontAssetPath))
+                {
+                    throw new MissingReferenceException($"Cannot replace TMP font asset at {OutputFontAssetPath}");
+                }
+            }
+
+            TMP_FontAsset fontAsset = TMP_FontAsset.CreateFontAsset(sourceFont);
+            fontAsset.name = "SVN-Determination Sans SDF";
+            fontAsset.atlasPopulationMode = AtlasPopulationMode.Dynamic;
+
+            if (fontAsset.material != null)
+            {
+                fontAsset.material.name = "SVN-Determination Sans SDF Material";
+            }
+
+            AssetDatabase.CreateAsset(fontAsset, OutputFontAssetPath);
+            AssetDatabase.SaveAssets();
+            AssetDatabase.Refresh();
+
+            Debug.Log($"Generated TMP font asset: {OutputFontAssetPath}");
+        }
+    }
+}

@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -39,6 +40,15 @@ public sealed class Movement : MonoBehaviour
     [SerializeField] private float movingThreshold = 0.05f;
     [SerializeField] private bool spriteFacesRightByDefault;
 
+    [Header("Interact Jump")]
+    [SerializeField] private string interactJumpTrigger = "IsJump";
+    [SerializeField] private string interactGroundedTrigger = "IsGrounded";
+    [SerializeField] private string interactJumpingBool;
+    [SerializeField] private LayerMask interactJumpGroundMask = ~0;
+    [SerializeField, Min(0.01f)] private float interactJumpGroundCheckDistance = 0.35f;
+    [SerializeField, Range(0.1f, 1f)] private float interactJumpGroundCheckWidthRatio = 0.9f;
+    [SerializeField] private bool allowCatHorizontalMovementDuringInteractJump = true;
+
     private MovementInput _input;
     private MovementFormBehaviour[] _forms;
     private MovementFormBehaviour _currentForm;
@@ -46,6 +56,11 @@ public sealed class Movement : MonoBehaviour
     private bool _hasDefaultGravityScale;
     private bool _isFacingRight = true;
     private bool _isMovementLocked;
+    private bool _isInteractJumping;
+    private bool _hasAppliedInteractJumpVelocity;
+    private float _interactJumpGroundCheckStartTime;
+    private Coroutine _interactJumpRoutine;
+    private readonly Collider2D[] _groundCheckHits = new Collider2D[8];
     private Vector2 _catColliderBaseOffset;
     private Vector2 _ghostColliderBaseOffset;
 
@@ -106,6 +121,14 @@ public sealed class Movement : MonoBehaviour
             return;
         }
 
+        UpdateInteractJump();
+        if (_isInteractJumping)
+        {
+            UpdateAnimator(Vector2.zero);
+            UpdateFlip(_input.Move);
+            return;
+        }
+
         if (_input.WasToggleFormPressed)
         {
             ToggleForm();
@@ -123,6 +146,12 @@ public sealed class Movement : MonoBehaviour
             return;
         }
 
+        if (_isInteractJumping)
+        {
+            MoveCatHorizontallyDuringInteractJump();
+            return;
+        }
+
         if (_currentForm == null)
         {
             return;
@@ -131,10 +160,71 @@ public sealed class Movement : MonoBehaviour
         _currentForm.Move(targetRigidbody, _input.Move);
     }
 
+    public bool TryInteractJump(
+        Vector2 jumpVelocity,
+        float minGroundCheckDelay,
+        float delayDuration = 0f,
+        bool useFacingDirection = true,
+        bool allowWhileStoryLocked = false,
+        bool allowGhostForm = false)
+    {
+        if (targetRigidbody == null || IsDialogueStateActive() || _isInteractJumping)
+        {
+            return false;
+        }
+
+        if (_isMovementLocked && !allowWhileStoryLocked)
+        {
+            return false;
+        }
+
+        if (!allowGhostForm && CurrentForm != MovementForm.Cat)
+        {
+            return false;
+        }
+
+        float clampedDelayDuration = Mathf.Max(0f, delayDuration);
+        float clampedMinGroundCheckDelay = Mathf.Max(0f, minGroundCheckDelay);
+        Vector2 resolvedJumpVelocity = ResolveInteractJumpVelocity(jumpVelocity, useFacingDirection);
+
+        _isInteractJumping = true;
+        _hasAppliedInteractJumpVelocity = false;
+        _interactJumpGroundCheckStartTime = float.PositiveInfinity;
+        StopMovement();
+
+        SetAnimatorTriggerIfExists(interactJumpTrigger);
+        SetAnimatorBoolIfExists(interactJumpingBool, true);
+        UpdateFlip(resolvedJumpVelocity);
+
+        if (clampedDelayDuration <= 0f)
+        {
+            ApplyInteractJumpVelocity(resolvedJumpVelocity, clampedMinGroundCheckDelay);
+        }
+        else
+        {
+            _interactJumpRoutine = StartCoroutine(ApplyInteractJumpVelocityAfterDelay(
+                resolvedJumpVelocity,
+                clampedDelayDuration,
+                clampedMinGroundCheckDelay
+            ));
+        }
+
+        return true;
+    }
+
     private void OnDisable()
     {
         EventBus.Unsubscribe<FlagChangedEvent>(OnFlagChanged);
         EventBus.Unsubscribe<FlagsLoadedEvent>(OnFlagsLoaded);
+
+        if (_interactJumpRoutine != null)
+        {
+            StopCoroutine(_interactJumpRoutine);
+            _interactJumpRoutine = null;
+        }
+
+        _isInteractJumping = false;
+        _hasAppliedInteractJumpVelocity = false;
 
         if (_hasDefaultGravityScale && targetRigidbody != null)
         {
@@ -385,6 +475,145 @@ public sealed class Movement : MonoBehaviour
         }
     }
 
+    private void UpdateInteractJump()
+    {
+        if (!_isInteractJumping || !_hasAppliedInteractJumpVelocity || Time.time < _interactJumpGroundCheckStartTime)
+        {
+            return;
+        }
+
+        if (!IsInteractJumpGrounded())
+        {
+            return;
+        }
+
+        CompleteInteractJump();
+    }
+
+    private void CompleteInteractJump()
+    {
+        _isInteractJumping = false;
+        _hasAppliedInteractJumpVelocity = false;
+        _interactJumpRoutine = null;
+        SetAnimatorBoolIfExists(interactJumpingBool, false);
+        SetAnimatorTriggerIfExists(interactGroundedTrigger);
+    }
+
+    private void MoveCatHorizontallyDuringInteractJump()
+    {
+        if (!allowCatHorizontalMovementDuringInteractJump
+            || !_hasAppliedInteractJumpVelocity
+            || CurrentForm != MovementForm.Cat
+            || _currentForm == null
+            || targetRigidbody == null
+            || _input == null)
+        {
+            return;
+        }
+
+        _currentForm.Move(targetRigidbody, new Vector2(_input.Move.x, 0f));
+    }
+
+    private IEnumerator ApplyInteractJumpVelocityAfterDelay(
+        Vector2 jumpVelocity,
+        float delayDuration,
+        float minGroundCheckDelay)
+    {
+        yield return new WaitForSeconds(delayDuration);
+
+        _interactJumpRoutine = null;
+
+        if (!_isInteractJumping || targetRigidbody == null || IsDialogueStateActive())
+        {
+            yield break;
+        }
+
+        ApplyInteractJumpVelocity(jumpVelocity, minGroundCheckDelay);
+    }
+
+    private Vector2 ResolveInteractJumpVelocity(Vector2 jumpVelocity, bool useFacingDirection)
+    {
+        if (!useFacingDirection || Mathf.Approximately(jumpVelocity.x, 0f))
+        {
+            return jumpVelocity;
+        }
+
+        float facingSign = _isFacingRight ? 1f : -1f;
+        jumpVelocity.x = Mathf.Abs(jumpVelocity.x) * facingSign;
+        return jumpVelocity;
+    }
+
+    private void ApplyInteractJumpVelocity(Vector2 jumpVelocity, float minGroundCheckDelay)
+    {
+        if (targetRigidbody != null)
+        {
+            targetRigidbody.linearVelocity = jumpVelocity;
+            _hasAppliedInteractJumpVelocity = true;
+            _interactJumpGroundCheckStartTime = Time.time + minGroundCheckDelay;
+        }
+    }
+
+    private bool IsInteractJumpGrounded()
+    {
+        Collider2D groundCheckCollider = ResolveGroundCheckCollider();
+        if (groundCheckCollider == null || !groundCheckCollider.enabled)
+        {
+            return false;
+        }
+
+        if (targetRigidbody != null && targetRigidbody.linearVelocity.y > 0.05f)
+        {
+            return false;
+        }
+
+        ContactFilter2D contactFilter = new()
+        {
+            useLayerMask = true,
+            useTriggers = false
+        };
+        contactFilter.SetLayerMask(interactJumpGroundMask);
+
+        Bounds bounds = groundCheckCollider.bounds;
+        float checkDistance = Mathf.Max(0.01f, interactJumpGroundCheckDistance);
+        float checkWidth = Mathf.Max(0.01f, bounds.size.x * interactJumpGroundCheckWidthRatio);
+        Vector2 checkCenter = new(bounds.center.x, bounds.min.y - checkDistance * 0.5f);
+        Vector2 checkSize = new(checkWidth, checkDistance);
+
+        int hitCount = Physics2D.OverlapBox(
+            checkCenter,
+            checkSize,
+            0f,
+            contactFilter,
+            _groundCheckHits
+        );
+
+        for (int i = 0; i < hitCount; i++)
+        {
+            Collider2D hitCollider = _groundCheckHits[i];
+            if (hitCollider != null && !hitCollider.transform.IsChildOf(transform))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private Collider2D ResolveGroundCheckCollider()
+    {
+        if (CurrentForm == MovementForm.Ghost && ghostBodyCollider != null)
+        {
+            return ghostBodyCollider;
+        }
+
+        if (catBodyCollider != null)
+        {
+            return catBodyCollider;
+        }
+
+        return bodyCollider;
+    }
+
     private bool ShouldBlockMovement()
     {
         return _isMovementLocked || IsDialogueStateActive();
@@ -401,6 +630,52 @@ public sealed class Movement : MonoBehaviour
         {
             targetRigidbody.linearVelocity = Vector2.zero;
         }
+    }
+
+    private void SetAnimatorTriggerIfExists(string parameterName)
+    {
+        if (animator == null || string.IsNullOrWhiteSpace(parameterName))
+        {
+            return;
+        }
+
+        int parameterHash = Animator.StringToHash(parameterName);
+        if (HasAnimatorParameter(parameterHash, AnimatorControllerParameterType.Trigger))
+        {
+            animator.SetTrigger(parameterHash);
+        }
+    }
+
+    private void SetAnimatorBoolIfExists(string parameterName, bool value)
+    {
+        if (animator == null || string.IsNullOrWhiteSpace(parameterName))
+        {
+            return;
+        }
+
+        int parameterHash = Animator.StringToHash(parameterName);
+        if (HasAnimatorParameter(parameterHash, AnimatorControllerParameterType.Bool))
+        {
+            animator.SetBool(parameterHash, value);
+        }
+    }
+
+    private bool HasAnimatorParameter(int parameterHash, AnimatorControllerParameterType parameterType)
+    {
+        if (animator == null)
+        {
+            return false;
+        }
+
+        foreach (AnimatorControllerParameter parameter in animator.parameters)
+        {
+            if (parameter.nameHash == parameterHash && parameter.type == parameterType)
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
 #if UNITY_EDITOR
@@ -442,6 +717,23 @@ public sealed class Movement : MonoBehaviour
                 "Assets/_Project/Animation/Cat/Cat.controller"
             );
         }
+
+        if (!Application.isPlaying)
+        {
+            PreviewColliderProfileInEditor();
+        }
+    }
+
+    private void PreviewColliderProfileInEditor()
+    {
+        if (bodyCollider == null || catBodyCollider != bodyCollider || ghostBodyCollider != null)
+        {
+            return;
+        }
+
+        ColliderProfile profile = startingForm == MovementForm.Ghost ? ghostCollider : catCollider;
+        bodyCollider.size = profile.Size;
+        bodyCollider.offset = profile.Offset;
     }
 #endif
 }
