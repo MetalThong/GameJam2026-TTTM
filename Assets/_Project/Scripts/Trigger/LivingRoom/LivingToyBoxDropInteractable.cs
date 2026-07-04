@@ -29,6 +29,11 @@ public sealed class LivingToyBoxDropInteractable : StoryInteractable
     [SerializeField, Min(0f)] private float cutSceneFadeOutDuration = 0.28f;
     [SerializeField] private Ease cutSceneFadeEase = Ease.OutQuad;
 
+    [Header("Post Dialogue Form")]
+    [SerializeField] private Movement playerMovement;
+    [SerializeField] private bool changePlayerFormAfterDialogue = true;
+    [SerializeField] private MovementForm postDialogueForm = MovementForm.Ghost;
+
     [Header("Flags")]
     [SerializeField] private string completionFlagId = "dropped_box";
 
@@ -185,6 +190,7 @@ public sealed class LivingToyBoxDropInteractable : StoryInteractable
         }
 
         await player.PlayAsync(cancellationToken);
+        ChangePlayerFormAfterDialogue();
 
         if (cutSceneHoldAfterPlayback > 0f)
         {
@@ -350,6 +356,30 @@ public sealed class LivingToyBoxDropInteractable : StoryInteractable
         return cutScenePlayer;
     }
 
+    private void ChangePlayerFormAfterDialogue()
+    {
+        if (!changePlayerFormAfterDialogue)
+        {
+            return;
+        }
+
+        Movement movement = ResolvePlayerMovement();
+        if (movement != null)
+        {
+            movement.SetForm(postDialogueForm);
+        }
+    }
+
+    private Movement ResolvePlayerMovement()
+    {
+        if (playerMovement == null)
+        {
+            playerMovement = UnityEngine.Object.FindFirstObjectByType<Movement>(FindObjectsInactive.Exclude);
+        }
+
+        return playerMovement;
+    }
+
     private void SetCompletionFlag()
     {
         if (string.IsNullOrWhiteSpace(completionFlagId) || FlagManager.Instance == null)
@@ -392,6 +422,11 @@ public sealed class LivingToyBoxDropInteractable : StoryInteractable
         if (cutScenePlayer == null && cutSceneObject != null)
         {
             cutScenePlayer = cutSceneObject.GetComponentInChildren<CutSceneDialoguePlayer>(true);
+        }
+
+        if (playerMovement == null)
+        {
+            playerMovement = UnityEngine.Object.FindFirstObjectByType<Movement>(FindObjectsInactive.Exclude);
         }
     }
 #endif
