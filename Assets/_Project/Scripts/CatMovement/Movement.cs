@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -74,6 +75,7 @@ public sealed class Movement : MonoBehaviour, ISaveable
 
     public MovementForm CurrentForm => _currentForm != null ? _currentForm.Form : startingForm;
     public Vector2 MoveInput => _input != null ? _input.Move : Vector2.zero;
+    public event Action<MovementForm, MovementForm> FormChanged;
 
     [System.Serializable]
     private struct ColliderProfile
@@ -220,6 +222,16 @@ public sealed class Movement : MonoBehaviour, ISaveable
         return true;
     }
 
+    public bool TryPlayAnimationTrigger(string triggerName, bool requireCatForm = false)
+    {
+        if (requireCatForm && CurrentForm != MovementForm.Cat)
+        {
+            return false;
+        }
+
+        return SetAnimatorTriggerIfExists(triggerName);
+    }
+
     public void Save(SaveData data)
     {
         if (data == null)
@@ -281,6 +293,7 @@ public sealed class Movement : MonoBehaviour, ISaveable
 
     public void SetForm(MovementForm form)
     {
+        MovementForm previousForm = CurrentForm;
         MovementFormBehaviour nextForm = FindForm(form);
         if (nextForm == null)
         {
@@ -301,6 +314,12 @@ public sealed class Movement : MonoBehaviour, ISaveable
         _currentForm.Enter(targetRigidbody, _defaultGravityScale);
 
         SyncAnimatorToForm(_input != null ? _input.Move : Vector2.zero, snapAnimatorOnFormChange);
+
+        MovementForm currentForm = CurrentForm;
+        if (previousForm != currentForm)
+        {
+            FormChanged?.Invoke(previousForm, currentForm);
+        }
     }
 
     private MovementFormBehaviour FindForm(MovementForm form)
@@ -756,18 +775,21 @@ public sealed class Movement : MonoBehaviour, ISaveable
         }
     }
 
-    private void SetAnimatorTriggerIfExists(string parameterName)
+    private bool SetAnimatorTriggerIfExists(string parameterName)
     {
         if (animator == null || string.IsNullOrWhiteSpace(parameterName))
         {
-            return;
+            return false;
         }
 
         int parameterHash = Animator.StringToHash(parameterName);
         if (HasAnimatorParameter(parameterHash, AnimatorControllerParameterType.Trigger))
         {
             animator.SetTrigger(parameterHash);
+            return true;
         }
+
+        return false;
     }
 
     private void SetAnimatorBoolIfExists(string parameterName, bool value)

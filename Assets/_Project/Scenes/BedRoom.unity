@@ -1318,6 +1318,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InteractButton
   button: {fileID: 1774933826}
+  restrictByForm: 0
+  requiredForm: 0
 --- !u!61 &837205678
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -2437,6 +2439,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InteractButton
   button: {fileID: 467572461}
+  restrictByForm: 1
+  requiredForm: 1
 --- !u!61 &1427161039
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -2699,6 +2703,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InteractButton
   button: {fileID: 112448343}
+  restrictByForm: 1
+  requiredForm: 1
 --- !u!61 &1528064482
 BoxCollider2D:
   m_ObjectHideFlags: 0

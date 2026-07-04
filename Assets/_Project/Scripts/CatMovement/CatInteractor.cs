@@ -15,6 +15,12 @@ public class CatInteractor : MonoBehaviour
     private bool _dialogueWasPlaying;
     private int _ignoreInteractionFrame = -1;
     private float _nextDialogueResolveTime;
+    private Movement _movement;
+
+    private void Awake()
+    {
+        _movement = GetComponent<Movement>();
+    }
 
     private void Update()
     {
@@ -143,21 +149,44 @@ public class CatInteractor : MonoBehaviour
         return GameManager.Instance != null && GameManager.Instance.CurrentState == GameState.OnDialog;
     }
 
-    private static bool IsAvailable(IInteractable interactable)
+    private bool IsAvailable(IInteractable interactable)
     {
         if (interactable == null)
         {
             return false;
         }
 
+        Component component = interactable as Component;
+
         if (interactable is Behaviour behaviour)
         {
-            return behaviour.isActiveAndEnabled && behaviour.gameObject.activeInHierarchy;
+            if (!behaviour.isActiveAndEnabled || !behaviour.gameObject.activeInHierarchy)
+            {
+                return false;
+            }
+        }
+        else if (component != null)
+        {
+            if (!component.gameObject.activeInHierarchy)
+            {
+                return false;
+            }
         }
 
-        if (interactable is Component component)
+        return component == null || PassesInteractionAvailability(component);
+    }
+
+    private bool PassesInteractionAvailability(Component interactableComponent)
+    {
+        MonoBehaviour[] behaviours = interactableComponent.GetComponents<MonoBehaviour>();
+        for (int i = 0; i < behaviours.Length; i++)
         {
-            return component.gameObject.activeInHierarchy;
+            MonoBehaviour behaviour = behaviours[i];
+            if (behaviour is IInteractionAvailability availability
+                && !availability.IsInteractionAvailable(_movement))
+            {
+                return false;
+            }
         }
 
         return true;
