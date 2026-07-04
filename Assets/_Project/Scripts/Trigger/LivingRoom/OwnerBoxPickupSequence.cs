@@ -12,6 +12,11 @@ public sealed class OwnerBoxPickupSequence : MonoBehaviour
     [SerializeField] private string ownerResourcePath = "Main/thang chu di";
     [SerializeField] private Transform spawnPoint;
     [SerializeField] private Vector3 spawnOffset;
+    [SerializeField] private bool useSpawnPositionOverride;
+    [SerializeField] private Vector3 spawnPositionOverride;
+    [SerializeField] private Vector3 ownerSpawnScale = Vector3.one;
+    [SerializeField] private bool flipOwnerOnSpawn;
+    [SerializeField] private bool disableAnimatorOnSpawn;
     [SerializeField, Min(0f)] private float spawnFadeDuration = 0.25f;
 
     [Header("Pickup Animation")]
@@ -90,12 +95,55 @@ public sealed class OwnerBoxPickupSequence : MonoBehaviour
             return null;
         }
 
-        Transform resolvedSpawnPoint = spawnPoint != null ? spawnPoint : transform;
-        GameObject owner = Instantiate(prefab, resolvedSpawnPoint.position + spawnOffset, Quaternion.identity);
+        Vector3 spawnPosition = ResolveSpawnPosition();
+        GameObject owner = Instantiate(prefab, spawnPosition + spawnOffset, Quaternion.identity);
         owner.name = prefab.name;
         owner.SetActive(true);
+        ApplyOwnerSpawnPresentation(owner);
         SetOwnerAlpha(owner, 0f);
         return owner;
+    }
+
+    private Vector3 ResolveSpawnPosition()
+    {
+        if (useSpawnPositionOverride)
+        {
+            return spawnPositionOverride;
+        }
+
+        Transform resolvedSpawnPoint = spawnPoint != null ? spawnPoint : transform;
+        return resolvedSpawnPoint.position;
+    }
+
+    private void ApplyOwnerSpawnPresentation(GameObject owner)
+    {
+        if (owner == null)
+        {
+            return;
+        }
+
+        owner.transform.localScale = ownerSpawnScale;
+
+        foreach (SpriteRenderer renderer in owner.GetComponentsInChildren<SpriteRenderer>(true))
+        {
+            if (renderer != null)
+            {
+                renderer.flipX = flipOwnerOnSpawn;
+            }
+        }
+
+        if (!disableAnimatorOnSpawn)
+        {
+            return;
+        }
+
+        foreach (Animator animator in owner.GetComponentsInChildren<Animator>(true))
+        {
+            if (animator != null)
+            {
+                animator.enabled = false;
+            }
+        }
     }
 
     private async UniTask PlayPickupAnimationAsync(GameObject owner, CancellationToken cancellationToken)

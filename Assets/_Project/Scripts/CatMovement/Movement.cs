@@ -279,7 +279,7 @@ public sealed class Movement : MonoBehaviour, ISaveable
         SetForm(nextForm);
     }
 
-    private void SetForm(MovementForm form)
+    public void SetForm(MovementForm form)
     {
         MovementFormBehaviour nextForm = FindForm(form);
         if (nextForm == null)

@@ -113,7 +113,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 84, y: -88}
+  m_AnchoredPosition: {x: 30, y: -34}
   m_SizeDelta: {x: 980, y: 84}
   m_Pivot: {x: 0, y: 1}
 --- !u!225 &7100000000000000190
@@ -152,10 +152,10 @@ MonoBehaviour:
     englishTitle: Help your owner wake up
     restoreWhenAssignedOnLoad: 1
   - missionId: living_drop_box
-    assignedFlag: went_living_room
+    assignedFlag: mission_provoke_owner
     completedFlag: dropped_box
-    vietnameseTitle: "G\xE2y s\u1EF1 ch\xFA \xFD v\u1EDBi ch\u1EE7"
-    englishTitle: Atract the attention of the boss
+    vietnameseTitle: "Ch\u1ECDc gi\u1EADn \xF4ng ch\u1EE7"
+    englishTitle: Make the owner angry
     restoreWhenAssignedOnLoad: 1
   visibleAlpha: 1
   assignStartOffset: {x: 0, y: 42}
@@ -625,7 +625,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -77, y: 75}
+  m_AnchoredPosition: {x: -1, y: 1}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1139718457600779242

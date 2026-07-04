@@ -68,6 +68,7 @@ Files:
 - `Playing`
 - `Paused`
 - `GameOver`
+- `OnDialog`
 
 Main transitions:
 
@@ -76,6 +77,7 @@ Main transitions:
 - `Resume()` -> `Playing` only from `Paused`
 - `RestartRun()` -> `Booting`
 - `QuitToMenu()` -> `MainMenu`
+- Dialogue, temporary chat, movement-lock story beats, and the Washing minigame use `OnDialog` as a runtime lock state so `Movement` stops while UI/dialogue input still works.
 
 ### Scene Loading
 
@@ -92,9 +94,24 @@ Current scene ids:
 
 - `MainMenu`
 - `BedRoom`
-- `Hall`
+- `HallUp`
+- `LivingRoom`
+- `HallDown`
 
-Current Build Settings include `Bootstrap`, `MainMenu`, and `BedRoom`. `Hall` exists in the enum but is not currently present in Build Settings.
+Current enabled Build Settings entries are:
+
+1. `Assets/_Project/Scenes/Bootstrap.unity`
+2. `Assets/_Project/Scenes/MainMenu.unity`
+3. `Assets/_Project/Scenes/BedRoom.unity`
+4. `Assets/_Project/Scenes/HallUp.unity`
+5. `Assets/_Project/Scenes/HallDown.unity`
+6. `Assets/_Project/Scenes/HallUp.unity`
+7. `Assets/_Project/Scenes/LivingRoom.unity`
+8. `Assets/_Project/Scenes/HallUp.unity`
+
+`Assets/_Project/Scenes/Kitchen.unity` exists, but it is not in `SceneId` and is not currently enabled in Build Settings. `HallUp.unity` currently appears more than once in Build Settings, so scene routing should be cleaned before relying on build-index order.
+
+`SceneLoader.FadeLoadAsync` wraps normal async scene loading with `FadePanel.FadeInAsync` and `FadePanel.FadeOutAsync` when a `FadePanel` exists. If no fade panel is found, it logs a warning and loads without transition.
 
 ### Input
 
@@ -254,6 +271,10 @@ Files:
 - `Assets/_Project/Scripts/Trigger/BedRoom/CatMeowTrigger.cs`
 - `Assets/_Project/Scripts/Trigger/BedRoom/CatMeowInteractable.cs`
 - `Assets/_Project/Scripts/Trigger/BedRoom/CatMeowMashInteractable.cs`
+- `Assets/_Project/Scripts/Trigger/LivingRoom/LivingRoomChatTransformSequence.cs`
+- `Assets/_Project/Scripts/Trigger/LivingRoom/LivingToyBoxDropInteractable.cs`
+- `Assets/_Project/Scripts/Trigger/LivingRoom/OwnerBoxPickupSequence.cs`
+- `Assets/_Project/Scripts/Trigger/LivingRoom/PushFlagObject.cs`
 
 The story system is flag-driven. `FlagManager` is the current singleton owner for a `StoryFlagStore`, exposes `HasFlag` and `SetFlag`, publishes `FlagChangedEvent` when a flag value changes, and saves after flag changes when `SaveManager` exists.
 
@@ -285,19 +306,35 @@ The story system is flag-driven. `FlagManager` is the current singleton owner fo
 
 `DeactivateOnFlag` disables its target GameObject when a configured flag is already set or becomes set. BedRoom uses it on WakeUpPanel with `waked_up` so returning from another room after wake-up removes the whole WakeUpPanel object, not only its visual or collider.
 
-`TemporaryChat` runs short one-off chat bubbles. It can wait before showing, fade all child `SpriteRenderer` and UI `Graphic` visuals, optionally set `GameState.OnDialog` while visible so `Movement` locks, set a completion flag, and deactivate the chat object after fade-out. HallDown uses this on `ChatTrigger`: `StoryTrigger` sets `went_down_hall`, `FlagBasedObject` activates the child `Chat`, `TemporaryChat` waits 3 seconds, locks movement while the chat is visible, then sets `chat_completed_go_down_hall` and hides `Chat` so the same bubble does not return on later loads.
+`TemporaryChat` runs short one-off chat bubbles. It can wait before showing, fade all child `SpriteRenderer` and UI `Graphic` visuals, optionally set `GameState.OnDialog` while visible so `Movement` locks, set a completion flag, and deactivate the chat object after fade-out. HallDown uses this on `ChatTrigger`: `StoryTrigger` sets `went_down_hall`, `FlagBasedObject` activates the child `Chat`, `TemporaryChat` waits 3 seconds, locks movement while the chat is visible, then sets `chat_completed_go_down_hall` and hides `Chat` so the same bubble does not return on later loads. LivingRoom also uses it on its child `Chat`: `StoryTrigger` sets `went_living_room`, `FlagBasedObject` activates `Chat` while `chat_completed_go_living_room` is absent, `TemporaryChat` locks movement while visible, then hides the bubble and writes `chat_completed_go_living_room`.
+
+`LivingRoomChatTransformSequence` is the scene-local continuation for the LivingRoom `ChatTrigger`. It listens for `chat_completed_go_living_room`, so the chat bubble fully finishes first. It then locks `GameState.OnDialog`, plays a built-in ring VFX plus fade/punch polish on the active `Movement` player, switches the Cat from `MovementForm.Ghost` to `MovementForm.Cat`, waits a short polish delay, plays `SO_Dialogue_LivingRoomTransform`, then sets `mission_provoke_owner`. It writes `post_chat_go_living_room_complete` after the sequence so returning to LivingRoom does not replay the transformation/dialogue.
 
 `DialogueStoryInteractable` extends `StoryInteractable` to play a `DialogueSO` (and optional SFX id) on success, then run the flag action, and optionally deactivate its own GameObject. On success it can fade a `hideBeforeDialogue` visual (for example the WakeUpPanel `Visual`) over `hideBeforeDialogueFadeDuration`, wait `dialogueDelayAfterHide`, then await `PlayDialogueAsync` before executing the action, so flags are only set after the dialogue finishes. The hide fade supports `SpriteRenderer`, UI `Graphic`, and TMP children. It guards against re-entry while a dialogue is playing. This is the reusable base for flag-gated interactions that should show dialogue (WakeUp panel, cat meow, etc.).
 
 The scene `DialogueManager` is resolved lazily through `ResolveDialogueManager`: it uses the serialized `dialogueManager` field if assigned, otherwise falls back to `FindFirstObjectByType<DialogueManager>` once and caches the result. This lets interactions work with only a `DialogueSO` assigned, as long as one `DialogueManager` exists in the scene. The find call is one-shot and cached, not a per-frame lookup, so it stays within acceptable use of the `RULE.md` anti-pattern for game-jam speed; prefer assigning the field directly when convenient.
 
+Current HallDown story components:
+
+- `ChatTrigger` uses `StoryTrigger` to set `went_down_hall` the first time the player enters. A `FlagBasedObject` reveals its child `Chat` while `went_down_hall` exists and `chat_completed_go_down_hall` does not.
+- The child `Chat` uses `TemporaryChat` with `showDelay = 3`, `lockMovementWhileVisible = true`, `completionFlag = chat_completed_go_down_hall`, and `deactivateAfterFade = true`.
+
 Current BedRoom story components:
 
 - `CatMeowTrigger` executes its configured flag action after success.
 - `CatMeowInteractable` derives from `DialogueStoryInteractable`, so the first `E` press near the bed plays `SO_Dialogue_CatMeowInitial` and sets `met_boss` only after that dialogue finishes. The `met_boss` flag disables this first interaction target and enables the mash target plus the `PhungThanhNo` visual.
-- `CatMeowMashInteractable` extends `MashStoryInteractable` for the repeated-`E` phase. When the mash succeeds, it plays `SO_Dialogue_PhungThanhNo`, spawns the owner from `Resources/Main/thang chu di.aseprite`, plays `SO_Dialogue_PhungThanhNo_Exit`, starts the owner exit animation state `thang chu di_clip`, runs a light screen fade, then sets `waked_boss_up`, hides completion targets, and deactivates its own GameObject.
+- `CatMeowMashInteractable` extends `MashStoryInteractable` for the repeated-`E` phase. When the mash succeeds, it plays `SO_Dialogue_PhungThanhNo`, spawns the configured Boss/owner prefab, fades it in at `(2.48, -4.48, 0)`, plays `SO_Dialogue_PhungThanhNo_Exit`, starts `BossWalk`, moves the owner lightly to the right, then fades/despawns it before setting `waked_boss_up`, hiding completion targets, and deactivating its own GameObject.
 - WakeUpPanel starts with its `Visual` active and shows the prompt text `Ấn E để tỉnh dậy`. Interacting fades that visual out over `hideBeforeDialogueFadeDuration` (currently 1 second), waits `dialogueDelayAfterHide` (currently 2 seconds), then plays the assigned wake-up `DialogueSO`; `waked_up` is applied only after dialogue completion, which keeps the cat locked until the wake-up flow finishes. When BedRoom is loaded after `waked_up` already exists, `FadeFlagObject` applies the hidden state instantly on its initial refresh so the WakeUpPanel visual does not flash back in before fading.
-- The PhungThanhNo mash setup lives on the boss `InteractE` object under `HolderAfter`. `PhungThanhNo` is inactive by default and only becomes visible when `met_boss` is set after the first cat-meow dialogue. Both `HolderAfter/InteractE` and `PhungThanhNo` are blocked by `waked_boss_up`, so loading a completed save keeps them hidden. `CatMeowMashInteractable` requires `met_boss`, asks for repeated `E` presses (`requiredPressCount` currently 12), decays after `decayDelay` (currently 0.3 seconds) at `decayPerSecond` (currently 3.5 progress per second), uses `PhungThanhNo` as the spawn point/visual root, loads the owner prefab from `Resources` path `Main/thang chu di`, and plays fade/animation before setting `waked_boss_up`. `MashProgressView` points at the same visual root, keeps it visible during the mash phase (`hideWhenEmpty = false`), auto-finds the full progress bar renderer, warms the bar color toward red, and punch-scales the emote/root to make spam input feel like it is making the character angrier.
+- The PhungThanhNo mash setup lives on the boss `InteractE` object under `HolderAfter`. `PhungThanhNo` is inactive by default and only becomes visible when `met_boss` is set after the first cat-meow dialogue. Both `HolderAfter/InteractE` and `PhungThanhNo` are blocked by `waked_boss_up`, so loading a completed save keeps them hidden. `CatMeowMashInteractable` requires `met_boss`, asks for repeated `E` presses (`requiredPressCount` currently 12), decays after `decayDelay` (currently 0.3 seconds) at `decayPerSecond` (currently 3.5 progress per second), and can optionally play owner animation/movement if `ownerExitAnimationState` or exit movement fields are assigned. `MashProgressView` points at the same visual root, keeps it visible during the mash phase (`hideWhenEmpty = false`), auto-finds the full progress bar renderer, warms the bar color toward red, and punch-scales the emote/root to make spam input feel like it is making the character angrier.
+
+Current LivingRoom story components:
+
+- `ChatTrigger` uses `StoryTrigger` to set `went_living_room`. Its `FlagBasedObject` reveals child `Chat` only while `went_living_room` exists and `chat_completed_go_living_room` does not. The child `Chat` is inactive by default, uses `TemporaryChat` with `lockMovementWhileVisible = true`, sets `chat_completed_go_living_room`, and deactivates itself after fade so it does not replay on later loads.
+- `LivingRoomChatTransformSequence` lives on the still-active `ChatTrigger`, not on the child `Chat`, so it can start after `TemporaryChat` hides the chat object. It waits for `chat_completed_go_living_room`, changes the player form to Cat with the built-in ring VFX/fade/punch polish, then plays `SO_Dialogue_LivingRoomTransform` after a short `dialogueDelay` before assigning the `mission_provoke_owner` mission flag.
+- `LivingToyBoxDropInteractable` derives from `StoryInteractable`. On a valid `E` interaction, it prevents re-entry, hides configured start targets, optionally plays an SFX before or after the move, DOTween-moves `toyBoxTransform` to `moveTarget` or `moveOffset`, fades the assigned cutscene object in, plays a `CutSceneDialoguePlayer` if assigned, holds the frozen final frame briefly, fades the cutscene object out, hides configured completion targets and the `toyBoxTransform.gameObject` when `hideToyBoxOnComplete` is enabled, then executes its normal `StoryFlagAction`, sets `completionFlagId` (default `dropped_box`), shows configured completion targets, and can deactivate itself. LivingRoom currently uses `cutSceneFadeInDuration = 0.18`, `cutSceneHoldAfterPlayback = 0.2`, and `cutSceneFadeOutDuration = 0.28` so `OwnerBoxPickupSequence` does not start until the HolderCutScene presentation has closed cleanly.
+- `CutSceneDialoguePlayer` is the reusable cutscene bridge used by LivingRoom. It can play an Animator state or legacy Animation clip once, optionally freeze on the final frame, wait a delay, then call `DialogueManager.PlayDialogueAsync(dialogue)`. It resolves animation state names directly or by trying the `_clip` suffix, and it supports manual `PlayAsync` as well as `playOnEnable`.
+- `OwnerBoxPickupSequence` starts when its GameObject is enabled, unless `completionFlagId` is already set. It spawns an owner prefab from a serialized prefab or `Resources` path `Main/thang chu di`, can override spawn position/scale/flip/animator state from the scene, fades owner sprites in, optionally plays a pickup animation/dialogue, then sets `picked_up_box` and deactivates itself. The current LivingRoom setup spawns Boss at `(-2.28, -3.04, 0)`, scale `(1, 1, 1)`, flips the sprite on spawn, disables the animator, leaves `pickupAnimationState` empty, and does not wait for animation so Boss simply fades in and stands still after the HolderCutScene flow.
+- `PushFlagObject` extends `FlagBasedObject` but currently overrides `Refresh()` to DOTween its own transform by an offset every time the flag condition refreshes. Use carefully: repeated flag load/change refreshes can move it again because it does not call `TryGetTargetActiveState` before moving.
 
 Current error and guard behavior:
 
@@ -314,9 +351,14 @@ Files:
 
 - `Assets/_Project/Scripts/Core/UI/UIManager.cs`
 - `Assets/_Project/Scripts/Core/UI/SceneUIController.cs`
+- `Assets/_Project/Scripts/Core/UI/SettingsPanelController.cs`
+- `Assets/_Project/Scripts/Core/UI/FadePanel.cs`
 - `Assets/_Project/Scripts/Core/UI/UIPanelView.cs`
 - `Assets/_Project/Scripts/Core/UI/MissionDefinition.cs`
 - `Assets/_Project/Scripts/Core/UI/MissionView.cs`
+- `Assets/_Project/Scripts/Core/Localization/LocalizationManager.cs`
+- `Assets/_Project/Scripts/Core/Localization/LocalizationTable.cs`
+- `Assets/_Project/Scripts/Core/Localization/LocalizedText.cs`
 - `Assets/_Project/Scripts/Dialogue/DialogueLine.cs`
 - `Assets/_Project/Scripts/Dialogue/DialogueView.cs`
 - `Assets/_Project/Scripts/Dialogue/DialogueTestRunner.cs`
@@ -344,7 +386,23 @@ Important current limitation: `UIPanelView.Id` has only a getter and is not seri
 
 `BedRoom.unity` owns its scene UI under `SceneUIRoot`. This root contains a Screen Space Overlay canvas, a Settings button, a Settings panel, and the Dialogue panel. `SceneUIController` binds the scene Settings button and close button to the Settings panel without relying on persistent global UI state.
 
-`UI.prefab` also owns a `Mission` HUD object with `MissionView`. `MissionView` listens to `FlagChangedEvent` and `FlagsLoadedEvent`, maps configured `MissionDefinition` entries from an assigned flag to a completed flag, and localizes mission title text through `LocalizationManager`. Missions now require a real assigned flag so they do not appear by default. When an assigned flag turns on, it fades the `(!) Mission title` text in while sliding it down into place. When the matching completed flag turns on, it wraps the text with TMP strikethrough, waits briefly, then fades the mission out while sliding it upward. On loaded saves, an assigned-but-incomplete mission is restored instantly without replaying the assignment animation. The current first Bedroom mission is `Giúp chủ nhân tỉnh dậy`, assigned by `waked_up` after the WakeUpPanel flow finishes and completed by `waked_boss_up` when the owner wakes up.
+`UI.prefab` also owns a `Mission` HUD object with `MissionView`. `MissionView` listens to `FlagChangedEvent` and `FlagsLoadedEvent`, maps configured `MissionDefinition` entries from an assigned flag to a completed flag, and localizes mission title text through `LocalizationManager`. Missions now require a real assigned flag so they do not appear by default. When an assigned flag turns on, it fades the `(!) Mission title` text in while sliding it down into place. When the matching completed flag turns on, it wraps the text with TMP strikethrough, waits briefly, then fades the mission out while sliding it upward. On loaded saves, an assigned-but-incomplete mission is restored instantly without replaying the assignment animation. The current first Bedroom mission is `Giúp chủ nhân tỉnh dậy`, assigned by `waked_up` after the WakeUpPanel flow finishes and completed by `waked_boss_up` when the owner wakes up. The current LivingRoom mission is `Chọc giận ông chủ`, assigned by `mission_provoke_owner` after `SO_Dialogue_LivingRoomTransform` finishes and completed by `dropped_box` in LivingRoom.
+
+`SettingsPanelController` drives the in-game settings panel. It persists `settings.musicVolume` and `settings.sfxVolume` to `PlayerPrefs`, applies them to `AudioManager`, controls the Vietnamese/English/Cat language buttons, visibly marks the selected language by disabling and highlighting its button, and can quit to `MainMenu` through `GameManager.QuitToMenu()` plus `SceneManager.LoadScene`.
+
+`LocalizationManager` owns the active `Language`, persists it to `PlayerPrefs` key `settings.language`, resolves UI keys through `LocalizationTable`, and exposes `LanguageChanged`. `LocalizedText` subscribes to that event and refreshes its attached TMP text. Cat language returns `Meow` for normal UI keys and dialogue speaker/body text, except the three language picker keys `language.vietnamese`, `language.english`, and `language.cat`, which remain readable.
+
+`FadePanel` derives from `UIPanelView` and wraps a `CanvasGroup`. `SceneLoader.FadeLoadAsync` finds it at runtime, fades it in before scene load, yields after load, then resolves/fades it out in the newly loaded scene. `FadePanel.Show()` and `Hide()` are asynchronous DOTween fades and keep raycast blocking configurable.
+
+### Cutscenes
+
+Files:
+
+- `Assets/_Project/Scripts/CutScene/CutSceneDialoguePlayer.cs`
+
+`CutSceneDialoguePlayer` is scene-local and intentionally reusable across story beats. It resolves an `Animator` first, then a legacy `Animation` fallback. When playing an Animator, it requires an active GameObject and runtime controller, clamps the requested layer, resolves the requested state directly or by toggling the `_clip` suffix, plays from normalized time `0`, waits for the resolved clip length divided by animator speed, and can freeze on the final frame by playing at normalized time `0.999` and setting speed to `0`. When using legacy `Animation`, it plays the named clip or first available clip once and can sample the last frame.
+
+After animation, it waits `delayAfterAnimation`, then plays the assigned `DialogueSO` through the scene `DialogueManager`. `playOnEnable` is useful for cutscene GameObjects that become active through a flag/object flow, while `PlayAsync` lets another script activate and await the whole sequence manually. `deactivateOnComplete` can hide the cutscene object after dialogue. Presentation fades are owned by the caller when the caller needs tighter story timing; for example `LivingToyBoxDropInteractable` fades the HolderCutScene object around `PlayAsync` and delays `dropped_box` until the fade-out finishes.
 
 ### Minigames
 
@@ -355,7 +413,7 @@ Files:
 
 `WashingMinigameController` drives the current Kitchen washing prototype. For testing, `Washing.prefab` keeps its root active but hides all minigame children until the player presses `Enter` or numpad Enter; then it reveals the minigame, locks movement by putting `GameManager` into `OnDialog`, and starts the tutorial. It reads `Keyboard.current.eKey.wasPressedThisFrame` directly like the current interaction/dialogue code. The first dish is a tutorial round: `DirtyDish (1)` moves from its starting point to the `Check` collider with an ease-out slowdown, stops at the valid overlap, then fades/pulses `ButtonE` to ask for input. Later dishes start from the same point, move through a fail point past `Check`, and get faster after every success. Pressing `E` inside the timing window around the moving dish hitbox and `Check` trigger plays the `WashingCat` `Wash` animation once, fades/scales the dish as consumed, then starts another round. The window is measured on local X from both collider widths plus a small padding so faster rounds do not miss because of narrow frame-by-frame bounds overlap. Pressing outside the window during active input or letting a normal dish pass the fail point sets `GameState.GameOver` and opens `PanelId.Lose` through `UIManager`.
 
-Default washing tuning is endless-until-fail for testing: tutorial travel duration `3` seconds, normal travel duration `2` seconds, speed multiplier `0.9` per success, minimum travel duration `0.75` seconds, wash lockout `0.33` seconds, and fail distance `1.2` local units past the check point. Story/interact/flag gating is intentionally left for a later pass.
+Default washing tuning is endless-until-fail for testing: `autoStartOnEnable = false`, `startOnEnter = true`, `hideMinigameUntilStarted = true`, tutorial travel duration `3` seconds, normal travel duration `2` seconds, speed multiplier `0.9` per success, minimum travel duration `0.75` seconds, fail distance `1.2` local units past the check point, timing window padding `0.35`, wash lockout `0.33` seconds, prompt fade `0.15` seconds, prompt pulse `0.55` seconds, and check pulse `0.5` seconds. Story/interact/flag gating is intentionally left for a later pass.
 
 ### Main Menu
 
@@ -454,6 +512,14 @@ Lifecycle:
 - release: call `OnDespawned` and deactivate
 - destroy: call `OnDestroyed` and destroy GameObject
 
+### Editor Tools
+
+Files:
+
+- `Assets/_Project/Scripts/Editor/TMPFontAssetGenerator.cs`
+
+`TMPFontAssetGenerator` is Editor-only under namespace `TTTM.EditorTools`. It keeps `Assets/_Project/Resources/Text/SVN-Determination Sans SDF.asset` available from source font `Assets/_Project/Resources/Text/SVN-Determination Sans.otf`. On editor load, it generates the TMP font asset only if missing. The menu item `Tools/TTTM/Generate TMP Font Assets/SVN Determination Sans` regenerates it by deleting and recreating the existing asset, creates a dynamic TMP font asset, names its atlas/material, saves assets, and refreshes the AssetDatabase.
+
 ## Dependency Direction
 
 Current intended dependency flow:
@@ -482,6 +548,14 @@ Story/Trigger Scripts
   -> SaveManager/ISaveable
   -> EventBus
   -> DOTween for fade presentation
+  -> DialogueManager for dialogue-backed interactions
+
+LivingRoom Story Scripts
+  -> StoryInteractable/FlagBasedObject
+  -> CutSceneDialoguePlayer
+  -> AudioManager
+  -> Resources for temporary owner prefab loading
+  -> DOTween
 
 MainMenu Scripts
   -> SaveManager
@@ -494,19 +568,28 @@ BedRoom Scene UI
   -> DialogueView
   -> DialogueTestRunner
   -> Unity UI / TextMeshPro
+
+Minigame Scripts
+  -> GameManager state lock
+  -> UIManager Lose panel
+  -> Unity InputSystem keyboard polling
+  -> DOTween
 ```
 
 The architecture is manager-centric. Cross-scene infrastructure is global and scene content calls into it as needed.
 
 ## Current Gaps And Risks
 
-- `SceneId.Hall` and `Hall.unity` exist, but Hall is not currently in Build Settings.
+- `Kitchen.unity` exists, but `SceneId.Kitchen` does not exist and Kitchen is not currently in Build Settings.
+- `HallUp.unity` is duplicated in Build Settings. Clean this before relying on scene list order or making a build.
 - `UIPanelView.Id` is not serialized or abstract, so the base class alone cannot configure unique panel ids in the Inspector.
 - Managers are singleton-based, which is simple for game jam speed but can make tests and scene isolation harder later.
 - `SaveManager.FindSaveables` only finds currently loaded active `MonoBehaviour` objects, so inactive objects or unloaded scenes are not saved.
 - `AudioManager` depends on correctly configured `AudioLibrary`, `AudioMixer`, and mixer parameter names.
 - `InputReader` throws if expected action map/action names are missing, which is useful during setup but should be accounted for when editing the input asset.
 - `CatInteractor` currently reads the `E` key directly instead of using `InputReader.InteractPressed`, so interaction rebinding is not fully wired yet.
+- `WashingMinigameController` currently reads `Enter`, numpad Enter, and `E` directly through `Keyboard.current`, so it is prototype input and not rebinding-ready.
+- `CutSceneDialoguePlayer`, `DialogueStoryInteractable`, and `OwnerBoxPickupSequence` use cached `FindFirstObjectByType` fallback paths when serialized references are not assigned. Prefer assigning references in scenes as the project stabilizes.
 - Story flags are string ids in Inspector fields; typos will fail silently unless caught by scene testing or future validation tooling.
 
 ## Adding New Features
