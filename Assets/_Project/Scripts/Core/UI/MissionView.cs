@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using DG.Tweening;
 using TMPro;
@@ -47,6 +48,11 @@ public sealed class MissionView : MonoBehaviour
             LocalizationManager.Instance.LanguageChanged += OnLanguageChanged;
         }
 
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.StateChanged += OnGameStateChanged;
+        }
+
         RefreshFromFlags();
     }
 
@@ -58,6 +64,11 @@ public sealed class MissionView : MonoBehaviour
         if (LocalizationManager.Instance != null)
         {
             LocalizationManager.Instance.LanguageChanged -= OnLanguageChanged;
+        }
+
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.StateChanged -= OnGameStateChanged;
         }
     }
 
@@ -79,15 +90,29 @@ public sealed class MissionView : MonoBehaviour
             return;
         }
 
+        MissionDefinition assignedMission = FindMissionByAssignedFlag(eventData.FlagId);
+        if (assignedMission != null && assignedMission.IsCompleted(FlagManager.Instance))
+        {
+            assignedMission = null;
+        }
+
         MissionDefinition completedMission = FindMissionByCompletedFlag(eventData.FlagId);
         if (completedMission != null && IsCurrentMission(completedMission))
         {
-            CompleteMission(completedMission);
+            CompleteMission(completedMission, () =>
+            {
+                if (assignedMission != null && !ShouldSuppressMissionUi())
+                {
+                    ShowMission(assignedMission, true);
+                    return;
+                }
+
+                RefreshFromFlags();
+            });
             return;
         }
 
-        MissionDefinition assignedMission = FindMissionByAssignedFlag(eventData.FlagId);
-        if (assignedMission != null && !assignedMission.IsCompleted(FlagManager.Instance))
+        if (assignedMission != null)
         {
             ShowMission(assignedMission, true);
         }
@@ -101,6 +126,11 @@ public sealed class MissionView : MonoBehaviour
     private void OnLanguageChanged(Language language)
     {
         RefreshCurrentText();
+    }
+
+    private void OnGameStateChanged(GameState previousState, GameState currentState)
+    {
+        RefreshFromFlags();
     }
 
     private void RefreshFromFlags()
@@ -123,7 +153,14 @@ public sealed class MissionView : MonoBehaviour
 
     private static bool ShouldSuppressMissionUi()
     {
-        return GameManager.Instance != null && GameManager.Instance.CurrentState == GameState.MainMenu;
+        if (GameManager.Instance == null)
+        {
+            return true;
+        }
+
+        return GameManager.Instance.CurrentState != GameState.Playing
+            && GameManager.Instance.CurrentState != GameState.OnDialog
+            && GameManager.Instance.CurrentState != GameState.Paused;
     }
 
     private void ShowMission(MissionDefinition mission, bool animate)
@@ -160,7 +197,7 @@ public sealed class MissionView : MonoBehaviour
             .OnComplete(() => _sequence = null);
     }
 
-    private void CompleteMission(MissionDefinition mission)
+    private void CompleteMission(MissionDefinition mission, Action onComplete = null)
     {
         ResolveReferences();
 
@@ -188,7 +225,12 @@ public sealed class MissionView : MonoBehaviour
         _sequence
             .Append(canvasGroup.DOFade(0f, completeFadeDuration))
             .Join(panel.DOAnchorPos(_restPosition + completeExitOffset, completeFadeDuration).SetEase(completeEase))
-            .OnComplete(SetHiddenInstant);
+            .OnComplete(() =>
+            {
+                _sequence = null;
+                SetHiddenInstant();
+                onComplete?.Invoke();
+            });
     }
 
     private void RefreshCurrentText()
