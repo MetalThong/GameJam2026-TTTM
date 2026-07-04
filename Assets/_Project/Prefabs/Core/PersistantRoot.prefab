@@ -182,6 +182,7 @@ MonoBehaviour:
   carryAnchorName: CarryAnchor
   carryLocalPosition: {x: 0, y: 0.45, z: 0}
   carryLocalEulerAngles: {x: 0, y: 0, z: 0}
+  preserveCarriedWorldScale: 1
   dropKey: 31
   dropLocalPosition: {x: 0, y: -0.25, z: 0}
   dropLocalEulerAngles: {x: 0, y: 0, z: 0}

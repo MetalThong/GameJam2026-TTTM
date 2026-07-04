@@ -12,6 +12,7 @@ public sealed class CarryManager : MonoBehaviour
     [SerializeField] private string carryAnchorName = "CarryAnchor";
     [SerializeField] private Vector3 carryLocalPosition = new(0f, 0.45f, 0f);
     [SerializeField] private Vector3 carryLocalEulerAngles;
+    [SerializeField] private bool preserveCarriedWorldScale = true;
     [SerializeField] private Key dropKey = Key.Q;
     [SerializeField] private Vector3 dropLocalPosition = new(0f, -0.25f, 0f);
     [SerializeField] private Vector3 dropLocalEulerAngles;
@@ -23,6 +24,7 @@ public sealed class CarryManager : MonoBehaviour
     private GameObject _carryPrefab;
     private GameObject _runtimeCarryTemplate;
     private GameObject _visual;
+    private Vector3 _carryWorldScale = Vector3.one;
 
     public bool IsCarrying => _carryPrefab != null;
     public string CurrentCarryId => _carryId;
@@ -93,7 +95,9 @@ public sealed class CarryManager : MonoBehaviour
             return;
         }
 
-        GameObject carryPrefab = ResolveCarryPrefab(carryable.CarryPrefab);
+        GameObject requestedCarryPrefab = carryable.CarryPrefab;
+        Vector3 carryWorldScale = ResolveCarryWorldScale(carryable, requestedCarryPrefab);
+        GameObject carryPrefab = ResolveCarryPrefab(requestedCarryPrefab);
         if (carryPrefab == null)
         {
             return;
@@ -101,6 +105,7 @@ public sealed class CarryManager : MonoBehaviour
 
         _carryId = carryable.CarryId;
         _carryPrefab = carryPrefab;
+        _carryWorldScale = carryWorldScale;
         AttachToCurrentPlayer();
     }
 
@@ -116,6 +121,7 @@ public sealed class CarryManager : MonoBehaviour
         ResolveDropPose(out Vector3 dropPosition, out Quaternion dropRotation);
         GameObject droppedObject = Instantiate(prefabToDrop, dropPosition, dropRotation);
         droppedObject.name = GetDroppedObjectName(prefabToDrop);
+        ApplyDroppedScale(droppedObject);
         droppedObject.SetActive(true);
 
         ClearCarriedState();
@@ -125,6 +131,7 @@ public sealed class CarryManager : MonoBehaviour
     {
         _carryId = null;
         _carryPrefab = null;
+        _carryWorldScale = Vector3.one;
 
         if (_visual != null)
         {
@@ -224,6 +231,7 @@ public sealed class CarryManager : MonoBehaviour
         _visual.name = _carryPrefab.name;
         _visual.transform.localPosition = carryLocalPosition;
         _visual.transform.localRotation = Quaternion.Euler(carryLocalEulerAngles);
+        ApplyCarriedScale(_visual.transform);
         _visual.SetActive(true);
 
         PrepareCarriedVisual(_visual);
@@ -338,5 +346,76 @@ public sealed class CarryManager : MonoBehaviour
                 behaviour.enabled = false;
             }
         }
+    }
+
+    private Vector3 ResolveCarryWorldScale(ICarryable carryable, GameObject carryPrefab)
+    {
+        if (!preserveCarriedWorldScale)
+        {
+            return Vector3.one;
+        }
+
+        if (carryable != null && IsValidScale(carryable.CarryWorldScale))
+        {
+            return carryable.CarryWorldScale;
+        }
+
+        if (carryable is Component component && IsValidScale(component.transform.lossyScale))
+        {
+            return component.transform.lossyScale;
+        }
+
+        if (carryPrefab != null && IsValidScale(carryPrefab.transform.lossyScale))
+        {
+            return carryPrefab.transform.lossyScale;
+        }
+
+        return Vector3.one;
+    }
+
+    private void ApplyCarriedScale(Transform carriedTransform)
+    {
+        if (!preserveCarriedWorldScale || carriedTransform == null)
+        {
+            return;
+        }
+
+        carriedTransform.localScale = WorldScaleToLocalScale(carriedTransform.parent, _carryWorldScale);
+    }
+
+    private void ApplyDroppedScale(GameObject droppedObject)
+    {
+        if (!preserveCarriedWorldScale || droppedObject == null)
+        {
+            return;
+        }
+
+        droppedObject.transform.localScale = _carryWorldScale;
+    }
+
+    private static Vector3 WorldScaleToLocalScale(Transform parent, Vector3 worldScale)
+    {
+        if (parent == null)
+        {
+            return worldScale;
+        }
+
+        Vector3 parentScale = parent.lossyScale;
+        return new Vector3(
+            SafeDivide(worldScale.x, parentScale.x),
+            SafeDivide(worldScale.y, parentScale.y),
+            SafeDivide(worldScale.z, parentScale.z));
+    }
+
+    private static float SafeDivide(float value, float divisor)
+    {
+        return Mathf.Approximately(divisor, 0f) ? value : value / divisor;
+    }
+
+    private static bool IsValidScale(Vector3 scale)
+    {
+        return !Mathf.Approximately(scale.x, 0f)
+            && !Mathf.Approximately(scale.y, 0f)
+            && !Mathf.Approximately(scale.z, 0f);
     }
 }

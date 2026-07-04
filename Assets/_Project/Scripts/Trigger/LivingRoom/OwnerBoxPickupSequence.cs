@@ -15,6 +15,7 @@ public sealed class OwnerBoxPickupSequence : MonoBehaviour
     [SerializeField] private bool useSpawnPositionOverride;
     [SerializeField] private Vector3 spawnPositionOverride;
     [SerializeField] private Vector3 ownerSpawnScale = Vector3.one;
+    [Tooltip("Mirror the whole owner hierarchy on X so attached props keep their relative offset.")]
     [SerializeField] private bool flipOwnerOnSpawn;
     [SerializeField] private bool disableAnimatorOnSpawn;
     [SerializeField, Min(0f)] private float spawnFadeDuration = 0.25f;
@@ -122,15 +123,14 @@ public sealed class OwnerBoxPickupSequence : MonoBehaviour
             return;
         }
 
-        owner.transform.localScale = ownerSpawnScale;
-
-        foreach (SpriteRenderer renderer in owner.GetComponentsInChildren<SpriteRenderer>(true))
+        Vector3 spawnScale = ownerSpawnScale;
+        if (flipOwnerOnSpawn)
         {
-            if (renderer != null)
-            {
-                renderer.flipX = flipOwnerOnSpawn;
-            }
+            float xScale = Mathf.Approximately(spawnScale.x, 0f) ? 1f : Mathf.Abs(spawnScale.x);
+            spawnScale.x = -xScale;
         }
+
+        owner.transform.localScale = spawnScale;
 
         if (!disableAnimatorOnSpawn)
         {

@@ -5,12 +5,22 @@ public sealed class CarryableInteractable : MonoBehaviour, IInteractable, ICarry
 {
     [SerializeField] private string carryId;
     [SerializeField] private GameObject carryPrefab;
+    [SerializeField] private Transform carryScaleSource;
+    [SerializeField] private Vector3 carriedScaleMultiplier = Vector3.one;
     [SerializeField] private bool hideSourceOnGrab = true;
     [SerializeField] private bool hideSourceWhenAlreadyCarried = true;
     [SerializeField] private bool allowReplaceCurrentCarry;
 
     public string CarryId => string.IsNullOrWhiteSpace(carryId) ? gameObject.name : carryId;
     public GameObject CarryPrefab => carryPrefab != null ? carryPrefab : gameObject;
+    public Vector3 CarryWorldScale
+    {
+        get
+        {
+            Transform scaleSource = carryScaleSource != null ? carryScaleSource : transform;
+            return Vector3.Scale(scaleSource.lossyScale, carriedScaleMultiplier);
+        }
+    }
 
     private void OnEnable()
     {
