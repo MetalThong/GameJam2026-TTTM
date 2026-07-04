@@ -1413,6 +1413,7 @@ GameObject:
   - component: {fileID: 1307963228}
   - component: {fileID: 1307963230}
   - component: {fileID: 1307963231}
+  - component: {fileID: 7100000000000000200}
   m_Layer: 0
   m_Name: WakeUpPanel
   m_TagString: Untagged
@@ -1499,7 +1500,8 @@ MonoBehaviour:
   condition:
     requiredFlags: []
     blockedFlags:
-    - meet_boss
+    - met_boss
+    - waked_up
   action:
     setFlags:
     - waked_up
@@ -1528,6 +1530,20 @@ MonoBehaviour:
   blockedFlag: 
   activeWhenFlagExists: 0
   fadeDuration: 1
+--- !u!114 &7100000000000000200
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1307963225}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd225fe0d2a642a89996512b0e8efa20, type: 3}
+  m_Name:
+  m_EditorClassIdentifier: Assembly-CSharp::DeactivateOnFlag
+  flagId: waked_up
+  target: {fileID: 1307963225}
 --- !u!1 &1332487312
 GameObject:
   m_ObjectHideFlags: 0
@@ -1628,7 +1644,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -0.0000076294, y: 0.000013351}
+  m_AnchoredPosition: {x: -31, y: -2}
   m_SizeDelta: {x: 444.1822, y: 109.3777}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1408278768
@@ -1653,8 +1669,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: "\u1EA4n E \u0111\u1EC3 t\u1EC9nh d\u1EADy"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: db2f30d1738f57942b06368b2427df89, type: 2}
+  m_sharedMaterial: {fileID: 5364150349029207964, guid: db2f30d1738f57942b06368b2427df89, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -1717,7 +1733,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: 0, w: 0}
+  m_margin: {x: 0, y: 0, z: -140.61732, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -1904,7 +1920,7 @@ MonoBehaviour:
   dialogue: {fileID: 11400000, guid: 548bb42f0d13dc048b6eface7ea4566f, type: 2}
   meowSfxId: cat_meow
   ownerPrefab: {fileID: 4460802599194774219, guid: 035b606787c0fe64387e61aab294d1e5, type: 3}
-  ownerResourcePath: ""
+  ownerResourcePath:
   ownerSpawnPoint: {fileID: 0}
   ownerSpawnOffset: {x: 0, y: 0, z: 0}
   useOwnerSpawnPosition: 1
@@ -2577,7 +2593,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!212 &2007685523
 SpriteRenderer:
   serializedVersion: 2

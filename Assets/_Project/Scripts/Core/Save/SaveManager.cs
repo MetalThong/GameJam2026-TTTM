@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public sealed class SaveManager : MonoBehaviour
 {
@@ -38,6 +39,16 @@ public sealed class SaveManager : MonoBehaviour
         {
             NewGame();
         }
+    }
+
+    private void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    private void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
     private void OnApplicationQuit()
@@ -106,8 +117,24 @@ public sealed class SaveManager : MonoBehaviour
 
         foreach (ISaveable saveable in _saveables)
         {
+            if (saveable is FlagManager)
+            {
+                continue;
+            }
+
             saveable.Load(_saveData);
         }
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        if (_saveData == null)
+        {
+            return;
+        }
+
+        LoadFlags();
+        LoadSaveables();
     }
 
     private void LoadFlags()

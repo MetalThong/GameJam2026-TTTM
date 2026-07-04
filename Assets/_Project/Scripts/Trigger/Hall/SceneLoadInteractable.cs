@@ -30,6 +30,11 @@ public class SceneLoadInteractable : MonoBehaviour, IInteractable
                 GameManager.Instance.SetState(GameState.Playing);
             }
 
+            if (SaveManager.Instance != null)
+            {
+                SaveManager.Instance.SaveGame();
+            }
+
             await _sceneLoader.FadeLoadAsync(targetScene);
         }
         finally

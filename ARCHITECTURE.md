@@ -218,9 +218,16 @@ Current `SaveData` fields:
 
 - `Coin`
 - `PlayerPosition`
+- `PlayerSceneName`
+- `HasPlayerState`
+- `PlayerForm`
+- `PlayerFacingRight`
+- `PlayerScenePositions`
 - `Flags`
 
 `FlagManager` implements `ISaveable`, so story flags are included in the same save file. Flag changes call `SaveManager.SaveGame()` when a save manager is available. On load, `SaveManager` pushes saved flags back into `FlagManager` and publishes `FlagsLoadedEvent` so flag-dependent scene objects can refresh.
+
+`Movement` implements `ISaveable` for the player. It stores the current form, facing direction, current scene name, and the last known Cat position for each scene. `SceneLoadInteractable` saves before loading the next scene, and `SaveManager` reloads flags and active scene saveables after `SceneManager.sceneLoaded`, so returning to a scene can restore the Cat position for that scene while preserving completed story state.
 
 ### Story Flags, Triggers, And Interactions
 
@@ -242,6 +249,7 @@ Files:
 - `Assets/_Project/Scripts/Trigger/InteractButton.cs`
 - `Assets/_Project/Scripts/Trigger/FlagBasedObject.cs`
 - `Assets/_Project/Scripts/Trigger/FadeFlagObject.cs`
+- `Assets/_Project/Scripts/Trigger/DeactivateOnFlag.cs`
 - `Assets/_Project/Scripts/Trigger/BedRoom/CatMeowTrigger.cs`
 - `Assets/_Project/Scripts/Trigger/BedRoom/CatMeowInteractable.cs`
 - `Assets/_Project/Scripts/Trigger/BedRoom/CatMeowMashInteractable.cs`
@@ -262,7 +270,7 @@ The story system is flag-driven. `FlagManager` is the current singleton owner fo
 
 `StoryTrigger` runs from `OnTriggerEnter2D` when the entering collider has the `Player` tag. It checks `FlagManager`, optional one-shot completion flag, and `StoryFlagCondition`, then executes `StoryFlagAction`. One-shot triggers write `trigger_completed_{triggerId}`.
 
-`StoryInteractable` implements `IInteractable`. It follows the same condition/action model as `StoryTrigger`, but is activated by interaction code instead of trigger entry. `TryInteract()` returns false when flags, one-shot completion, or `CanInteract()` block the interaction; it returns true only after `Interact()` starts. One-shot interactables write `interact_completed_{interactId}`.
+`StoryInteractable` implements `IInteractable`. It follows the same condition/action model as `StoryTrigger`, but is activated by interaction code instead of trigger entry. It refreshes its colliders whenever story flags load or change, so condition-blocked or one-shot-completed interactables cannot be called again after returning to a scene. `TryInteract()` returns false when flags, one-shot completion, or `CanInteract()` block the interaction; it returns true only after `Interact()` starts. One-shot interactables write `interact_completed_{interactId}`.
 
 `MashStoryInteractable` extends `StoryInteractable` for repeated presses. It increments progress by one per successful interact, decays progress after `decayDelay` by `decayPerSecond`, succeeds when progress reaches `requiredPressCount`, and can reset progress after success. It exposes `NormalizedProgress` (0..1) and the `Pressed`, `ProgressChanged`, and `Succeeded` events so views can render mash feedback without owning the mash state.
 
@@ -274,6 +282,8 @@ The story system is flag-driven. `FlagManager` is the current singleton owner fo
 
 `FadeFlagObject` extends `FlagBasedObject` by fading a target `SpriteRenderer` with DOTween before disabling it. If no sprite renderer is available, it falls back to normal active-state toggling.
 
+`DeactivateOnFlag` disables its target GameObject when a configured flag is already set or becomes set. BedRoom uses it on WakeUpPanel with `waked_up` so returning from another room after wake-up removes the whole WakeUpPanel object, not only its visual or collider.
+
 `DialogueStoryInteractable` extends `StoryInteractable` to play a `DialogueSO` (and optional SFX id) on success, then run the flag action, and optionally deactivate its own GameObject. On success it can fade a `hideBeforeDialogue` visual (for example the WakeUpPanel `Visual`) over `hideBeforeDialogueFadeDuration`, wait `dialogueDelayAfterHide`, then await `PlayDialogueAsync` before executing the action, so flags are only set after the dialogue finishes. The hide fade supports `SpriteRenderer`, UI `Graphic`, and TMP children. It guards against re-entry while a dialogue is playing. This is the reusable base for flag-gated interactions that should show dialogue (WakeUp panel, cat meow, etc.).
 
 The scene `DialogueManager` is resolved lazily through `ResolveDialogueManager`: it uses the serialized `dialogueManager` field if assigned, otherwise falls back to `FindFirstObjectByType<DialogueManager>` once and caches the result. This lets interactions work with only a `DialogueSO` assigned, as long as one `DialogueManager` exists in the scene. The find call is one-shot and cached, not a per-frame lookup, so it stays within acceptable use of the `RULE.md` anti-pattern for game-jam speed; prefer assigning the field directly when convenient.
@@ -283,7 +293,7 @@ Current BedRoom story components:
 - `CatMeowTrigger` executes its configured flag action after success.
 - `CatMeowInteractable` derives from `DialogueStoryInteractable`, so the first `E` press near the bed plays `SO_Dialogue_CatMeowInitial` and sets `met_boss` only after that dialogue finishes. The `met_boss` flag disables this first interaction target and enables the mash target plus the `PhungThanhNo` visual.
 - `CatMeowMashInteractable` extends `MashStoryInteractable` for the repeated-`E` phase. When the mash succeeds, it plays `SO_Dialogue_PhungThanhNo`, spawns the owner from `Resources/Main/thang chu di.aseprite`, plays `SO_Dialogue_PhungThanhNo_Exit`, starts the owner exit animation state `thang chu di_clip`, runs a light screen fade, then sets `waked_boss_up`, hides completion targets, and deactivates its own GameObject.
-- WakeUpPanel starts with its `Visual` active and shows the prompt text `Ấn E để tỉnh dậy`. Interacting fades that visual out over `hideBeforeDialogueFadeDuration` (currently 1 second), waits `dialogueDelayAfterHide` (currently 2 seconds), then plays the assigned wake-up `DialogueSO`; `waked_up` is applied only after dialogue completion, which keeps the cat locked until the wake-up flow finishes.
+- WakeUpPanel starts with its `Visual` active and shows the prompt text `Ấn E để tỉnh dậy`. Interacting fades that visual out over `hideBeforeDialogueFadeDuration` (currently 1 second), waits `dialogueDelayAfterHide` (currently 2 seconds), then plays the assigned wake-up `DialogueSO`; `waked_up` is applied only after dialogue completion, which keeps the cat locked until the wake-up flow finishes. When BedRoom is loaded after `waked_up` already exists, `FadeFlagObject` applies the hidden state instantly on its initial refresh so the WakeUpPanel visual does not flash back in before fading.
 - The PhungThanhNo mash setup lives on the boss `InteractE` object under `HolderAfter`. `PhungThanhNo` is inactive by default and only becomes visible when `met_boss` is set after the first cat-meow dialogue. Both `HolderAfter/InteractE` and `PhungThanhNo` are blocked by `waked_boss_up`, so loading a completed save keeps them hidden. `CatMeowMashInteractable` requires `met_boss`, asks for repeated `E` presses (`requiredPressCount` currently 12), decays after `decayDelay` (currently 0.3 seconds) at `decayPerSecond` (currently 3.5 progress per second), uses `PhungThanhNo` as the spawn point/visual root, loads the owner prefab from `Resources` path `Main/thang chu di`, and plays fade/animation before setting `waked_boss_up`. `MashProgressView` points at the same visual root, keeps it visible during the mash phase (`hideWhenEmpty = false`), auto-finds the full progress bar renderer, warms the bar color toward red, and punch-scales the emote/root to make spam input feel like it is making the character angrier.
 
 Current error and guard behavior:
@@ -302,6 +312,8 @@ Files:
 - `Assets/_Project/Scripts/Core/UI/UIManager.cs`
 - `Assets/_Project/Scripts/Core/UI/SceneUIController.cs`
 - `Assets/_Project/Scripts/Core/UI/UIPanelView.cs`
+- `Assets/_Project/Scripts/Core/UI/MissionDefinition.cs`
+- `Assets/_Project/Scripts/Core/UI/MissionView.cs`
 - `Assets/_Project/Scripts/Dialogue/DialogueLine.cs`
 - `Assets/_Project/Scripts/Dialogue/DialogueView.cs`
 - `Assets/_Project/Scripts/Dialogue/DialogueTestRunner.cs`
@@ -328,6 +340,8 @@ Current panel ids:
 Important current limitation: `UIPanelView.Id` has only a getter and is not serialized, so derived panels need to provide an id or this base will not expose a configurable id in the Inspector.
 
 `BedRoom.unity` owns its scene UI under `SceneUIRoot`. This root contains a Screen Space Overlay canvas, a Settings button, a Settings panel, and the Dialogue panel. `SceneUIController` binds the scene Settings button and close button to the Settings panel without relying on persistent global UI state.
+
+`UI.prefab` also owns a `Mission` HUD object with `MissionView`. `MissionView` listens to `FlagChangedEvent` and `FlagsLoadedEvent`, maps configured `MissionDefinition` entries from an assigned flag to a completed flag, and localizes mission title text through `LocalizationManager`. A mission with an empty assigned flag is treated as active by default until its completed flag exists. When an assigned flag turns on, it fades the `(!) Mission title` text in while sliding it down into place. When the matching completed flag turns on, it wraps the text with TMP strikethrough, waits briefly, then fades the mission out while sliding it upward. On loaded saves, an assigned-but-incomplete mission is restored instantly without replaying the assignment animation. The current prefab mappings are `Giúp chủ thức dậy` by default until `waked_up`, then `Hãy giúp chủ nhân vui lên` from `met_boss` until `waked_boss_up`.
 
 ### Main Menu
 

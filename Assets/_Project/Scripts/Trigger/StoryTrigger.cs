@@ -7,6 +7,25 @@ public class StoryTrigger : MonoBehaviour
     [SerializeField] private StoryFlagCondition condition = new();
     [SerializeField] private StoryFlagAction action = new();
 
+    private Collider2D[] _triggerColliders;
+
+    private string CompletedFlagId => string.IsNullOrWhiteSpace(triggerId)
+        ? string.Empty
+        : $"trigger_completed_{triggerId}";
+
+    private void OnEnable()
+    {
+        EventBus.Subscribe<FlagChangedEvent>(OnFlagChanged);
+        EventBus.Subscribe<FlagsLoadedEvent>(OnFlagsLoaded);
+        RefreshCompletedState();
+    }
+
+    private void OnDisable()
+    {
+        EventBus.Unsubscribe<FlagChangedEvent>(OnFlagChanged);
+        EventBus.Unsubscribe<FlagsLoadedEvent>(OnFlagsLoaded);
+    }
+
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.CompareTag("Player"))
@@ -24,9 +43,9 @@ public class StoryTrigger : MonoBehaviour
             return;
         }
 
-        if (triggerOnce && flagManager.HasFlag($"trigger_completed_{triggerId}"))
+        if (IsCompleted(flagManager))
         {
-            // Debug.Log("[StoryTrigger] This trigger has triggered");
+            RefreshCompletedState();
             return;
         }
 
@@ -53,9 +72,53 @@ public class StoryTrigger : MonoBehaviour
 
         action?.Execute(flagManager);
 
-        if (triggerOnce)
+        if (triggerOnce && !string.IsNullOrEmpty(CompletedFlagId))
         {
-            flagManager.SetFlag($"trigger_completed_{triggerId}", true);
+            flagManager.SetFlag(CompletedFlagId, true);
+        }
+    }
+
+    private void OnFlagChanged(FlagChangedEvent eventData)
+    {
+        if (eventData.FlagId == CompletedFlagId)
+        {
+            RefreshCompletedState();
+        }
+    }
+
+    private void OnFlagsLoaded(FlagsLoadedEvent eventData)
+    {
+        RefreshCompletedState();
+    }
+
+    private bool IsCompleted(FlagManager flagManager)
+    {
+        return flagManager != null
+            && triggerOnce
+            && !string.IsNullOrEmpty(CompletedFlagId)
+            && flagManager.HasFlag(CompletedFlagId);
+    }
+
+    private void RefreshCompletedState()
+    {
+        bool shouldEnable = !IsCompleted(FlagManager.Instance);
+        SetTriggerCollidersEnabled(shouldEnable);
+    }
+
+    private void SetTriggerCollidersEnabled(bool shouldEnable)
+    {
+        if (_triggerColliders == null || _triggerColliders.Length == 0)
+        {
+            _triggerColliders = GetComponents<Collider2D>();
+        }
+
+        for (int i = 0; i < _triggerColliders.Length; i++)
+        {
+            Collider2D triggerCollider = _triggerColliders[i];
+            if (triggerCollider != null && triggerCollider.isTrigger)
+            {
+                triggerCollider.enabled = shouldEnable;
+            }
         }
     }
 }

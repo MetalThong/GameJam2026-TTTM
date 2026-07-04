@@ -56,12 +56,30 @@ namespace TTTM.EditorTools
             fontAsset.name = "SVN-Determination Sans SDF";
             fontAsset.atlasPopulationMode = AtlasPopulationMode.Dynamic;
 
+            Texture2D atlasTexture = fontAsset.atlasTexture;
+            if (atlasTexture != null)
+            {
+                atlasTexture.name = "SVN-Determination Sans SDF Atlas";
+            }
+
             if (fontAsset.material != null)
             {
                 fontAsset.material.name = "SVN-Determination Sans SDF Material";
             }
 
             AssetDatabase.CreateAsset(fontAsset, OutputFontAssetPath);
+
+            if (atlasTexture != null)
+            {
+                AssetDatabase.AddObjectToAsset(atlasTexture, fontAsset);
+            }
+
+            if (fontAsset.material != null)
+            {
+                AssetDatabase.AddObjectToAsset(fontAsset.material, fontAsset);
+            }
+
+            EditorUtility.SetDirty(fontAsset);
             AssetDatabase.SaveAssets();
             AssetDatabase.Refresh();
 

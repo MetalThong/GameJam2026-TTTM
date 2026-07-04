@@ -1,6 +1,7 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(Animator))]
@@ -9,7 +10,7 @@ using UnityEngine.InputSystem;
 [RequireComponent(typeof(MovementInput))]
 [RequireComponent(typeof(CatMovementForm))]
 [RequireComponent(typeof(GhostMovementForm))]
-public sealed class Movement : MonoBehaviour
+public sealed class Movement : MonoBehaviour, ISaveable
 {
     private static readonly int IsMovingHash = Animator.StringToHash("IsMoving");
     private static readonly int IsGhostHash = Animator.StringToHash("IsGhost");
@@ -20,6 +21,9 @@ public sealed class Movement : MonoBehaviour
     [Header("Story Lock")]
     [SerializeField] private bool shouldLockMovementUntilFlag;
     [SerializeField] private string unlockMovementFlag = "waked_up";
+
+    [Header("Save")]
+    [SerializeField] private bool restoreSavedScenePosition = true;
 
     [Header("Input")]
     [SerializeField] private InputActionAsset inputActions;
@@ -212,6 +216,35 @@ public sealed class Movement : MonoBehaviour
         return true;
     }
 
+    public void Save(SaveData data)
+    {
+        if (data == null)
+        {
+            return;
+        }
+
+        data.HasPlayerState = true;
+        data.PlayerPosition = transform.position;
+        data.PlayerSceneName = ResolveCurrentSceneName();
+        data.SetPlayerScenePosition(data.PlayerSceneName, transform.position);
+        data.PlayerForm = (int)CurrentForm;
+        data.PlayerFacingRight = _isFacingRight;
+    }
+
+    public void Load(SaveData data)
+    {
+        if (data == null || !data.HasPlayerState)
+        {
+            return;
+        }
+
+        SetForm(ResolveSavedForm(data.PlayerForm));
+        ApplyFacing(data.PlayerFacingRight);
+        RestoreScenePosition(data);
+        StopMovement();
+        RefreshMovementLock();
+    }
+
     private void OnDisable()
     {
         EventBus.Unsubscribe<FlagChangedEvent>(OnFlagChanged);
@@ -276,6 +309,46 @@ public sealed class Movement : MonoBehaviour
         }
 
         return null;
+    }
+
+    private MovementForm ResolveSavedForm(int formValue)
+    {
+        return formValue switch
+        {
+            (int)MovementForm.Cat => MovementForm.Cat,
+            (int)MovementForm.Ghost => MovementForm.Ghost,
+            _ => startingForm
+        };
+    }
+
+    private void RestoreScenePosition(SaveData data)
+    {
+        if (!restoreSavedScenePosition || data == null)
+        {
+            return;
+        }
+
+        string sceneName = ResolveCurrentSceneName();
+        if (!data.TryGetPlayerScenePosition(sceneName, out Vector3 savedPosition))
+        {
+            return;
+        }
+
+        transform.position = savedPosition;
+
+        if (targetRigidbody != null)
+        {
+            targetRigidbody.position = new Vector2(savedPosition.x, savedPosition.y);
+            targetRigidbody.linearVelocity = Vector2.zero;
+        }
+    }
+
+    private string ResolveCurrentSceneName()
+    {
+        Scene scene = gameObject.scene;
+        return scene.IsValid() && !string.IsNullOrWhiteSpace(scene.name)
+            ? scene.name
+            : SceneManager.GetActiveScene().name;
     }
 
     private void ResolveReferences()
@@ -420,7 +493,18 @@ public sealed class Movement : MonoBehaviour
         }
 
         _isFacingRight = horizontal > 0f;
-        spriteRenderer.flipX = spriteFacesRightByDefault ? !_isFacingRight : _isFacingRight;
+        ApplyFacing(_isFacingRight);
+    }
+
+    private void ApplyFacing(bool isFacingRight)
+    {
+        _isFacingRight = isFacingRight;
+
+        if (spriteRenderer != null)
+        {
+            spriteRenderer.flipX = spriteFacesRightByDefault ? !_isFacingRight : _isFacingRight;
+        }
+
         ApplyColliderForForm(CurrentForm);
     }
 

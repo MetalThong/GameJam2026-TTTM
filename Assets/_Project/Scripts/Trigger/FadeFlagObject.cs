@@ -7,6 +7,7 @@ public class FadeFlagObject : FlagBasedObject
 
     private SpriteRenderer _targetSpr;
     private Tween _fadeTween;
+    private bool _hasCompletedInitialRefresh;
 
     private void Awake()
     {
@@ -31,10 +32,19 @@ public class FadeFlagObject : FlagBasedObject
         if (_targetSpr == null)
         {
             SetTargetActive();
+            _hasCompletedInitialRefresh = true;
             return;
         }
 
         _fadeTween?.Kill();
+
+        bool shouldAnimate = _hasCompletedInitialRefresh && Application.isPlaying && fadeDuration > 0f;
+        if (!shouldAnimate)
+        {
+            SetTargetInstant(shouldBeActive);
+            _hasCompletedInitialRefresh = true;
+            return;
+        }
 
         target.SetActive(true);
 
@@ -46,5 +56,16 @@ public class FadeFlagObject : FlagBasedObject
                 target.SetActive(false);
             }
         });
+
+        _hasCompletedInitialRefresh = true;
+    }
+
+    private void SetTargetInstant(bool shouldBeActive)
+    {
+        target.SetActive(shouldBeActive);
+
+        Color color = _targetSpr.color;
+        color.a = shouldBeActive ? 1f : 0f;
+        _targetSpr.color = color;
     }
 }
