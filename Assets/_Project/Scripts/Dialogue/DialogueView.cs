@@ -152,8 +152,8 @@ public sealed class DialogueView : MonoBehaviour
         string speakerName = line.GetSpeakerName(localizationManager);
         string body = line.GetText(localizationManager);
 
-        speakerNameText.text = string.IsNullOrWhiteSpace(speakerName) ? "???" : speakerName;
-        _fullBodyText = string.IsNullOrWhiteSpace(body) ? string.Empty : body;
+        speakerNameText.text = string.IsNullOrWhiteSpace(speakerName) ? "???" : VietnameseTextUtility.Normalize(speakerName);
+        _fullBodyText = string.IsNullOrWhiteSpace(body) ? string.Empty : VietnameseTextUtility.Normalize(body);
         _visibleCharacterCount = 0;
 
         if (portraitImage != null)

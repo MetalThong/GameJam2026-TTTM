@@ -42,6 +42,12 @@ public class CatMeowMashInteractable : MashStoryInteractable
     private bool _isPlaying;
     private GameObject _spawnedOwner;
 
+    protected override void Interact()
+    {
+        PlayMeowSfx();
+        base.Interact();
+    }
+
     protected override void OnInteractSucceeded()
     {
         if (_isPlaying)
@@ -65,11 +71,6 @@ public class CatMeowMashInteractable : MashStoryInteractable
 
         try
         {
-            if (AudioManager.Instance != null && !string.IsNullOrWhiteSpace(meowSfxId))
-            {
-                AudioManager.Instance.PlaySfx(meowSfxId);
-            }
-
             await PlayDialogueIfAssignedAsync(dialogue, destroyToken);
 
             _spawnedOwner = SpawnOwner();
@@ -148,6 +149,11 @@ public class CatMeowMashInteractable : MashStoryInteractable
         SetOwnerAnimatorsEnabled(owner, !disableOwnerAnimatorUntilWalk);
         SetOwnerAlpha(owner, 0f);
         return owner;
+    }
+
+    private void PlayMeowSfx()
+    {
+        AudioFeedback.PlaySfx(meowSfxId);
     }
 
     private void SetOwnerSpawnedFlag(GameObject owner)

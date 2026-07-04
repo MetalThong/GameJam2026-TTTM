@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e00aa469938822d4b8c61cbad7b3ac80, type: 3}
+  m_Name: SO_AudioLibrary
+  m_EditorClassIdentifier: Assembly-CSharp::AudioLibrary
+  entries:
+  - id: bowl_fall
+    clip: {fileID: 8300000, guid: 77abf360c4096e94484f56d4c7b8942b, type: 3}
+  - id: box_fall
+    clip: {fileID: 8300000, guid: 37f04cb2dd3b5574aae0e550744db561, type: 3}
+  - id: button_click
+    clip: {fileID: 8300000, guid: 1c145529be06f9147b3fe4c47d33827c, type: 3}
+  - id: cat_meow
+    clip: {fileID: 8300000, guid: 22c9fa3dcca619c488ffceadb5c7c48b, type: 3}

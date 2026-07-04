@@ -73,7 +73,7 @@ public sealed class LocalizationManager : MonoBehaviour
 
         if (table != null && table.TryGet(key, CurrentLanguage, out string value))
         {
-            return value;
+            return VietnameseTextUtility.Normalize(value);
         }
 
         if (CurrentLanguage == Language.Cat)
@@ -81,37 +81,43 @@ public sealed class LocalizationManager : MonoBehaviour
             return CatText;
         }
 
-        return key;
+        return VietnameseTextUtility.Normalize(key);
     }
 
     public string GetDialogueText(string vietnameseText, string englishText)
     {
-        return CurrentLanguage switch
+        string value = CurrentLanguage switch
         {
             Language.English => !string.IsNullOrWhiteSpace(englishText) ? englishText : vietnameseText,
             Language.Cat => Catify(vietnameseText),
             _ => vietnameseText
         };
+
+        return VietnameseTextUtility.Normalize(value);
     }
 
     public string GetDialogueSpeaker(string vietnameseSpeaker, string englishSpeaker)
     {
-        return CurrentLanguage switch
+        string value = CurrentLanguage switch
         {
             Language.English => !string.IsNullOrWhiteSpace(englishSpeaker) ? englishSpeaker : vietnameseSpeaker,
             Language.Cat => Catify(vietnameseSpeaker),
             _ => vietnameseSpeaker
         };
+
+        return VietnameseTextUtility.Normalize(value);
     }
 
     public static string GetLanguageDisplayName(Language language)
     {
-        return language switch
+        string value = language switch
         {
             Language.English => "English",
             Language.Cat => "Ti\u1EBFng M\u00E8o",
             _ => "Ti\u1EBFng Vi\u1EC7t"
         };
+
+        return VietnameseTextUtility.Normalize(value);
     }
 
     public static string Catify(string source)

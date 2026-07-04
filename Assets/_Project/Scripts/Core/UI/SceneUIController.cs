@@ -19,11 +19,13 @@ public sealed class SceneUIController : MonoBehaviour
     {
         if (settingsButton != null)
         {
+            AudioFeedback.AddButtonClick(settingsButton);
             settingsButton.onClick.AddListener(OpenSettings);
         }
 
         if (closeSettingsButton != null)
         {
+            AudioFeedback.AddButtonClick(closeSettingsButton);
             closeSettingsButton.onClick.AddListener(CloseSettings);
         }
     }
@@ -37,11 +39,13 @@ public sealed class SceneUIController : MonoBehaviour
     {
         if (settingsButton != null)
         {
+            AudioFeedback.RemoveButtonClick(settingsButton);
             settingsButton.onClick.RemoveListener(OpenSettings);
         }
 
         if (closeSettingsButton != null)
         {
+            AudioFeedback.RemoveButtonClick(closeSettingsButton);
             closeSettingsButton.onClick.RemoveListener(CloseSettings);
         }
     }
