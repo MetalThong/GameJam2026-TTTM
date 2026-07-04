@@ -30,10 +30,10 @@ EditorBuildSettings:
     path: Assets/_Project/Scenes/HallUp.unity
     guid: 5da481c347b729a44a5953dfb0b5eae5
   - enabled: 1
-    path: Assets/_Project/Scenes/Kitchen.unity
+    path: Assets/_Project/Scenes/GhostKitchen.unity
     guid: 73d51fa0518f4e046a9cd0367d297130
   - enabled: 1
-    path: Assets/_Project/Scenes/GhostKitchen.unity
+    path: Assets/_Project/Scenes/Kitchen.unity
     guid: 957a64d9eb40168439e7d9b3d46f3ff6
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
