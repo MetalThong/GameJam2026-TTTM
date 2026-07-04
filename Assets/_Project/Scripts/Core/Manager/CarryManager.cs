@@ -6,7 +6,24 @@ using UnityEngine.SceneManagement;
 
 public sealed class CarryManager : MonoBehaviour
 {
+    public struct CarryDropInfo
+    {
+        public CarryDropInfo(string carryId, GameObject droppedObject, Vector3 dropPosition, Scene dropScene)
+        {
+            CarryId = carryId;
+            DroppedObject = droppedObject;
+            DropPosition = dropPosition;
+            DropScene = dropScene;
+        }
+
+        public string CarryId { get; }
+        public GameObject DroppedObject { get; }
+        public Vector3 DropPosition { get; }
+        public Scene DropScene { get; }
+    }
+
     public static CarryManager Instance { get; private set; }
+    public static event Action<CarryDropInfo> CarriedObjectDropped;
 
     [SerializeField] private string playerTag = "Player";
     [SerializeField] private SceneId[] paintingScenes = { SceneId.GhostKitchen };
@@ -121,6 +138,7 @@ public sealed class CarryManager : MonoBehaviour
 
     public void Drop()
     {
+        string droppedCarryId = _carryId;
         GameObject prefabToDrop = _carryPrefab;
         if (prefabToDrop == null)
         {
@@ -134,6 +152,12 @@ public sealed class CarryManager : MonoBehaviour
         ApplyDroppedScale(droppedObject);
         droppedObject.SetActive(true);
         ApplyDroppedScale(droppedObject);
+
+        CarriedObjectDropped?.Invoke(new CarryDropInfo(
+            droppedCarryId,
+            droppedObject,
+            dropPosition,
+            SceneManager.GetActiveScene()));
 
         ClearCarriedState();
     }
