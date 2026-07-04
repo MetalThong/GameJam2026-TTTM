@@ -348,6 +348,10 @@ MonoBehaviour:
   interactOnce: 1
   completionFlagId: 
   hideWhenCompletionFlagExists: 1
+  playScratchAnimation: 1
+  playerMovement: {fileID: 409702061}
+  scratchAnimationTrigger: IsScratch
+  requireCatFormForScratchAnimation: 1
   promptLocalizationKey: prompt.interact
 --- !u!1001 &194051326
 PrefabInstance:
@@ -459,6 +463,10 @@ MonoBehaviour:
   interactOnce: 1
   completionFlagId: 
   hideWhenCompletionFlagExists: 1
+  playScratchAnimation: 1
+  playerMovement: {fileID: 409702061}
+  scratchAnimationTrigger: IsScratch
+  requireCatFormForScratchAnimation: 1
   promptLocalizationKey: prompt.interact
 --- !u!1 &203707970
 GameObject:
@@ -1108,6 +1116,10 @@ MonoBehaviour:
   interactOnce: 1
   completionFlagId: 
   hideWhenCompletionFlagExists: 1
+  playScratchAnimation: 1
+  playerMovement: {fileID: 409702061}
+  scratchAnimationTrigger: IsScratch
+  requireCatFormForScratchAnimation: 1
   promptLocalizationKey: prompt.interact
 --- !u!4 &506765300
 Transform:
@@ -1215,6 +1227,10 @@ MonoBehaviour:
   interactOnce: 1
   completionFlagId: store_cobweb_04
   hideWhenCompletionFlagExists: 1
+  playScratchAnimation: 1
+  playerMovement: {fileID: 409702061}
+  scratchAnimationTrigger: IsScratch
+  requireCatFormForScratchAnimation: 1
   promptLocalizationKey: prompt.interact
 --- !u!114 &720133270
 MonoBehaviour:
@@ -1604,6 +1620,10 @@ MonoBehaviour:
   interactOnce: 1
   completionFlagId: store_cobweb_03
   hideWhenCompletionFlagExists: 1
+  playScratchAnimation: 1
+  playerMovement: {fileID: 409702061}
+  scratchAnimationTrigger: IsScratch
+  requireCatFormForScratchAnimation: 1
   promptLocalizationKey: prompt.interact
 --- !u!114 &827546829
 MonoBehaviour:
@@ -2169,6 +2189,10 @@ MonoBehaviour:
   interactOnce: 1
   completionFlagId: store_cobweb_02
   hideWhenCompletionFlagExists: 1
+  playScratchAnimation: 1
+  playerMovement: {fileID: 409702061}
+  scratchAnimationTrigger: IsScratch
+  requireCatFormForScratchAnimation: 1
   promptLocalizationKey: prompt.interact
 --- !u!114 &900345988
 MonoBehaviour:
@@ -3001,6 +3025,10 @@ MonoBehaviour:
   interactOnce: 1
   completionFlagId: 
   hideWhenCompletionFlagExists: 1
+  playScratchAnimation: 1
+  playerMovement: {fileID: 409702061}
+  scratchAnimationTrigger: IsScratch
+  requireCatFormForScratchAnimation: 1
   promptLocalizationKey: prompt.interact
 --- !u!1001 &1305165710
 PrefabInstance:
@@ -3175,6 +3203,10 @@ MonoBehaviour:
   interactOnce: 1
   completionFlagId: store_cobweb_01
   hideWhenCompletionFlagExists: 1
+  playScratchAnimation: 1
+  playerMovement: {fileID: 409702061}
+  scratchAnimationTrigger: IsScratch
+  requireCatFormForScratchAnimation: 1
   promptLocalizationKey: prompt.interact
 --- !u!114 &1346087813
 MonoBehaviour:
@@ -3594,7 +3626,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1160356261127867848, guid: bcecc761fd5ac88419a97f15be2fcd3c, type: 3}
       propertyPath: m_Controller
-      value:
+      value: 
       objectReference: {fileID: 9100000, guid: 5984c9cbbc90f8b48a711c6c65cf6f6b, type: 2}
     - target: {fileID: 3626916397498700004, guid: bcecc761fd5ac88419a97f15be2fcd3c, type: 3}
       propertyPath: m_FlipX
@@ -4090,6 +4122,10 @@ MonoBehaviour:
   interactOnce: 1
   completionFlagId: 
   hideWhenCompletionFlagExists: 1
+  playScratchAnimation: 1
+  playerMovement: {fileID: 409702061}
+  scratchAnimationTrigger: IsScratch
+  requireCatFormForScratchAnimation: 1
   promptLocalizationKey: prompt.interact
 --- !u!1 &1721997433
 GameObject:
@@ -4468,6 +4504,10 @@ MonoBehaviour:
   interactOnce: 1
   completionFlagId: 
   hideWhenCompletionFlagExists: 1
+  playScratchAnimation: 1
+  playerMovement: {fileID: 409702061}
+  scratchAnimationTrigger: IsScratch
+  requireCatFormForScratchAnimation: 1
   promptLocalizationKey: prompt.interact
 --- !u!1 &1770553385
 GameObject:
@@ -4675,6 +4715,10 @@ MonoBehaviour:
   interactOnce: 1
   completionFlagId: 
   hideWhenCompletionFlagExists: 1
+  playScratchAnimation: 1
+  playerMovement: {fileID: 409702061}
+  scratchAnimationTrigger: IsScratch
+  requireCatFormForScratchAnimation: 1
   promptLocalizationKey: prompt.interact
 --- !u!1001 &1831589192
 PrefabInstance:

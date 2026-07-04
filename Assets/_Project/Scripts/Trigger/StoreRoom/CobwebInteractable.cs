@@ -17,6 +17,12 @@ public sealed class CobwebInteractable : MonoBehaviour, IInteractable, IInteract
     [SerializeField] private string completionFlagId;
     [SerializeField] private bool hideWhenCompletionFlagExists = true;
 
+    [Header("Player Scratch Animation")]
+    [SerializeField] private bool playScratchAnimation = true;
+    [SerializeField] private Movement playerMovement;
+    [SerializeField] private string scratchAnimationTrigger = "IsScratch";
+    [SerializeField] private bool requireCatFormForScratchAnimation = true;
+
     [Header("Prompt")]
     [SerializeField] private string promptLocalizationKey = "prompt.interact";
 
@@ -73,8 +79,30 @@ public sealed class CobwebInteractable : MonoBehaviour, IInteractable, IInteract
             return false;
         }
 
+        PlayScratchAnimation();
         FadeOut();
         return true;
+    }
+
+    private void PlayScratchAnimation()
+    {
+        if (!playScratchAnimation || string.IsNullOrWhiteSpace(scratchAnimationTrigger))
+        {
+            return;
+        }
+
+        Movement movement = ResolvePlayerMovement();
+        movement?.TryPlayAnimationTrigger(scratchAnimationTrigger, requireCatFormForScratchAnimation);
+    }
+
+    private Movement ResolvePlayerMovement()
+    {
+        if (playerMovement == null)
+        {
+            playerMovement = Object.FindFirstObjectByType<Movement>(FindObjectsInactive.Exclude);
+        }
+
+        return playerMovement;
     }
 
     private void FadeOut()
@@ -280,6 +308,11 @@ public sealed class CobwebInteractable : MonoBehaviour, IInteractable, IInteract
         if (fadeDuration < 0f)
         {
             fadeDuration = 0f;
+        }
+
+        if (playerMovement == null)
+        {
+            playerMovement = Object.FindFirstObjectByType<Movement>(FindObjectsInactive.Exclude);
         }
     }
 #endif
