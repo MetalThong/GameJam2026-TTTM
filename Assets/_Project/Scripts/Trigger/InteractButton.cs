@@ -57,22 +57,26 @@ public class InteractButton : MonoBehaviour, IInteractionAvailability
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag("Player"))
+        Movement movement = ResolvePlayerMovement(other);
+        if (movement != null)
         {
             _isPlayerInside = true;
-            SetPlayerMovement(other.GetComponentInParent<Movement>());
+            SetPlayerMovement(movement);
             RefreshPrompt();
         }
     }
 
     private void OnTriggerExit2D(Collider2D other)
     {
-        if (other.CompareTag("Player"))
+        Movement movement = ResolvePlayerMovement(other);
+        if (movement == null || (_playerMovement != null && movement != _playerMovement))
         {
-            _isPlayerInside = false;
-            SetPlayerMovement(null);
-            RefreshPrompt();
+            return;
         }
+
+        _isPlayerInside = false;
+        SetPlayerMovement(null);
+        RefreshPrompt();
     }
 
     private void OnGameStateChanged(GameState previousState, GameState currentState)
@@ -312,5 +316,15 @@ public class InteractButton : MonoBehaviour, IInteractionAvailability
     private void OnPlayerFormChanged(MovementForm previousForm, MovementForm currentForm)
     {
         RefreshPrompt();
+    }
+
+    private static Movement ResolvePlayerMovement(Collider2D collider)
+    {
+        if (collider == null)
+        {
+            return null;
+        }
+
+        return collider.GetComponentInParent<Movement>();
     }
 }

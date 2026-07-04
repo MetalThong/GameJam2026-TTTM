@@ -14,5 +14,14 @@ public sealed class PersistantRoot : MonoBehaviour
 
         Instance = this;
         DontDestroyOnLoad(gameObject);
+        EnsurePersistentEventSystem();
+    }
+
+    private void EnsurePersistentEventSystem()
+    {
+        if (!TryGetComponent(out PersistentEventSystem _))
+        {
+            gameObject.AddComponent<PersistentEventSystem>();
+        }
     }
 }
