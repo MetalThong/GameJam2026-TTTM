@@ -106,6 +106,14 @@ public class InteractButton : MonoBehaviour, IInteractionAvailability
         return !restrictByForm || (playerMovement != null && playerMovement.CurrentForm == requiredForm);
     }
 
+    public void HidePromptImmediately()
+    {
+        _isPlayerInside = false;
+        SetPlayerMovement(null);
+        SetLocalPromptVisible(false, false, true);
+        HideGlobalPrompt();
+    }
+
     private static bool IsPromptBlocked()
     {
         return GameManager.Instance != null && GameManager.Instance.CurrentState == GameState.OnDialog;
