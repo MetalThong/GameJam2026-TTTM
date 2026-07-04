@@ -323,8 +323,8 @@ Transform:
   m_GameObject: {fileID: 118865559}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.45, y: 0, z: 0}
-  m_LocalScale: {x: 0.1, y: 0.8, z: 1}
+  m_LocalPosition: {x: -0.33892, y: 0, z: 0}
+  m_LocalScale: {x: 0.32215962, y: 0.8, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 812935049}
@@ -461,8 +461,8 @@ Transform:
   m_GameObject: {fileID: 153526323}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.455, z: 0}
-  m_LocalScale: {x: 0.8, y: 0.1, z: 1}
+  m_LocalPosition: {x: 0, y: 0.35613, z: 0}
+  m_LocalScale: {x: 0.8, y: 0.29774874, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 812935049}
@@ -929,7 +929,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3626916397498700004, guid: 29b411c0403626d419d3bf5640556efe, type: 3}
       propertyPath: m_Sprite
-      value:
+      value: 
       objectReference: {fileID: -3062456089376325957, guid: 0113a8b3d98fbd14eb4beb4a8ae1aaff, type: 3}
     - target: {fileID: 3626916397498700004, guid: 29b411c0403626d419d3bf5640556efe, type: 3}
       propertyPath: m_SortingLayer
@@ -1880,8 +1880,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 8d6da6302ed24ad4b8b4792ab0164f01, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   flagId: boss_wake_up
   targetRenderer: {fileID: 678343398}
   targetChildName: Bedr bed
@@ -2083,7 +2083,7 @@ MonoBehaviour:
   sfxId: 
   hideBeforeDialogue: {fileID: 2007685521}
   hideBeforeDialogueFadeDuration: 1
-  dialogueDelayAfterHide: 2
+  dialogueDelayAfterHide: 1.1
   deactivateOnComplete: 0
 --- !u!114 &1307963231
 MonoBehaviour:
@@ -2289,22 +2289,9 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -31, y: -2}
-  m_SizeDelta: {x: 444.1822, y: 109.3777}
+  m_AnchoredPosition: {x: 18.76651, y: 0}
+  m_SizeDelta: {x: 1070.9697, y: 109.3777}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1408278770
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1408278766}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9a9274549eee44c8997865350bb45d96, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
-  key: prompt.wakeup
 --- !u!114 &1408278768
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2391,7 +2378,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: -140.61732, w: 0}
+  m_margin: {x: 0, y: 0, z: 1.9566787, w: 0}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -2405,6 +2392,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1408278766}
   m_CullTransparentMesh: 1
+--- !u!114 &1408278770
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1408278766}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a9274549eee44c8997865350bb45d96, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  key: prompt.wakeup
 --- !u!1 &1427161035
 GameObject:
   m_ObjectHideFlags: 0

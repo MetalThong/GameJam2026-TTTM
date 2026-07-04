@@ -6,6 +6,12 @@ public static class EventBus
 {
     private static readonly Dictionary<Type, List<Delegate>> _type2Subscribers = new();
 
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    private static void ResetForPlayMode()
+    {
+        Clear();
+    }
+
     public static void Subscribe<TEvent>(Action<TEvent> handler)
     {
         if (handler == null)

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public sealed class JumpInteractable : MonoBehaviour, IInteractable
@@ -10,6 +11,8 @@ public sealed class JumpInteractable : MonoBehaviour, IInteractable
     [SerializeField] private bool allowWhileStoryLocked;
     [SerializeField] private bool allowGhostForm;
 
+    private readonly HashSet<Collider2D> _knownColliders = new();
+    private readonly HashSet<Collider2D> _movementColliders = new();
     private Movement _currentMovement;
 
     public bool TryInteract()
@@ -41,8 +44,9 @@ public sealed class JumpInteractable : MonoBehaviour, IInteractable
 
     private void OnTriggerExit2D(Collider2D other)
     {
-        Movement movement = other.GetComponentInParent<Movement>();
-        if (movement != null && movement == _currentMovement)
+        _knownColliders.Remove(other);
+
+        if (_movementColliders.Remove(other) && _movementColliders.Count <= 0)
         {
             _currentMovement = null;
         }
@@ -50,9 +54,15 @@ public sealed class JumpInteractable : MonoBehaviour, IInteractable
 
     private void Register(Collider2D other)
     {
+        if (other == null || !_knownColliders.Add(other))
+        {
+            return;
+        }
+
         Movement movement = other.GetComponentInParent<Movement>();
         if (movement != null)
         {
+            _movementColliders.Add(other);
             _currentMovement = movement;
         }
     }
