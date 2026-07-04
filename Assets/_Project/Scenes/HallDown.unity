@@ -1367,6 +1367,8 @@ MonoBehaviour:
     setFlags:
     - went_down_hall
     unsetFlags: []
+  lockGameStateAfterTrigger: 1
+  unlockGameStateFlag: chat_completed_go_down_hall
 --- !u!114 &947290377
 MonoBehaviour:
   m_ObjectHideFlags: 0

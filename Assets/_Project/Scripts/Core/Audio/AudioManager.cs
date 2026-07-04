@@ -1,9 +1,12 @@
 using UnityEngine;
 using UnityEngine.Audio;
+using UnityEngine.SceneManagement;
 
 public sealed class AudioManager : MonoBehaviour
 {
     private const string DefaultAudioLibraryResourcePath = "Audio/SO_AudioLibrary";
+    private const string MenuMusicId = "bg_menu";
+    private const string GameMusicId = "bg_game";
     private const float MinVolumeDb = -80f;
     private const string MasterVolumeParameter = "MasterVolume";
     private const string MusicVolumeParameter = "MusicVolume";
@@ -13,6 +16,9 @@ public sealed class AudioManager : MonoBehaviour
     [SerializeField] private AudioMixer audioMixer;
     [SerializeField] private AudioMixerGroup musicGroup;
     [SerializeField] private AudioMixerGroup sfxGroup;
+    [SerializeField] private bool autoPlayBackgroundMusic = true;
+    [SerializeField] private string mainMenuSceneName = "MainMenu";
+    [SerializeField] private string bootstrapSceneName = "Bootstrap";
 
     private AudioSource _musicSource;
     private AudioSource _sfxSource;
@@ -31,10 +37,18 @@ public sealed class AudioManager : MonoBehaviour
 
         Instance = this;
         CreateAudioSources();
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    private void Start()
+    {
+        PlayBackgroundMusicForScene(SceneManager.GetActiveScene());
     }
 
     private void OnDestroy()
     {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+
         if (Instance == this)
         {
             Instance = null;
@@ -133,12 +147,33 @@ public sealed class AudioManager : MonoBehaviour
         _musicSource.outputAudioMixerGroup = musicGroup;
         _musicSource.playOnAwake = false;
         _musicSource.loop = true;
+        _musicSource.spatialBlend = 0f;
         _musicSource.volume = _musicVolume;
 
         _sfxSource = gameObject.AddComponent<AudioSource>();
         _sfxSource.outputAudioMixerGroup = sfxGroup;
         _sfxSource.playOnAwake = false;
         _sfxSource.volume = _sfxVolume;
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        PlayBackgroundMusicForScene(scene);
+    }
+
+    private void PlayBackgroundMusicForScene(Scene scene)
+    {
+        if (!autoPlayBackgroundMusic || !scene.IsValid() || string.IsNullOrWhiteSpace(scene.name))
+        {
+            return;
+        }
+
+        if (scene.name == bootstrapSceneName)
+        {
+            return;
+        }
+
+        PlayMusic(scene.name == mainMenuSceneName ? MenuMusicId : GameMusicId);
     }
 
     private bool TryGetClip(string id, out AudioClip clip)

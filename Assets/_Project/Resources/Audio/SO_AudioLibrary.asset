@@ -21,3 +21,7 @@ MonoBehaviour:
     clip: {fileID: 8300000, guid: 1c145529be06f9147b3fe4c47d33827c, type: 3}
   - id: cat_meow
     clip: {fileID: 8300000, guid: 22c9fa3dcca619c488ffceadb5c7c48b, type: 3}
+  - id: bg_menu
+    clip: {fileID: 8300000, guid: 604e305d83198a64fb52a069025fbc90, type: 3}
+  - id: bg_game
+    clip: {fileID: 8300000, guid: 4ee06b2377735c44da8389c7beae0aaa, type: 3}
