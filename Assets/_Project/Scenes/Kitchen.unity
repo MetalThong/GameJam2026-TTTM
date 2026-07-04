@@ -1213,13 +1213,14 @@ GameObject:
   - component: {fileID: 1202607350}
   - component: {fileID: 1202607349}
   - component: {fileID: 1202607348}
+  - component: {fileID: 1202607346}
   m_Layer: 0
   m_Name: InteractE
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1202607348
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1240,6 +1241,23 @@ MonoBehaviour:
   extraPromptFadeOutDuration: 0.12
   restrictByForm: 0
   requiredForm: 0
+--- !u!114 &1202607346
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1202607347}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 74e8f523f6a34308823933b41470cc8e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WashingMinigameInteractable
+  washingMinigame: {fileID: 0}
+  requiredFlag: go_to_dishes
+  completedFlag: dishes_washed
+  promptLocalizationKey: prompt.interact
+  hidePromptOnStart: 1
 --- !u!61 &1202607349
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -2026,8 +2044,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FlagBasedObject
   target: {fileID: 1202607347}
-  requiredFlag: 
-  blockedFlag: 
+  requiredFlag: go_to_dishes
+  blockedFlag: dishes_washed
   activeWhenFlagExists: 1
 --- !u!1001 &1778078364
 PrefabInstance:

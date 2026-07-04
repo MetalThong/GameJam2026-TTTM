@@ -9,6 +9,8 @@ public sealed class InteractionPromptView : MonoBehaviour
 
     private Component _owner;
     private string _currentPromptKey;
+    private Component _fallbackOwner;
+    private string _fallbackPromptKey;
 
     private void Awake()
     {
@@ -43,8 +45,7 @@ public sealed class InteractionPromptView : MonoBehaviour
 
         _owner = owner;
         _currentPromptKey = string.IsNullOrWhiteSpace(localizationKey) ? defaultPromptKey : localizationKey;
-        RefreshLabel();
-        SetVisible(true);
+        RefreshDisplay();
     }
 
     public void Hide(Component owner)
@@ -56,7 +57,38 @@ public sealed class InteractionPromptView : MonoBehaviour
 
         _owner = null;
         _currentPromptKey = null;
-        SetVisible(false);
+        RefreshDisplay();
+    }
+
+    public void ShowFallback(Component owner, string localizationKey)
+    {
+        if (owner == null)
+        {
+            return;
+        }
+
+        string promptKey = string.IsNullOrWhiteSpace(localizationKey) ? defaultPromptKey : localizationKey;
+        if (_fallbackOwner == owner && _fallbackPromptKey == promptKey)
+        {
+            RefreshDisplay();
+            return;
+        }
+
+        _fallbackOwner = owner;
+        _fallbackPromptKey = promptKey;
+        RefreshDisplay();
+    }
+
+    public void HideFallback(Component owner)
+    {
+        if (owner != null && _fallbackOwner != null && owner != _fallbackOwner)
+        {
+            return;
+        }
+
+        _fallbackOwner = null;
+        _fallbackPromptKey = null;
+        RefreshDisplay();
     }
 
     private void OnLanguageChanged(Language language)
@@ -71,12 +103,29 @@ public sealed class InteractionPromptView : MonoBehaviour
             return;
         }
 
-        string key = string.IsNullOrWhiteSpace(_currentPromptKey) ? defaultPromptKey : _currentPromptKey;
+        string key = ResolveActivePromptKey();
         string action = LocalizationManager.Instance != null
             ? LocalizationManager.Instance.Get(key)
             : key;
 
         label.text = $"E : {VietnameseTextUtility.Normalize(action)}";
+    }
+
+    private void RefreshDisplay()
+    {
+        bool hasPrompt = _owner != null || _fallbackOwner != null;
+        if (hasPrompt)
+        {
+            RefreshLabel();
+        }
+
+        SetVisible(hasPrompt);
+    }
+
+    private string ResolveActivePromptKey()
+    {
+        string key = _owner != null ? _currentPromptKey : _fallbackPromptKey;
+        return string.IsNullOrWhiteSpace(key) ? defaultPromptKey : key;
     }
 
     private void SetVisible(bool isVisible)

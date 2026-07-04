@@ -57,6 +57,10 @@ MonoBehaviour:
     vietnamese: "K\u00EAu"
     english: Meow
     cat: Meow
+  - key: prompt.store_meow
+    vietnamese: "\u0110\u1EC3 k\u00EAu"
+    english: Meow
+    cat: Meow
   - key: prompt.pass
     vietnamese: "\u0110i qua"
     english: Go through
