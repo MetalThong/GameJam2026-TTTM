@@ -341,6 +341,11 @@ public sealed class Movement : MonoBehaviour, ISaveable
             return;
         }
 
+        if (previousForm == MovementForm.Cat && form == MovementForm.Ghost)
+        {
+            CancelInteractJump();
+        }
+
         _currentForm?.Exit(targetRigidbody, _defaultGravityScale);
         _currentForm = nextForm;
         ApplyColliderForForm(form);
@@ -704,6 +709,25 @@ public sealed class Movement : MonoBehaviour, ISaveable
         _interactJumpRoutine = null;
         SetAnimatorBoolIfExists(interactJumpingBool, false);
         SetAnimatorTriggerIfExists(interactGroundedTrigger);
+    }
+
+    private void CancelInteractJump()
+    {
+        if (!_isInteractJumping && _interactJumpRoutine == null)
+        {
+            return;
+        }
+
+        if (_interactJumpRoutine != null)
+        {
+            StopCoroutine(_interactJumpRoutine);
+            _interactJumpRoutine = null;
+        }
+
+        _isInteractJumping = false;
+        _hasAppliedInteractJumpVelocity = false;
+        _interactJumpGroundCheckStartTime = 0f;
+        SetAnimatorBoolIfExists(interactJumpingBool, false);
     }
 
     private void MoveCatHorizontallyDuringInteractJump()

@@ -890,7 +890,8 @@ PrefabInstance:
       value: -1638106889
       objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects: []
+    m_RemovedGameObjects:
+    - {fileID: 8374372433757751494, guid: acfb272cdcd1fcd49a51afedbd6f635e, type: 3}
     m_AddedGameObjects:
     - targetCorrespondingSourceObject: {fileID: 2291035196233133428, guid: acfb272cdcd1fcd49a51afedbd6f635e, type: 3}
       insertIndex: -1
@@ -1473,7 +1474,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!212 &821962577
 SpriteRenderer:
   serializedVersion: 2
@@ -1542,7 +1543,7 @@ Transform:
   m_GameObject: {fileID: 821962576}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.66, y: 1.25, z: 0}
+  m_LocalPosition: {x: 0.66, y: 1.76, z: 0}
   m_LocalScale: {x: 4, y: 4, z: 5.3333335}
   m_ConstrainProportionsScale: 1
   m_Children: []
@@ -1658,7 +1659,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 9.160895, y: 0.76020974}
+  m_Offset: {x: 9.225931, y: 0.6858831}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -1668,7 +1669,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 0.9556179, y: 1.2523044}
+  m_Size: {x: 0.82554626, y: 1.1779758}
   m_EdgeRadius: 0
 --- !u!1 &831481638
 GameObject:
@@ -2019,6 +2020,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: -2253911629886400664, guid: 4624e060f8d2d96488c6c1b46fcb8f15, type: 3}
       insertIndex: -1
       addedObject: {fileID: 875266430}
+    - targetCorrespondingSourceObject: {fileID: -2253911629886400664, guid: 4624e060f8d2d96488c6c1b46fcb8f15, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 875266432}
   m_SourcePrefab: {fileID: -8435245712485981826, guid: 4624e060f8d2d96488c6c1b46fcb8f15, type: 3}
 --- !u!4 &875266428 stripped
 Transform:
@@ -2095,6 +2099,21 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 0.38, y: 0.38334394}
   m_EdgeRadius: 0
+--- !u!114 &875266432
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 875266429}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a9b2e5a9874f45b79cb16c601d8f3073, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GhostPassThroughCollider
+  targetCollider: {fileID: 875266431}
+  includeChildColliders: 0
+  ignoreTriggerColliders: 1
 --- !u!1 &900345985
 GameObject:
   m_ObjectHideFlags: 0
@@ -2205,7 +2224,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 6.676444, y: 0.48173243}
+  m_Offset: {x: 6.6671343, y: 0.16520238}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -2215,7 +2234,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 1.3300629, y: 1.3760506}
+  m_Size: {x: 1.0507698, y: 0.51955557}
   m_EdgeRadius: 0
 --- !u!1 &944444907
 GameObject:
@@ -2308,7 +2327,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 2.656922, y: -0.8869748}
+  m_Offset: {x: 2.7723746, y: -0.8869748}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -2318,7 +2337,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 0.60247564, y: 0.4814219}
+  m_Size: {x: 0.48023105, y: 0.48142195}
   m_EdgeRadius: 0
 --- !u!4 &944444911
 Transform:
@@ -3387,6 +3406,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: -2253911629886400664, guid: 2dba27ebb3c328c4aa4fae4ee8485449, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1528481780}
+    - targetCorrespondingSourceObject: {fileID: -2253911629886400664, guid: 2dba27ebb3c328c4aa4fae4ee8485449, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1528481782}
   m_SourcePrefab: {fileID: -8435245712485981826, guid: 2dba27ebb3c328c4aa4fae4ee8485449, type: 3}
 --- !u!4 &1528481778 stripped
 Transform:
@@ -3463,6 +3485,21 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 0.24000001, y: 0.24529696}
   m_EdgeRadius: 0
+--- !u!114 &1528481782
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1528481779}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a9b2e5a9874f45b79cb16c601d8f3073, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GhostPassThroughCollider
+  targetCollider: {fileID: 1528481781}
+  includeChildColliders: 0
+  ignoreTriggerColliders: 1
 --- !u!1 &1548971692
 GameObject:
   m_ObjectHideFlags: 0
@@ -4124,6 +4161,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: -2253911629886400664, guid: 9cf2574772f790d4386bac61a1aeca14, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1755893308}
+    - targetCorrespondingSourceObject: {fileID: -2253911629886400664, guid: 9cf2574772f790d4386bac61a1aeca14, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1755893310}
   m_SourcePrefab: {fileID: -8435245712485981826, guid: 9cf2574772f790d4386bac61a1aeca14, type: 3}
 --- !u!4 &1755893306 stripped
 Transform:
@@ -4200,6 +4240,21 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 0.24, y: 0.24043429}
   m_EdgeRadius: 0
+--- !u!114 &1755893310
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1755893307}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a9b2e5a9874f45b79cb16c601d8f3073, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GhostPassThroughCollider
+  targetCollider: {fileID: 1755893309}
+  includeChildColliders: 0
+  ignoreTriggerColliders: 1
 --- !u!1001 &1762179406
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4685,7 +4740,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 1.2375273, y: -1.5406864}
+  m_Offset: {x: 1.2034265, y: -1.5406864}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -4695,7 +4750,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 0.91931367, y: 0.3490038}
+  m_Size: {x: 0.85111207, y: 0.3490038}
   m_EdgeRadius: 0
 --- !u!4 &1860276431
 Transform:
@@ -4844,7 +4899,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0.40714276, y: 0.28701055}
+  m_Offset: {x: 0.30052757, y: 0.5642096}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -4854,7 +4909,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 0.7598412, y: 2.6043022}
+  m_Size: {x: 0.54661083, y: 3.1587002}
   m_EdgeRadius: 0
 --- !u!4 &1920179377
 Transform:
@@ -4888,7 +4943,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &2009949804
 Transform:
   m_ObjectHideFlags: 0

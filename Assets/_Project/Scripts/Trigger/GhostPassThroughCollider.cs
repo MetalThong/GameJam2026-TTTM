@@ -71,7 +71,25 @@ public sealed class GhostPassThroughCollider : MonoBehaviour
             ? targetCollider
             : GetComponent<Collider2D>();
 
+        if (ShouldIncludeSiblingEffectorColliders(resolvedCollider))
+        {
+            Collider2D[] siblingColliders = resolvedCollider.GetComponents<Collider2D>();
+            for (int i = 0; i < siblingColliders.Length; i++)
+            {
+                AddColliderIfAllowed(results, siblingColliders[i]);
+            }
+
+            return;
+        }
+
         AddColliderIfAllowed(results, resolvedCollider);
+    }
+
+    private static bool ShouldIncludeSiblingEffectorColliders(Collider2D collider)
+    {
+        return collider != null
+            && collider.usedByEffector
+            && collider.GetComponent<PlatformEffector2D>() != null;
     }
 
     private void AddColliderIfAllowed(List<Collider2D> results, Collider2D candidate)
