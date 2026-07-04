@@ -290,6 +290,73 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
+--- !u!1 &331900100
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 331900101}
+  - component: {fileID: 331900102}
+  m_Layer: 0
+  m_Name: KitchenDroppedBowlSequence
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &331900101
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 331900100}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &331900102
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 331900100}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c38e3b2c113247b68a25da8629f8659a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::KitchenDroppedBowlSequence
+  sceneId: 5
+  carryId: cat_bowl
+  completionFlagId: kitchen_bowl_taken
+  startDelay: 1
+  dialogueManager: {fileID: 0}
+  ownerHearDialogue: {fileID: 11400000, guid: 4cb72a8e31664c6ab9d9a1ca3df31518, type: 2}
+  ownerFoundDialogue: {fileID: 11400000, guid: dd94d57435a54aa3960165ddf154e7aa, type: 2}
+  catReactionDialogue: {fileID: 11400000, guid: d5c31cf45285426b878796172310c842, type: 2}
+  ownerPrefab: {fileID: 4460802599194774219, guid: 035b606787c0fe64387e61aab294d1e5, type: 3}
+  ownerResourcePath: 
+  spawnAtDropPosition: 0
+  ownerDropSpawnOffset: {x: 0, y: 0, z: 0}
+  ownerSpawnPoint: {fileID: 0}
+  useOwnerSpawnPosition: 1
+  ownerSpawnPosition: {x: 4.96, y: -3.78, z: 0}
+  ownerSpawnOffset: {x: 0, y: 0, z: 0}
+  ownerSpawnScale: {x: 1, y: 1, z: 1}
+  flipOwnerOnSpawn: 0
+  disableAnimatorOnSpawn: 1
+  ownerSpawnFadeDuration: 0.25
+  ownerDespawnFadeDuration: 0.35
+  hideDroppedBowlOnOwnerSpawn: 1
+  droppedBowlFadeDuration: 0.25
 --- !u!1001 &340541535
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2312,73 +2379,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6086a98dea57e6d40874e7e679d1efa5, type: 3}
---- !u!1 &331900100
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 331900101}
-  - component: {fileID: 331900102}
-  m_Layer: 0
-  m_Name: KitchenDroppedBowlSequence
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &331900101
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 331900100}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &331900102
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 331900100}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c38e3b2c113247b68a25da8629f8659a, type: 3}
-  m_Name:
-  m_EditorClassIdentifier: Assembly-CSharp::KitchenDroppedBowlSequence
-  sceneId: 5
-  carryId: cat_bowl
-  completionFlagId: kitchen_bowl_taken
-  startDelay: 0.35
-  dialogueManager: {fileID: 0}
-  ownerHearDialogue: {fileID: 11400000, guid: 4cb72a8e31664c6ab9d9a1ca3df31518, type: 2}
-  ownerFoundDialogue: {fileID: 11400000, guid: dd94d57435a54aa3960165ddf154e7aa, type: 2}
-  catReactionDialogue: {fileID: 11400000, guid: d5c31cf45285426b878796172310c842, type: 2}
-  ownerPrefab: {fileID: 4460802599194774219, guid: 035b606787c0fe64387e61aab294d1e5, type: 3}
-  ownerResourcePath:
-  spawnAtDropPosition: 0
-  ownerDropSpawnOffset: {x: 0, y: 0, z: 0}
-  ownerSpawnPoint: {fileID: 0}
-  useOwnerSpawnPosition: 1
-  ownerSpawnPosition: {x: 4.96, y: -3.78, z: 0}
-  ownerSpawnOffset: {x: 0, y: 0, z: 0}
-  ownerSpawnScale: {x: 1, y: 1, z: 1}
-  flipOwnerOnSpawn: 0
-  disableAnimatorOnSpawn: 1
-  ownerSpawnFadeDuration: 0.25
-  ownerDespawnFadeDuration: 0.35
-  hideDroppedBowlOnOwnerSpawn: 1
-  droppedBowlFadeDuration: 0.25
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

@@ -591,7 +591,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!212 &247842111
 SpriteRenderer:
   serializedVersion: 2
@@ -639,7 +639,7 @@ SpriteRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 1346041461
   m_SortingLayer: 3
-  m_SortingOrder: 0
+  m_SortingOrder: 1
   m_MaskInteraction: 0
   m_Sprite: {fileID: -3856491126525625548, guid: ad922ba92c368554d950c5cd8af8dac5, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -660,7 +660,7 @@ Transform:
   m_GameObject: {fileID: 247842110}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.61, y: -0.32, z: 0}
+  m_LocalPosition: {x: -0.12, y: 0.07, z: 0}
   m_LocalScale: {x: 4, y: 4, z: 5.3333335}
   m_ConstrainProportionsScale: 1
   m_Children: []
@@ -692,7 +692,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7878350319992209165, guid: 8a4fc9da7577ba9448dd5b4ad1297202, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.88
+      value: -0.954
       objectReference: {fileID: 0}
     - target: {fileID: 7878350319992209165, guid: 8a4fc9da7577ba9448dd5b4ad1297202, type: 3}
       propertyPath: m_LocalPosition.y
@@ -767,8 +767,8 @@ Transform:
   m_GameObject: {fileID: 314299598}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.41904, y: 0, z: 0}
-  m_LocalScale: {x: 0.16192205, y: 0.8, z: 1}
+  m_LocalPosition: {x: -0.42225, y: 0, z: 0}
+  m_LocalScale: {x: 0.15550831, y: 0.8, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1047842189}
@@ -908,7 +908,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FlagBasedObject
   target: {fileID: 1015589336}
-  requiredFlag: dropped_box
+  requiredFlag: picked_up_box
   blockedFlag: 
   activeWhenFlagExists: 1
 --- !u!4 &353672565
@@ -1717,7 +1717,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1015589337
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1786,7 +1786,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: -0.21557975, y: 0}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
@@ -1796,7 +1796,7 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 0.71116376, y: 7.584621}
+  m_Size: {x: 0.9548621, y: 7.584621}
   m_EdgeRadius: 0
 --- !u!4 &1015589340
 Transform:
@@ -1807,7 +1807,7 @@ Transform:
   m_GameObject: {fileID: 1015589336}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -8.3, y: 0, z: 0}
+  m_LocalPosition: {x: -8.75, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -2388,8 +2388,8 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_GlobalIlluminationMeshLod: 0
-  m_SortingLayerID: 1843868011
-  m_SortingLayer: 5
+  m_SortingLayerID: 1346041461
+  m_SortingLayer: 3
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_Sprite: {fileID: -6054700944055236759, guid: b0ac12e75fd75ec4ba1d83294811b029, type: 3}
@@ -3468,7 +3468,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7878350319992209165, guid: 2af430010cccce14fb420cc50d996640, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.456
+      value: -0.431
       objectReference: {fileID: 0}
     - target: {fileID: 7878350319992209165, guid: 2af430010cccce14fb420cc50d996640, type: 3}
       propertyPath: m_LocalPosition.y
