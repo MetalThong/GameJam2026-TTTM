@@ -198,7 +198,7 @@ public sealed class MissionView : MonoBehaviour
             return;
         }
 
-        string title = _currentMission.GetTitle(LocalizationManager.Instance);
+        string title = VietnameseTextUtility.Normalize(_currentMission.GetTitle(LocalizationManager.Instance));
         string missionText = string.IsNullOrWhiteSpace(prefix) ? title : $"{prefix} {title}";
         titleText.text = _isCompleting ? $"<s>{missionText}</s>" : missionText;
     }

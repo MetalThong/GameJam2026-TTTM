@@ -44,11 +44,13 @@ public sealed class SettingsPanelController : MonoBehaviour
     {
         if (openButton != null)
         {
+            AudioFeedback.AddButtonClick(openButton);
             openButton.onClick.AddListener(Open);
         }
 
         if (closeButton != null)
         {
+            AudioFeedback.AddButtonClick(closeButton);
             closeButton.onClick.AddListener(Close);
         }
 
@@ -64,21 +66,25 @@ public sealed class SettingsPanelController : MonoBehaviour
 
         if (vietnameseButton != null)
         {
+            AudioFeedback.AddButtonClick(vietnameseButton);
             vietnameseButton.onClick.AddListener(SelectVietnamese);
         }
 
         if (englishButton != null)
         {
+            AudioFeedback.AddButtonClick(englishButton);
             englishButton.onClick.AddListener(SelectEnglish);
         }
 
         if (catButton != null)
         {
+            AudioFeedback.AddButtonClick(catButton);
             catButton.onClick.AddListener(SelectCat);
         }
 
         if (quitToMenuButton != null)
         {
+            AudioFeedback.AddButtonClick(quitToMenuButton);
             quitToMenuButton.onClick.AddListener(QuitToMainMenu);
         }
 
@@ -99,11 +105,13 @@ public sealed class SettingsPanelController : MonoBehaviour
     {
         if (openButton != null)
         {
+            AudioFeedback.RemoveButtonClick(openButton);
             openButton.onClick.RemoveListener(Open);
         }
 
         if (closeButton != null)
         {
+            AudioFeedback.RemoveButtonClick(closeButton);
             closeButton.onClick.RemoveListener(Close);
         }
 
@@ -119,21 +127,25 @@ public sealed class SettingsPanelController : MonoBehaviour
 
         if (vietnameseButton != null)
         {
+            AudioFeedback.RemoveButtonClick(vietnameseButton);
             vietnameseButton.onClick.RemoveListener(SelectVietnamese);
         }
 
         if (englishButton != null)
         {
+            AudioFeedback.RemoveButtonClick(englishButton);
             englishButton.onClick.RemoveListener(SelectEnglish);
         }
 
         if (catButton != null)
         {
+            AudioFeedback.RemoveButtonClick(catButton);
             catButton.onClick.RemoveListener(SelectCat);
         }
 
         if (quitToMenuButton != null)
         {
+            AudioFeedback.RemoveButtonClick(quitToMenuButton);
             quitToMenuButton.onClick.RemoveListener(QuitToMainMenu);
         }
 

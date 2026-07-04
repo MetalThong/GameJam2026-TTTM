@@ -122,9 +122,6 @@ public sealed class LivingRoomChatTransformSequence : MonoBehaviour
         try
         {
             LockGameState();
-            await PlayFormChangeAsync(cancellationToken);
-            EnsureGameStateLocked();
-
             if (dialogueDelay > 0f)
             {
                 await DelayWithMovementLockAsync(dialogueDelay, cancellationToken);
@@ -132,6 +129,8 @@ public sealed class LivingRoomChatTransformSequence : MonoBehaviour
 
             EnsureGameStateLocked();
             await PlayDialogueAsync(cancellationToken);
+            EnsureGameStateLocked();
+            await PlayFormChangeAsync(cancellationToken);
             SetFlag(missionAssignedFlag);
             SetFlag(completionFlag);
         }

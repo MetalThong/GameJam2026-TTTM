@@ -28,26 +28,31 @@ public sealed class MainMenuController : MonoBehaviour
     {
         if (startButton != null)
         {
+            AudioFeedback.AddButtonClick(startButton);
             startButton.onClick.AddListener(gameFlow.StartNewGame);
         }
 
         if (continueButton != null)
         {
+            AudioFeedback.AddButtonClick(continueButton);
             continueButton.onClick.AddListener(gameFlow.ContinueGame);
         }
 
         if (settingsButton != null)
         {
+            AudioFeedback.AddButtonClick(settingsButton);
             settingsButton.onClick.AddListener(settingsPanelView.Open);
         }
 
         if (quitButton != null)
         {
+            AudioFeedback.AddButtonClick(quitButton);
             quitButton.onClick.AddListener(gameFlow.QuitGame);
         }
 
         if (closeSettingsButton != null)
         {
+            AudioFeedback.AddButtonClick(closeSettingsButton);
             closeSettingsButton.onClick.AddListener(settingsPanelView.Close);
         }
 
@@ -73,26 +78,31 @@ public sealed class MainMenuController : MonoBehaviour
     {
         if (startButton != null)
         {
+            AudioFeedback.RemoveButtonClick(startButton);
             startButton.onClick.RemoveListener(gameFlow.StartNewGame);
         }
 
         if (continueButton != null)
         {
+            AudioFeedback.RemoveButtonClick(continueButton);
             continueButton.onClick.RemoveListener(gameFlow.ContinueGame);
         }
 
         if (settingsButton != null)
         {
+            AudioFeedback.RemoveButtonClick(settingsButton);
             settingsButton.onClick.RemoveListener(settingsPanelView.Open);
         }
 
         if (quitButton != null)
         {
+            AudioFeedback.RemoveButtonClick(quitButton);
             quitButton.onClick.RemoveListener(gameFlow.QuitGame);
         }
 
         if (closeSettingsButton != null)
         {
+            AudioFeedback.RemoveButtonClick(closeSettingsButton);
             closeSettingsButton.onClick.RemoveListener(settingsPanelView.Close);
         }
 

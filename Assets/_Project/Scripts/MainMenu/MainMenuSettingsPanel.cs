@@ -136,6 +136,9 @@ public sealed class MainMenuSettingsPanel : MonoBehaviour
 
         _musicSlider.onValueChanged.AddListener(OnMusicVolumeChanged);
         _sfxSlider.onValueChanged.AddListener(OnSfxVolumeChanged);
+        AudioFeedback.AddButtonClick(_vietnameseButton);
+        AudioFeedback.AddButtonClick(_englishButton);
+        AudioFeedback.AddButtonClick(_catButton);
         _vietnameseButton.onClick.AddListener(SelectVietnamese);
         _englishButton.onClick.AddListener(SelectEnglish);
         _catButton.onClick.AddListener(SelectCat);
@@ -151,6 +154,9 @@ public sealed class MainMenuSettingsPanel : MonoBehaviour
 
         _musicSlider.onValueChanged.RemoveListener(OnMusicVolumeChanged);
         _sfxSlider.onValueChanged.RemoveListener(OnSfxVolumeChanged);
+        AudioFeedback.RemoveButtonClick(_vietnameseButton);
+        AudioFeedback.RemoveButtonClick(_englishButton);
+        AudioFeedback.RemoveButtonClick(_catButton);
         _vietnameseButton.onClick.RemoveListener(SelectVietnamese);
         _englishButton.onClick.RemoveListener(SelectEnglish);
         _catButton.onClick.RemoveListener(SelectCat);
@@ -299,7 +305,7 @@ public sealed class MainMenuSettingsPanel : MonoBehaviour
         TMP_Text text = button != null ? button.GetComponentInChildren<TMP_Text>(true) : null;
         if (text != null)
         {
-            text.text = value;
+            text.text = VietnameseTextUtility.Normalize(value);
         }
     }
 
@@ -307,7 +313,7 @@ public sealed class MainMenuSettingsPanel : MonoBehaviour
     {
         if (text != null)
         {
-            text.text = value;
+            text.text = VietnameseTextUtility.Normalize(value);
         }
     }
 

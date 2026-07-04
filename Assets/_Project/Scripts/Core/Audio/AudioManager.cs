@@ -3,6 +3,7 @@ using UnityEngine.Audio;
 
 public sealed class AudioManager : MonoBehaviour
 {
+    private const string DefaultAudioLibraryResourcePath = "Audio/SO_AudioLibrary";
     private const float MinVolumeDb = -80f;
     private const string MasterVolumeParameter = "MasterVolume";
     private const string MusicVolumeParameter = "MusicVolume";
@@ -143,6 +144,11 @@ public sealed class AudioManager : MonoBehaviour
     private bool TryGetClip(string id, out AudioClip clip)
     {
         clip = null;
+
+        if (audioLibrary == null)
+        {
+            audioLibrary = Resources.Load<AudioLibrary>(DefaultAudioLibraryResourcePath);
+        }
 
         if (audioLibrary == null)
         {

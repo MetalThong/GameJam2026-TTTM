@@ -5,6 +5,7 @@ using UnityEngine.InputSystem;
 public class CatInteractor : MonoBehaviour
 {
     [SerializeField] private DialogueManager dialogueManager;
+    [SerializeField] private string interactSfxId = AudioFeedback.ButtonClickId;
 
     private readonly List<IInteractable> _interactables = new();
     private bool _dialogueWasPlaying;
@@ -47,6 +48,7 @@ public class CatInteractor : MonoBehaviour
 
             if (interactable.TryInteract())
             {
+                AudioFeedback.PlaySfx(interactSfxId);
                 break;
             }
         }
