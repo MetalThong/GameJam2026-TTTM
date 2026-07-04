@@ -7,7 +7,13 @@ public class StoryTrigger : MonoBehaviour
     [SerializeField] private StoryFlagCondition condition = new();
     [SerializeField] private StoryFlagAction action = new();
 
+    [Header("Game State Lock")]
+    [SerializeField] private bool lockGameStateAfterTrigger;
+    [SerializeField] private string unlockGameStateFlag;
+
     private Collider2D[] _triggerColliders;
+    private bool _hasLockedGameState;
+    private GameState _previousGameState = GameState.Playing;
 
     private string CompletedFlagId => string.IsNullOrWhiteSpace(triggerId)
         ? string.Empty
@@ -24,6 +30,7 @@ public class StoryTrigger : MonoBehaviour
     {
         EventBus.Unsubscribe<FlagChangedEvent>(OnFlagChanged);
         EventBus.Unsubscribe<FlagsLoadedEvent>(OnFlagsLoaded);
+        ReleaseGameStateLock();
     }
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -59,6 +66,7 @@ public class StoryTrigger : MonoBehaviour
 
     protected virtual void Trigger()
     {
+        LockGameStateIfNeeded();
         ExecuteAction();
     }
 
@@ -84,11 +92,17 @@ public class StoryTrigger : MonoBehaviour
         {
             RefreshCompletedState();
         }
+
+        if (eventData.Value && eventData.FlagId == unlockGameStateFlag)
+        {
+            ReleaseGameStateLock();
+        }
     }
 
     private void OnFlagsLoaded(FlagsLoadedEvent eventData)
     {
         RefreshCompletedState();
+        ReleaseGameStateLockIfUnlocked();
     }
 
     private bool IsCompleted(FlagManager flagManager)
@@ -119,6 +133,55 @@ public class StoryTrigger : MonoBehaviour
             {
                 triggerCollider.enabled = shouldEnable;
             }
+        }
+    }
+
+    private void LockGameStateIfNeeded()
+    {
+        if (!lockGameStateAfterTrigger
+            || _hasLockedGameState
+            || string.IsNullOrWhiteSpace(unlockGameStateFlag)
+            || GameManager.Instance == null)
+        {
+            return;
+        }
+
+        _previousGameState = GameManager.Instance.CurrentState;
+        _hasLockedGameState = true;
+
+        if (_previousGameState != GameState.OnDialog)
+        {
+            GameManager.Instance.SetState(GameState.OnDialog);
+        }
+    }
+
+    private void ReleaseGameStateLockIfUnlocked()
+    {
+        if (!_hasLockedGameState
+            || string.IsNullOrWhiteSpace(unlockGameStateFlag)
+            || FlagManager.Instance == null
+            || !FlagManager.Instance.HasFlag(unlockGameStateFlag))
+        {
+            return;
+        }
+
+        ReleaseGameStateLock();
+    }
+
+    private void ReleaseGameStateLock()
+    {
+        if (!_hasLockedGameState)
+        {
+            return;
+        }
+
+        _hasLockedGameState = false;
+
+        if (GameManager.Instance != null && GameManager.Instance.CurrentState == GameState.OnDialog)
+        {
+            GameManager.Instance.SetState(_previousGameState == GameState.OnDialog
+                ? GameState.Playing
+                : _previousGameState);
         }
     }
 }

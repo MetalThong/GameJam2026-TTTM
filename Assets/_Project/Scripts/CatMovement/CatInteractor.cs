@@ -13,8 +13,8 @@ public class CatInteractor : MonoBehaviour
 
     private void Update()
     {
-        bool dialoguePlaying = IsDialoguePlaying();
-        if (dialoguePlaying)
+        bool interactionBlocked = IsDialoguePlaying() || IsInteractionBlockedByGameState();
+        if (interactionBlocked)
         {
             _dialogueWasPlaying = true;
             return;
@@ -101,6 +101,11 @@ public class CatInteractor : MonoBehaviour
         }
 
         return dialogueManager != null && dialogueManager.IsPlaying;
+    }
+
+    private static bool IsInteractionBlockedByGameState()
+    {
+        return GameManager.Instance != null && GameManager.Instance.CurrentState == GameState.OnDialog;
     }
 
     private static bool IsAvailable(IInteractable interactable)
