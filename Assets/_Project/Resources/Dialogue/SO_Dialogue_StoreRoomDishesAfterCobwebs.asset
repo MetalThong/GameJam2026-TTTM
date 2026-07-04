@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0df2ddcceb2389b4d864a64d8b7d2cf4, type: 3}
+  m_Name: SO_Dialogue_StoreRoomDishesAfterCobwebs
+  m_EditorClassIdentifier: 
+  background: {fileID: 0}
+  lines:
+  - speakerName: "V\u0169"
+    englishSpeakerName: Vu
+    text: "H\u1EBFt d\u1ECDn nh\u00E0 kho, c\u00F2n \u0111\u1EBFn \u0111\u1ED1ng b\u00E1t \u0111\u0169a n\u1EEFa... haizz."
+    englishText: The storage room is done, and now there is that pile of dishes too... sigh.
+    portrait: {fileID: -4254258901546231152, guid: c5d997eca51e38d418373f1e8fdc90ce, type: 3}
+  - speakerName: Silly
+    englishSpeakerName: Silly
+    text: "\u01A0, th\u1EBF m\u00ECnh s\u1EBD d\u1ECDn h\u1EBFt b\u00E1t \u0111\u0169a cho c\u1EADu ch\u1EE7 lu\u00F4n."
+    englishText: Oh, then I will clean all the dishes for him too.
+    portrait: {fileID: 6468568510307345621, guid: 0c05e137063d43e429af4b01ffae35ac, type: 3}

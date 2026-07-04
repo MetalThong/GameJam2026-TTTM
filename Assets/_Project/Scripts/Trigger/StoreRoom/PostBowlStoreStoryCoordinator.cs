@@ -9,6 +9,7 @@ public sealed class PostBowlStoreStoryCoordinator : MonoBehaviour
 {
     private const string LivingRoomDialogueResourcePath = "Dialogue/SO_Dialogue_LivingRoomCarryBoxToStore";
     private const string StoreRoomDialogueResourcePath = "Dialogue/SO_Dialogue_StoreRoomCleanCobwebsIntro";
+    private const string StoreRoomDishesDialogueResourcePath = "Dialogue/SO_Dialogue_StoreRoomDishesAfterCobwebs";
 
     [Header("Scenes")]
     [SerializeField] private SceneId livingRoomScene = SceneId.LivingRoom;
@@ -19,12 +20,16 @@ public sealed class PostBowlStoreStoryCoordinator : MonoBehaviour
     [SerializeField] private string livingRoomHintFlag = "living_room_store_hint_seen";
     [SerializeField] private string storeMissionAssignedFlag = "went_to_store";
     [SerializeField] private string storeMissionCompletedFlag = "store_cobwebs_cleared";
+    [SerializeField] private string storeDishesDialogueFlag = "store_dishes_hint_seen";
+    [SerializeField] private string dishesMissionFlag = "go_to_dishes";
     [SerializeField] private bool allowStoreIntroWithoutLivingRoomHint = true;
 
     [Header("Dialogue")]
     [SerializeField] private DialogueSO livingRoomDialogue;
     [SerializeField] private DialogueSO storeRoomDialogue;
+    [SerializeField] private DialogueSO storeRoomDishesDialogue;
     [SerializeField, Min(0f)] private float sceneStartDelay = 0.35f;
+    [SerializeField, Min(0f)] private float postMissionDialogueDelay = 0.8f;
     [SerializeField, Min(0f)] private float dialogueManagerWaitTimeout = 2f;
 
     private bool _isScheduled;
@@ -131,6 +136,12 @@ public sealed class PostBowlStoreStoryCoordinator : MonoBehaviour
 
         if (IsScene(activeScene, storeRoomScene))
         {
+            if (ShouldPlayStoreRoomDishesHint())
+            {
+                await TryPlayStoreRoomDishesHintAsync(cancellationToken);
+                return;
+            }
+
             await TryPlayStoreRoomIntroAsync(cancellationToken);
         }
     }
@@ -163,11 +174,49 @@ public sealed class PostBowlStoreStoryCoordinator : MonoBehaviour
             cancellationToken);
     }
 
+    private async UniTask TryPlayStoreRoomDishesHintAsync(CancellationToken cancellationToken)
+    {
+        if (!ShouldPlayStoreRoomDishesHint())
+        {
+            return;
+        }
+
+        if (postMissionDialogueDelay > 0f)
+        {
+            await UniTask.Delay(TimeSpan.FromSeconds(postMissionDialogueDelay), cancellationToken: cancellationToken);
+        }
+
+        if (!ShouldPlayStoreRoomDishesHint() || !IsScene(SceneManager.GetActiveScene(), storeRoomScene))
+        {
+            return;
+        }
+
+        await PlayDialogueThenSetFlagsAsync(
+            ResolveStoreRoomDishesDialogue(),
+            ShouldPlayStoreRoomDishesHint,
+            cancellationToken,
+            storeDishesDialogueFlag,
+            dishesMissionFlag);
+    }
+
     private async UniTask PlayDialogueThenSetFlagAsync(
         DialogueSO dialogue,
         string flagAfterDialogue,
         Func<bool> shouldStillPlay,
         CancellationToken cancellationToken)
+    {
+        await PlayDialogueThenSetFlagsAsync(
+            dialogue,
+            shouldStillPlay,
+            cancellationToken,
+            flagAfterDialogue);
+    }
+
+    private async UniTask PlayDialogueThenSetFlagsAsync(
+        DialogueSO dialogue,
+        Func<bool> shouldStillPlay,
+        CancellationToken cancellationToken,
+        params string[] flagsAfterDialogue)
     {
         _isPlaying = true;
 
@@ -194,7 +243,10 @@ public sealed class PostBowlStoreStoryCoordinator : MonoBehaviour
 
             if (shouldStillPlay() && FlagManager.Instance != null)
             {
-                FlagManager.Instance.SetFlag(flagAfterDialogue, true);
+                for (int i = 0; i < flagsAfterDialogue.Length; i++)
+                {
+                    FlagManager.Instance.SetFlag(flagsAfterDialogue[i], true);
+                }
             }
         }
         finally
@@ -244,6 +296,16 @@ public sealed class PostBowlStoreStoryCoordinator : MonoBehaviour
         return storeRoomDialogue;
     }
 
+    private DialogueSO ResolveStoreRoomDishesDialogue()
+    {
+        if (storeRoomDishesDialogue == null)
+        {
+            storeRoomDishesDialogue = Resources.Load<DialogueSO>(StoreRoomDishesDialogueResourcePath);
+        }
+
+        return storeRoomDishesDialogue;
+    }
+
     private bool ShouldPlayLivingRoomHint()
     {
         return HasFlag(bowlCompletedFlag)
@@ -260,6 +322,13 @@ public sealed class PostBowlStoreStoryCoordinator : MonoBehaviour
             && (allowStoreIntroWithoutLivingRoomHint || HasFlag(livingRoomHintFlag));
     }
 
+    private bool ShouldPlayStoreRoomDishesHint()
+    {
+        return HasFlag(storeMissionCompletedFlag)
+            && !HasFlag(storeDishesDialogueFlag)
+            && !HasFlag(dishesMissionFlag);
+    }
+
     private bool HasFlag(string flagId)
     {
         return !string.IsNullOrWhiteSpace(flagId)
@@ -272,7 +341,9 @@ public sealed class PostBowlStoreStoryCoordinator : MonoBehaviour
         return flagId == bowlCompletedFlag
             || flagId == livingRoomHintFlag
             || flagId == storeMissionAssignedFlag
-            || flagId == storeMissionCompletedFlag;
+            || flagId == storeMissionCompletedFlag
+            || flagId == storeDishesDialogueFlag
+            || flagId == dishesMissionFlag;
     }
 
     private static bool IsScene(Scene scene, SceneId sceneId)

@@ -19,6 +19,7 @@ public sealed class StoreRoomCatMeowTransformAbility : MonoBehaviour
     [SerializeField] private CatInteractor catInteractor;
     [SerializeField] private RandomDialogueSpawner randomDialogueSpawner;
     [SerializeField] private RadialTimerUI timerUI;
+    [SerializeField] private InteractionPromptView interactionPromptView;
 
     [Header("Scene")]
     [SerializeField] private string requiredSceneName = "StoreRoom";
@@ -43,8 +44,14 @@ public sealed class StoreRoomCatMeowTransformAbility : MonoBehaviour
     [Header("Audio")]
     [SerializeField] private bool playMeowAudio = true;
 
+    [Header("Prompt")]
+    [SerializeField] private bool showFallbackPrompt = true;
+    [SerializeField] private string fallbackPromptKey = "prompt.store_meow";
+
     private AbilityState _state = AbilityState.Ready;
     private CancellationTokenSource _sequenceCts;
+    private bool _fallbackPromptVisible;
+    private bool _isDestroying;
 
     private void Awake()
     {
@@ -60,12 +67,24 @@ public sealed class StoreRoomCatMeowTransformAbility : MonoBehaviour
             catInteractor.FallbackInteractRequested += TryStartFromFallback;
         }
 
+        if (movement != null)
+        {
+            movement.FormChanged += OnFormChanged;
+        }
+
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.StateChanged += OnGameStateChanged;
+        }
+
         SceneManager.activeSceneChanged += OnActiveSceneChanged;
 
         if (hideTimerWhenReady && _state == AbilityState.Ready)
         {
             SetTimerVisible(false);
         }
+
+        RefreshFallbackPrompt();
     }
 
     private void OnDisable()
@@ -75,13 +94,26 @@ public sealed class StoreRoomCatMeowTransformAbility : MonoBehaviour
             catInteractor.FallbackInteractRequested -= TryStartFromFallback;
         }
 
+        if (movement != null)
+        {
+            movement.FormChanged -= OnFormChanged;
+        }
+
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.StateChanged -= OnGameStateChanged;
+        }
+
         SceneManager.activeSceneChanged -= OnActiveSceneChanged;
+        HideFallbackPrompt();
         CancelSequence(revertToInactiveFormOnCancel);
     }
 
     private void OnDestroy()
     {
-        CancelSequence(revertToInactiveFormOnCancel);
+        _isDestroying = true;
+        HideFallbackPrompt();
+        CancelSequence(revertToInactiveFormOnCancel, false);
     }
 
     private bool TryStartFromFallback()
@@ -105,6 +137,7 @@ public sealed class StoreRoomCatMeowTransformAbility : MonoBehaviour
         {
             _state = AbilityState.Dialogue;
             SetTimerVisible(false);
+            RefreshFallbackPrompt();
 
             if (playMeowAudio)
             {
@@ -120,6 +153,7 @@ public sealed class StoreRoomCatMeowTransformAbility : MonoBehaviour
 
             movement.SetForm(activeForm);
             activeFormApplied = true;
+            RefreshFallbackPrompt();
 
             _state = AbilityState.Active;
             await RunTimerAsync(activeDuration, activeTimerColor, cancellationToken);
@@ -128,6 +162,7 @@ public sealed class StoreRoomCatMeowTransformAbility : MonoBehaviour
             activeFormApplied = false;
 
             _state = AbilityState.Cooldown;
+            RefreshFallbackPrompt();
             await RunTimerAsync(cooldownDuration, cooldownTimerColor, cancellationToken);
 
             completed = true;
@@ -149,6 +184,7 @@ public sealed class StoreRoomCatMeowTransformAbility : MonoBehaviour
                 SetTimerVisible(false);
             }
 
+            RefreshFallbackPrompt();
             DisposeSequenceCts();
         }
     }
@@ -218,6 +254,7 @@ public sealed class StoreRoomCatMeowTransformAbility : MonoBehaviour
     {
         if (!IsInRequiredScene())
         {
+            HideFallbackPrompt();
             CancelSequence(revertToInactiveFormOnCancel);
             return;
         }
@@ -226,9 +263,21 @@ public sealed class StoreRoomCatMeowTransformAbility : MonoBehaviour
         {
             SetTimerVisible(false);
         }
+
+        RefreshFallbackPrompt();
     }
 
-    private void CancelSequence(bool revertForm)
+    private void OnFormChanged(MovementForm previousForm, MovementForm currentForm)
+    {
+        RefreshFallbackPrompt();
+    }
+
+    private void OnGameStateChanged(GameState previousState, GameState currentState)
+    {
+        RefreshFallbackPrompt();
+    }
+
+    private void CancelSequence(bool revertForm, bool refreshPrompt = true)
     {
         if (_sequenceCts != null)
         {
@@ -246,6 +295,11 @@ public sealed class StoreRoomCatMeowTransformAbility : MonoBehaviour
         if (hideTimerWhenReady)
         {
             SetTimerVisible(false);
+        }
+
+        if (refreshPrompt && !_isDestroying)
+        {
+            RefreshFallbackPrompt();
         }
     }
 
@@ -279,5 +333,67 @@ public sealed class StoreRoomCatMeowTransformAbility : MonoBehaviour
         {
             catInteractor = GetComponent<CatInteractor>();
         }
+
+        if (interactionPromptView == null)
+        {
+            interactionPromptView = UnityEngine.Object.FindFirstObjectByType<InteractionPromptView>(FindObjectsInactive.Include);
+        }
+    }
+
+    private void RefreshFallbackPrompt()
+    {
+        if (_isDestroying || this == null)
+        {
+            return;
+        }
+
+        if (!isActiveAndEnabled)
+        {
+            HideFallbackPrompt();
+            return;
+        }
+
+        bool shouldShow = showFallbackPrompt && CanStart();
+        if (!shouldShow)
+        {
+            HideFallbackPrompt();
+            return;
+        }
+
+        InteractionPromptView promptView = ResolvePromptView();
+        if (promptView == null)
+        {
+            _fallbackPromptVisible = false;
+            return;
+        }
+
+        promptView.ShowFallback(this, fallbackPromptKey);
+        _fallbackPromptVisible = true;
+    }
+
+    private void HideFallbackPrompt()
+    {
+        if (!_fallbackPromptVisible && interactionPromptView == null)
+        {
+            return;
+        }
+
+        if (interactionPromptView != null)
+        {
+            interactionPromptView.HideFallback(this);
+        }
+
+        _fallbackPromptVisible = false;
+    }
+
+    private InteractionPromptView ResolvePromptView()
+    {
+        if (interactionPromptView != null)
+        {
+            return interactionPromptView;
+        }
+
+        interactionPromptView = UnityEngine.Object.FindFirstObjectByType<InteractionPromptView>(FindObjectsInactive.Include);
+        return interactionPromptView;
     }
 }

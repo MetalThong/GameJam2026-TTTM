@@ -562,7 +562,6 @@ MonoBehaviour:
   trackRoot: {fileID: 182047085571044843}
   uiManager: {fileID: 0}
   autoStartOnEnable: 0
-  startOnEnter: 1
   hideMinigameUntilStarted: 1
   lockGameStateWhilePlaying: 1
   tutorialTravelDuration: 3
@@ -572,6 +571,9 @@ MonoBehaviour:
   failDistancePastCheck: 1.2
   timingWindowPadding: 0.35
   washLockoutDuration: 0.33
+  requiredSuccessfulHits: 5
+  completionFlagId: dishes_washed
+  deactivateOnComplete: 1
   idleStateName: Idle
   washStateName: Wash
   dishConsumeDuration: 0.18

@@ -18,7 +18,6 @@ public sealed class WashingMinigameController : MonoBehaviour
 
     [Header("Flow")]
     [SerializeField] private bool autoStartOnEnable = true;
-    [SerializeField] private bool startOnEnter = false;
     [SerializeField] private bool hideMinigameUntilStarted = false;
     [SerializeField] private bool lockGameStateWhilePlaying = true;
     [SerializeField, Min(0.05f)] private float tutorialTravelDuration = 3f;
@@ -28,6 +27,11 @@ public sealed class WashingMinigameController : MonoBehaviour
     [SerializeField, Min(0f)] private float failDistancePastCheck = 1.2f;
     [SerializeField, Min(0f)] private float timingWindowPadding = 0.35f;
     [SerializeField, Min(0f)] private float washLockoutDuration = 0.33f;
+
+    [Header("Completion")]
+    [SerializeField, Min(1)] private int requiredSuccessfulHits = 5;
+    [SerializeField] private string completionFlagId = "dishes_washed";
+    [SerializeField] private bool deactivateOnComplete = true;
 
     [Header("Animation")]
     [SerializeField] private string idleStateName = "Idle";
@@ -55,7 +59,6 @@ public sealed class WashingMinigameController : MonoBehaviour
     private bool _failed;
     private bool _hasLockedGameState;
     private bool _hasCachedInitialState;
-    private bool _waitingForEnterStart;
     private bool _warnedMissingUi;
     private bool _warnedMissingAnimatorState;
     private GameState _previousGameState = GameState.Playing;
@@ -64,6 +67,8 @@ public sealed class WashingMinigameController : MonoBehaviour
     private Tween _promptPulseTween;
     private Tween _checkPulseTween;
 
+    public bool IsPlaying => _isPlaying;
+
     private void Awake()
     {
         ResolveReferences();
@@ -71,7 +76,7 @@ public sealed class WashingMinigameController : MonoBehaviour
         ResetVisualsForNextDish();
         HidePromptCue(false);
         PlayAnimatorState(idleStateName, false);
-        if (startOnEnter && hideMinigameUntilStarted)
+        if (hideMinigameUntilStarted)
         {
             SetMinigameVisible(false);
         }
@@ -85,8 +90,7 @@ public sealed class WashingMinigameController : MonoBehaviour
             return;
         }
 
-        _waitingForEnterStart = startOnEnter;
-        if (_waitingForEnterStart && hideMinigameUntilStarted)
+        if (hideMinigameUntilStarted)
         {
             SetMinigameVisible(false);
         }
@@ -95,16 +99,6 @@ public sealed class WashingMinigameController : MonoBehaviour
     private void Update()
     {
         Keyboard keyboard = Keyboard.current;
-        if (_waitingForEnterStart)
-        {
-            if (keyboard != null && (keyboard.enterKey.wasPressedThisFrame || keyboard.numpadEnterKey.wasPressedThisFrame))
-            {
-                StartMinigame();
-            }
-
-            return;
-        }
-
         if (!_roundActive || _isResolvingRound || _failed)
         {
             return;
@@ -130,6 +124,19 @@ public sealed class WashingMinigameController : MonoBehaviour
         StopAllTweens();
     }
 
+    public void StartFromInteraction()
+    {
+        if (!gameObject.activeSelf)
+        {
+            gameObject.SetActive(true);
+        }
+
+        if (!_isPlaying)
+        {
+            StartMinigame();
+        }
+    }
+
     public void StartMinigame()
     {
         ResolveReferences();
@@ -141,7 +148,6 @@ public sealed class WashingMinigameController : MonoBehaviour
         _currentTravelDuration = tutorialTravelDuration;
         _isPlaying = true;
         _isResolvingRound = false;
-        _waitingForEnterStart = false;
         SetMinigameVisible(true);
         LockGameState();
         HidePromptCue(false);
@@ -245,9 +251,35 @@ public sealed class WashingMinigameController : MonoBehaviour
         _successSequence.OnComplete(() =>
         {
             PlayAnimatorState(idleStateName, false);
+            if (_successCount >= Mathf.Max(1, requiredSuccessfulHits))
+            {
+                CompleteMinigame();
+                return;
+            }
+
             _currentTravelDuration = Mathf.Max(minimumTravelDuration, normalTravelDuration * Mathf.Pow(speedMultiplier, _successCount - 1));
             StartRound();
         });
+    }
+
+    private void CompleteMinigame()
+    {
+        _successSequence = null;
+        _roundActive = false;
+        _isResolvingRound = false;
+        _isPlaying = false;
+        _failed = false;
+
+        HidePromptCue(false);
+        _checkPulseTween?.Kill();
+        _checkPulseTween = null;
+        ReleaseGameStateLock();
+        SetCompletionFlag();
+
+        if (deactivateOnComplete)
+        {
+            gameObject.SetActive(false);
+        }
     }
 
     private bool IsDishInCheckWindow()
@@ -596,6 +628,14 @@ public sealed class WashingMinigameController : MonoBehaviour
             GameManager.Instance.SetState(_previousGameState == GameState.OnDialog
                 ? GameState.Playing
                 : _previousGameState);
+        }
+    }
+
+    private void SetCompletionFlag()
+    {
+        if (!string.IsNullOrWhiteSpace(completionFlagId) && FlagManager.Instance != null)
+        {
+            FlagManager.Instance.SetFlag(completionFlagId, true);
         }
     }
 
