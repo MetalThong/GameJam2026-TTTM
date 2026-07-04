@@ -144,7 +144,7 @@ Current forms:
 
 `Movement` requires `Rigidbody2D`, `Animator`, `SpriteRenderer`, `BoxCollider2D`, `MovementInput`, `CatMovementForm`, and `GhostMovementForm`. It resolves missing serialized references in `Awake`/`OnValidate`, disables itself on missing critical references, and logs errors for missing Rigidbody, body collider, or `MovementInput`.
 
-Animation and facing are currently handled directly by `Movement`. It drives Animator bools `IsMoving` and `IsGhost`, flips the `SpriteRenderer` from horizontal input or rigidbody velocity, and mirrors collider offsets when configured.
+Animation and facing are currently handled directly by `Movement`. It drives Animator bools `IsMoving` and `IsGhost`, snaps the animator to the configured cat/ghost state when form is changed or loaded, flips the `SpriteRenderer` from horizontal input or rigidbody velocity, and mirrors collider offsets when configured.
 
 Collider handling supports either separate cat/ghost `BoxCollider2D` references or one shared body collider with serialized cat/ghost collider profiles. Switching form enables the appropriate collider or applies the selected collider size/offset profile.
 
@@ -250,6 +250,7 @@ Files:
 - `Assets/_Project/Scripts/Trigger/FlagBasedObject.cs`
 - `Assets/_Project/Scripts/Trigger/FadeFlagObject.cs`
 - `Assets/_Project/Scripts/Trigger/DeactivateOnFlag.cs`
+- `Assets/_Project/Scripts/Trigger/Hall/TemporaryChat.cs`
 - `Assets/_Project/Scripts/Trigger/BedRoom/CatMeowTrigger.cs`
 - `Assets/_Project/Scripts/Trigger/BedRoom/CatMeowInteractable.cs`
 - `Assets/_Project/Scripts/Trigger/BedRoom/CatMeowMashInteractable.cs`
@@ -283,6 +284,8 @@ The story system is flag-driven. `FlagManager` is the current singleton owner fo
 `FadeFlagObject` extends `FlagBasedObject` by fading a target `SpriteRenderer` with DOTween before disabling it. If no sprite renderer is available, it falls back to normal active-state toggling.
 
 `DeactivateOnFlag` disables its target GameObject when a configured flag is already set or becomes set. BedRoom uses it on WakeUpPanel with `waked_up` so returning from another room after wake-up removes the whole WakeUpPanel object, not only its visual or collider.
+
+`TemporaryChat` runs short one-off chat bubbles. It can wait before showing, fade all child `SpriteRenderer` and UI `Graphic` visuals, optionally set `GameState.OnDialog` while visible so `Movement` locks, set a completion flag, and deactivate the chat object after fade-out. HallDown uses this on `ChatTrigger`: `StoryTrigger` sets `went_down_hall`, `FlagBasedObject` activates the child `Chat`, `TemporaryChat` waits 3 seconds, locks movement while the chat is visible, then sets `chat_completed_go_down_hall` and hides `Chat` so the same bubble does not return on later loads.
 
 `DialogueStoryInteractable` extends `StoryInteractable` to play a `DialogueSO` (and optional SFX id) on success, then run the flag action, and optionally deactivate its own GameObject. On success it can fade a `hideBeforeDialogue` visual (for example the WakeUpPanel `Visual`) over `hideBeforeDialogueFadeDuration`, wait `dialogueDelayAfterHide`, then await `PlayDialogueAsync` before executing the action, so flags are only set after the dialogue finishes. The hide fade supports `SpriteRenderer`, UI `Graphic`, and TMP children. It guards against re-entry while a dialogue is playing. This is the reusable base for flag-gated interactions that should show dialogue (WakeUp panel, cat meow, etc.).
 
@@ -341,7 +344,7 @@ Important current limitation: `UIPanelView.Id` has only a getter and is not seri
 
 `BedRoom.unity` owns its scene UI under `SceneUIRoot`. This root contains a Screen Space Overlay canvas, a Settings button, a Settings panel, and the Dialogue panel. `SceneUIController` binds the scene Settings button and close button to the Settings panel without relying on persistent global UI state.
 
-`UI.prefab` also owns a `Mission` HUD object with `MissionView`. `MissionView` listens to `FlagChangedEvent` and `FlagsLoadedEvent`, maps configured `MissionDefinition` entries from an assigned flag to a completed flag, and localizes mission title text through `LocalizationManager`. A mission with an empty assigned flag is treated as active by default until its completed flag exists. When an assigned flag turns on, it fades the `(!) Mission title` text in while sliding it down into place. When the matching completed flag turns on, it wraps the text with TMP strikethrough, waits briefly, then fades the mission out while sliding it upward. On loaded saves, an assigned-but-incomplete mission is restored instantly without replaying the assignment animation. The current prefab mappings are `Giúp chủ thức dậy` by default until `waked_up`, then `Hãy giúp chủ nhân vui lên` from `met_boss` until `waked_boss_up`.
+`UI.prefab` also owns a `Mission` HUD object with `MissionView`. `MissionView` listens to `FlagChangedEvent` and `FlagsLoadedEvent`, maps configured `MissionDefinition` entries from an assigned flag to a completed flag, and localizes mission title text through `LocalizationManager`. Missions now require a real assigned flag so they do not appear by default. When an assigned flag turns on, it fades the `(!) Mission title` text in while sliding it down into place. When the matching completed flag turns on, it wraps the text with TMP strikethrough, waits briefly, then fades the mission out while sliding it upward. On loaded saves, an assigned-but-incomplete mission is restored instantly without replaying the assignment animation. The current first Bedroom mission is `Giúp chủ nhân tỉnh dậy`, assigned by `waked_up` after the WakeUpPanel flow finishes and completed by `waked_boss_up` when the owner wakes up.
 
 ### Main Menu
 

@@ -146,16 +146,10 @@ MonoBehaviour:
   prefix: (!)
   missions:
   - missionId: bedroom_wake_owner
-    assignedFlag:
-    completedFlag: waked_up
-    vietnameseTitle: "Gi\xFAp ch\u1EE7 th\u1EE9c d\u1EADy"
-    englishTitle: Help your owner wake up
-    restoreWhenAssignedOnLoad: 1
-  - missionId: bedroom_help_owner
-    assignedFlag: met_boss
+    assignedFlag: waked_up
     completedFlag: waked_boss_up
-    vietnameseTitle: "H\xE3y gi\xFAp ch\u1EE7 nh\xE2n vui l\xEAn"
-    englishTitle: Help your owner feel better
+    vietnameseTitle: "Gi\xFAp ch\u1EE7 nh\xE2n t\u1EC9nh d\u1EADy"
+    englishTitle: Help your owner wake up
     restoreWhenAssignedOnLoad: 1
   visibleAlpha: 1
   assignStartOffset: {x: 0, y: 42}

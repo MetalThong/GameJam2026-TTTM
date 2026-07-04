@@ -7,8 +7,8 @@ using UnityEngine;
 public sealed class FadePanel : UIPanelView
 {
     [SerializeField, Range(0f, 1f)] private float visibleAlpha = 1f;
-    [SerializeField, Min(0f)] private float fadeInDuration = 0.35f;
-    [SerializeField, Min(0f)] private float fadeOutDuration = 0.35f;
+    [SerializeField, Min(0f)] private float fadeInDuration = 0.5f;
+    [SerializeField, Min(0f)] private float fadeOutDuration = 0.5f;
     [SerializeField] private bool hideOnAwake = true;
     [SerializeField] private bool blockRaycastsWhileVisible = true;
 

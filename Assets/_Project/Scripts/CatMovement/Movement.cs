@@ -43,6 +43,10 @@ public sealed class Movement : MonoBehaviour, ISaveable
     [SerializeField] private SpriteRenderer spriteRenderer;
     [SerializeField] private float movingThreshold = 0.05f;
     [SerializeField] private bool spriteFacesRightByDefault;
+    [SerializeField] private bool snapAnimatorOnFormChange = true;
+    [SerializeField] private string catIdleStateName = "CatIdle";
+    [SerializeField] private string catWalkStateName = "CatWalk";
+    [SerializeField] private string ghostStateName = "GhostCat";
 
     [Header("Interact Jump")]
     [SerializeField] private string interactJumpTrigger = "IsJump";
@@ -241,6 +245,7 @@ public sealed class Movement : MonoBehaviour, ISaveable
         SetForm(ResolveSavedForm(data.PlayerForm));
         ApplyFacing(data.PlayerFacingRight);
         RestoreScenePosition(data);
+        SyncAnimatorToForm(Vector2.zero, true);
         StopMovement();
         RefreshMovementLock();
     }
@@ -286,7 +291,7 @@ public sealed class Movement : MonoBehaviour, ISaveable
         if (_currentForm == nextForm)
         {
             ApplyColliderForForm(form);
-            UpdateAnimator(_input != null ? _input.Move : Vector2.zero);
+            SyncAnimatorToForm(_input != null ? _input.Move : Vector2.zero, true);
             return;
         }
 
@@ -295,7 +300,7 @@ public sealed class Movement : MonoBehaviour, ISaveable
         ApplyColliderForForm(form);
         _currentForm.Enter(targetRigidbody, _defaultGravityScale);
 
-        UpdateAnimator(_input != null ? _input.Move : Vector2.zero);
+        SyncAnimatorToForm(_input != null ? _input.Move : Vector2.zero, snapAnimatorOnFormChange);
     }
 
     private MovementFormBehaviour FindForm(MovementForm form)
@@ -464,6 +469,11 @@ public sealed class Movement : MonoBehaviour, ISaveable
 
     private void UpdateAnimator(Vector2 moveInput)
     {
+        SyncAnimatorToForm(moveInput, false);
+    }
+
+    private void SyncAnimatorToForm(Vector2 moveInput, bool snapState)
+    {
         if (animator == null)
         {
             return;
@@ -474,6 +484,36 @@ public sealed class Movement : MonoBehaviour, ISaveable
 
         animator.SetBool(IsGhostHash, isGhost);
         animator.SetBool(IsMovingHash, isMoving);
+
+        if (!snapState)
+        {
+            return;
+        }
+
+        string stateName = ResolveAnimatorStateName(isGhost, isMoving);
+        if (string.IsNullOrWhiteSpace(stateName))
+        {
+            return;
+        }
+
+        int stateHash = Animator.StringToHash(stateName);
+        if (!animator.HasState(0, stateHash))
+        {
+            return;
+        }
+
+        animator.Play(stateHash, 0, 0f);
+        animator.Update(0f);
+    }
+
+    private string ResolveAnimatorStateName(bool isGhost, bool isMoving)
+    {
+        if (isGhost)
+        {
+            return ghostStateName;
+        }
+
+        return isMoving ? catWalkStateName : catIdleStateName;
     }
 
     private void UpdateFlip(Vector2 moveInput)

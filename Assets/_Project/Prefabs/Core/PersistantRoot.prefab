@@ -682,8 +682,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::FadePanel
   id: 0
   visibleAlpha: 1
-  fadeInDuration: 0.35
-  fadeOutDuration: 0.35
+  fadeInDuration: 0.5
+  fadeOutDuration: 0.5
   hideOnAwake: 1
   blockRaycastsWhileVisible: 1
 --- !u!1001 &7050812205399102335

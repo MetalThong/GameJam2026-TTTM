@@ -31,7 +31,7 @@ public sealed class MissionDefinition
             return false;
         }
 
-        return string.IsNullOrWhiteSpace(assignedFlag) || flagManager.HasFlag(assignedFlag);
+        return !string.IsNullOrWhiteSpace(assignedFlag) && flagManager.HasFlag(assignedFlag);
     }
 
     public bool IsCompleted(FlagManager flagManager)
