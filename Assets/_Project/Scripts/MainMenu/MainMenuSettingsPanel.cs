@@ -11,10 +11,14 @@ public sealed class MainMenuSettingsPanel : MonoBehaviour
     private const float DefaultVolume = 0.8f;
 
     private static readonly Color LanguageNormalColor = new(0.16f, 0.18f, 0.2f, 1f);
-    private static readonly Color LanguageSelectedColor = new(0.3f, 0.72f, 0.44f, 1f);
+    private static readonly Color LanguageNormalHighlightColor = new(0.22f, 0.25f, 0.29f, 1f);
+    private static readonly Color LanguageNormalPressedColor = new(0.1f, 0.12f, 0.14f, 1f);
+    private static readonly Color LanguageSelectedColor = new(1f, 0.78f, 0.28f, 1f);
+    private static readonly Color LanguageSelectedHighlightColor = new(1f, 0.86f, 0.42f, 1f);
+    private static readonly Color LanguageSelectedPressedColor = new(0.88f, 0.61f, 0.18f, 1f);
     private static readonly Color LanguageNormalTextColor = Color.white;
-    private static readonly Color LanguageSelectedTextColor = new(0.04f, 0.08f, 0.06f, 1f);
-    private static readonly Color LanguageSelectedOutlineColor = new(0.85f, 1f, 0.72f, 1f);
+    private static readonly Color LanguageSelectedTextColor = new(0.08f, 0.05f, 0.02f, 1f);
+    private static readonly Color LanguageSelectedOutlineColor = new(1f, 0.98f, 0.78f, 1f);
 
     [SerializeField] private GameObject panel;
 
@@ -267,7 +271,7 @@ public sealed class MainMenuSettingsPanel : MonoBehaviour
             return;
         }
 
-        button.interactable = !selected;
+        button.interactable = true;
 
         if (button.targetGraphic is Image image)
         {
@@ -275,11 +279,12 @@ public sealed class MainMenuSettingsPanel : MonoBehaviour
         }
 
         ColorBlock colors = button.colors;
-        colors.normalColor = LanguageNormalColor;
-        colors.highlightedColor = new Color(0.19f, 0.21f, 0.24f, 1f);
-        colors.pressedColor = new Color(0.13f, 0.15f, 0.16f, 1f);
-        colors.selectedColor = LanguageSelectedColor;
-        colors.disabledColor = LanguageSelectedColor;
+        colors.normalColor = selected ? LanguageSelectedColor : LanguageNormalColor;
+        colors.highlightedColor = selected ? LanguageSelectedHighlightColor : LanguageNormalHighlightColor;
+        colors.pressedColor = selected ? LanguageSelectedPressedColor : LanguageNormalPressedColor;
+        colors.selectedColor = selected ? LanguageSelectedColor : LanguageNormalColor;
+        colors.disabledColor = selected ? LanguageSelectedColor : LanguageNormalColor;
+        colors.colorMultiplier = 1f;
         button.colors = colors;
 
         TMP_Text label = button.GetComponentInChildren<TMP_Text>(true);
@@ -502,10 +507,11 @@ public sealed class MainMenuSettingsPanel : MonoBehaviour
 
         ColorBlock colors = button.colors;
         colors.normalColor = LanguageNormalColor;
-        colors.highlightedColor = new Color(0.19f, 0.21f, 0.24f, 1f);
-        colors.pressedColor = new Color(0.13f, 0.15f, 0.16f, 1f);
+        colors.highlightedColor = LanguageNormalHighlightColor;
+        colors.pressedColor = LanguageNormalPressedColor;
         colors.selectedColor = LanguageSelectedColor;
         colors.disabledColor = LanguageSelectedColor;
+        colors.colorMultiplier = 1f;
         button.colors = colors;
 
         TMP_Text text = CreateButtonText(rectTransform, label, font);

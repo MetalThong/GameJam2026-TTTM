@@ -65,6 +65,10 @@ MonoBehaviour:
     vietnamese: "T\u01B0\u01A1ng t\u00E1c"
     english: Interact
     cat: Meow
+  - key: prompt.dance
+    vietnamese: "Nh\u1EA3y"
+    english: Dance
+    cat: Meow
   - key: prompt.wakeup
     vietnamese: "\u1EA4n E \u0111\u1EC3 t\u1EC9nh d\u1EADy"
     english: Press E to wake up

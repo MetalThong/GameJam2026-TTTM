@@ -232,6 +232,39 @@ public sealed class Movement : MonoBehaviour, ISaveable
         return SetAnimatorTriggerIfExists(triggerName);
     }
 
+    public bool TryPlayAnimationState(string stateName, bool requireCatForm, out float duration)
+    {
+        duration = 0f;
+
+        if (requireCatForm && CurrentForm != MovementForm.Cat)
+        {
+            return false;
+        }
+
+        if (animator == null || string.IsNullOrWhiteSpace(stateName))
+        {
+            return false;
+        }
+
+        if (!TryResolveAnimatorStateHash(stateName, out int stateHash))
+        {
+            return false;
+        }
+
+        StopMovement();
+        animator.SetBool(IsGhostHash, CurrentForm == MovementForm.Ghost);
+        animator.SetBool(IsMovingHash, false);
+        animator.Play(stateHash, 0, 0f);
+        animator.Update(0f);
+        duration = ResolveAnimationClipLength(stateName);
+        return true;
+    }
+
+    public void SnapAnimatorToCurrentForm()
+    {
+        SyncAnimatorToForm(_input != null ? _input.Move : Vector2.zero, true);
+    }
+
     public void Save(SaveData data)
     {
         if (data == null)
@@ -515,8 +548,7 @@ public sealed class Movement : MonoBehaviour, ISaveable
             return;
         }
 
-        int stateHash = Animator.StringToHash(stateName);
-        if (!animator.HasState(0, stateHash))
+        if (!TryResolveAnimatorStateHash(stateName, out int stateHash))
         {
             return;
         }
@@ -533,6 +565,38 @@ public sealed class Movement : MonoBehaviour, ISaveable
         }
 
         return isMoving ? catWalkStateName : catIdleStateName;
+    }
+
+    private bool TryResolveAnimatorStateHash(string stateName, out int stateHash)
+    {
+        stateHash = 0;
+
+        if (animator == null || string.IsNullOrWhiteSpace(stateName))
+        {
+            return false;
+        }
+
+        int shortNameHash = Animator.StringToHash(stateName);
+        if (animator.HasState(0, shortNameHash))
+        {
+            stateHash = shortNameHash;
+            return true;
+        }
+
+        string layerName = animator.GetLayerName(0);
+        if (string.IsNullOrWhiteSpace(layerName))
+        {
+            return false;
+        }
+
+        int fullPathHash = Animator.StringToHash($"{layerName}.{stateName}");
+        if (animator.HasState(0, fullPathHash))
+        {
+            stateHash = fullPathHash;
+            return true;
+        }
+
+        return false;
     }
 
     private void UpdateFlip(Vector2 moveInput)
@@ -790,6 +854,33 @@ public sealed class Movement : MonoBehaviour, ISaveable
         }
 
         return false;
+    }
+
+    private float ResolveAnimationClipLength(string stateName)
+    {
+        if (animator == null || animator.runtimeAnimatorController == null || string.IsNullOrWhiteSpace(stateName))
+        {
+            return 0f;
+        }
+
+        AnimationClip[] clips = animator.runtimeAnimatorController.animationClips;
+        for (int i = 0; i < clips.Length; i++)
+        {
+            AnimationClip clip = clips[i];
+            if (clip == null)
+            {
+                continue;
+            }
+
+            if (string.Equals(clip.name, stateName, StringComparison.Ordinal)
+                || clip.name.Contains(stateName, StringComparison.Ordinal)
+                || stateName.Contains(clip.name, StringComparison.Ordinal))
+            {
+                return clip.length;
+            }
+        }
+
+        return 0f;
     }
 
     private void SetAnimatorBoolIfExists(string parameterName, bool value)

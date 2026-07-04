@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.InputSystem.UI;
 using UnityEngine.SceneManagement;
 
 [DisallowMultipleComponent]
@@ -8,6 +9,7 @@ public sealed class PersistentEventSystem : MonoBehaviour
     [SerializeField] private bool destroySceneDuplicates = true;
 
     private EventSystem _eventSystem;
+    private InputSystemUIInputModule _inputModule;
 
     private void Awake()
     {
@@ -36,6 +38,11 @@ public sealed class PersistentEventSystem : MonoBehaviour
         if (!TryGetComponent(out _eventSystem))
         {
             _eventSystem = gameObject.AddComponent<EventSystem>();
+        }
+
+        if (!TryGetComponent(out _inputModule))
+        {
+            _inputModule = gameObject.AddComponent<InputSystemUIInputModule>();
         }
     }
 
