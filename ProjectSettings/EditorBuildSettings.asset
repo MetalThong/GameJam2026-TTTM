@@ -38,6 +38,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/_Project/Scenes/BedRoomEnding.unity
     guid: 1a336917f18fea34da3edf57c5282904
+  - enabled: 1
+    path: Assets/_Project/Scenes/StoreRoom.unity
+    guid: 11b112d002edf55409fc20f21c6d982a
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0

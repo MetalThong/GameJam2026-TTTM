@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -16,6 +17,8 @@ public class CatInteractor : MonoBehaviour
     private int _ignoreInteractionFrame = -1;
     private float _nextDialogueResolveTime;
     private Movement _movement;
+
+    public event Func<bool> FallbackInteractRequested;
 
     private void Awake()
     {
@@ -49,6 +52,7 @@ public class CatInteractor : MonoBehaviour
 
         PruneInteractables();
 
+        bool didInteract = false;
         for (int i = _interactables.Count - 1; i >= 0; i--)
         {
             IInteractable interactable = _interactables[i];
@@ -60,8 +64,14 @@ public class CatInteractor : MonoBehaviour
             if (interactable.TryInteract())
             {
                 AudioFeedback.PlaySfx(interactSfxId);
+                didInteract = true;
                 break;
             }
+        }
+
+        if (!didInteract)
+        {
+            TryFallbackInteract();
         }
     }
 
@@ -138,7 +148,7 @@ public class CatInteractor : MonoBehaviour
         if (dialogueManager == null && Time.unscaledTime >= _nextDialogueResolveTime)
         {
             _nextDialogueResolveTime = Time.unscaledTime + dialogueResolveRetryInterval;
-            dialogueManager = Object.FindFirstObjectByType<DialogueManager>(FindObjectsInactive.Include);
+            dialogueManager = UnityEngine.Object.FindFirstObjectByType<DialogueManager>(FindObjectsInactive.Include);
         }
 
         return dialogueManager != null && dialogueManager.IsPlaying;
@@ -174,6 +184,26 @@ public class CatInteractor : MonoBehaviour
         }
 
         return component == null || PassesInteractionAvailability(component);
+    }
+
+    private bool TryFallbackInteract()
+    {
+        Func<bool> handlers = FallbackInteractRequested;
+        if (handlers == null)
+        {
+            return false;
+        }
+
+        Delegate[] invocationList = handlers.GetInvocationList();
+        for (int i = 0; i < invocationList.Length; i++)
+        {
+            if (invocationList[i] is Func<bool> handler && handler())
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private bool PassesInteractionAvailability(Component interactableComponent)

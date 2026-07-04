@@ -1,0 +1,1183 @@
+fileFormatVersion: 2
+guid: 2707092bd948df14ebc55f28c1355a0c
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -2918717355479349530
+    second: "glow nh\xE2n v\u1EADt_0"
+  - first:
+      213: -346893435339293765
+    second: "glow nh\xE2n v\u1EADt_1"
+  - first:
+      213: 5424445447523796579
+    second: "glow nh\xE2n v\u1EADt_2"
+  - first:
+      213: -3199699401135786403
+    second: "glow nh\xE2n v\u1EADt_3"
+  - first:
+      213: -6128426340397119673
+    second: "glow nh\xE2n v\u1EADt_4"
+  - first:
+      213: -8840839109128668333
+    second: "glow nh\xE2n v\u1EADt_5"
+  - first:
+      213: -7518988359178264530
+    second: "glow nh\xE2n v\u1EADt_6"
+  - first:
+      213: 6191986820926544213
+    second: "glow nh\xE2n v\u1EADt_7"
+  - first:
+      213: -2804981463978378063
+    second: "glow nh\xE2n v\u1EADt_8"
+  - first:
+      213: 8960085101545738181
+    second: "glow nh\xE2n v\u1EADt_9"
+  - first:
+      213: 253072345181868170
+    second: "glow nh\xE2n v\u1EADt_10"
+  - first:
+      213: 5039953199096291465
+    second: "glow nh\xE2n v\u1EADt_11"
+  - first:
+      213: 1145387553145754411
+    second: "glow nh\xE2n v\u1EADt_12"
+  - first:
+      213: 863304030018339819
+    second: "glow nh\xE2n v\u1EADt_13"
+  - first:
+      213: -7203020641366972574
+    second: "glow nh\xE2n v\u1EADt_14"
+  - first:
+      213: 6061066732493295097
+    second: "glow nh\xE2n v\u1EADt_15"
+  - first:
+      213: 2282124700018041657
+    second: "glow nh\xE2n v\u1EADt_16"
+  - first:
+      213: -5477592207912271345
+    second: "glow nh\xE2n v\u1EADt_17"
+  - first:
+      213: -2210684930425585255
+    second: "glow nh\xE2n v\u1EADt_18"
+  - first:
+      213: -5498604878563270337
+    second: "glow nh\xE2n v\u1EADt_19"
+  - first:
+      213: 5383453282577570459
+    second: "glow nh\xE2n v\u1EADt_20"
+  - first:
+      213: -1933113748340314128
+    second: "glow nh\xE2n v\u1EADt_21"
+  - first:
+      213: 6351713037702960284
+    second: "glow nh\xE2n v\u1EADt_22"
+  - first:
+      213: 5548011120515790407
+    second: "glow nh\xE2n v\u1EADt_23"
+  - first:
+      213: -612511508679732030
+    second: "glow nh\xE2n v\u1EADt_24"
+  - first:
+      213: 202271488722111227
+    second: "glow nh\xE2n v\u1EADt_25"
+  - first:
+      213: 3727005404302852671
+    second: "glow nh\xE2n v\u1EADt_26"
+  - first:
+      213: 3249181083421546328
+    second: "glow nh\xE2n v\u1EADt_27"
+  - first:
+      213: -7094415896192881805
+    second: "glow nh\xE2n v\u1EADt_28"
+  - first:
+      213: 2967233791997548877
+    second: "glow nh\xE2n v\u1EADt_29"
+  - first:
+      213: 4844599445187581281
+    second: "glow nh\xE2n v\u1EADt_30"
+  - first:
+      213: 2499311941079530059
+    second: "glow nh\xE2n v\u1EADt_31"
+  - first:
+      213: 2311496828598546769
+    second: "glow nh\xE2n v\u1EADt_32"
+  - first:
+      213: -7722442300056132986
+    second: "glow nh\xE2n v\u1EADt_33"
+  - first:
+      213: 8378035950895718002
+    second: "glow nh\xE2n v\u1EADt_34"
+  - first:
+      213: 3576125655805158138
+    second: "glow nh\xE2n v\u1EADt_35"
+  - first:
+      213: -6148288363061415440
+    second: "glow nh\xE2n v\u1EADt_36"
+  - first:
+      213: -1222934589614049210
+    second: "glow nh\xE2n v\u1EADt_37"
+  - first:
+      213: 590053993113315269
+    second: "glow nh\xE2n v\u1EADt_38"
+  - first:
+      213: -6943391125717726910
+    second: "glow nh\xE2n v\u1EADt_39"
+  - first:
+      213: -9003317007709189079
+    second: "glow nh\xE2n v\u1EADt_40"
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: "glow nh\xE2n v\u1EADt_0"
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 673
+        height: 681
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6e6c2ea7702ae77d0800000000000000
+      internalID: -2918717355479349530
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "glow nh\xE2n v\u1EADt_1"
+      rect:
+        serializedVersion: 2
+        x: 258
+        y: 652
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bbbbfab22469f2bf0800000000000000
+      internalID: -346893435339293765
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "glow nh\xE2n v\u1EADt_2"
+      rect:
+        serializedVersion: 2
+        x: 272
+        y: 656
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 36604230560874b40800000000000000
+      internalID: 5424445447523796579
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "glow nh\xE2n v\u1EADt_3"
+      rect:
+        serializedVersion: 2
+        x: 287
+        y: 651
+        width: 8
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d56754fe8526893d0800000000000000
+      internalID: -3199699401135786403
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "glow nh\xE2n v\u1EADt_4"
+      rect:
+        serializedVersion: 2
+        x: 367
+        y: 637
+        width: 20
+        height: 18
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 7478b7496b473faa0800000000000000
+      internalID: -6128426340397119673
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "glow nh\xE2n v\u1EADt_5"
+      rect:
+        serializedVersion: 2
+        x: 652
+        y: 426
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 35b3108cba70f4580800000000000000
+      internalID: -8840839109128668333
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "glow nh\xE2n v\u1EADt_6"
+      rect:
+        serializedVersion: 2
+        x: 15
+        y: 410
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e20e1e4bcef27a790800000000000000
+      internalID: -7518988359178264530
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "glow nh\xE2n v\u1EADt_7"
+      rect:
+        serializedVersion: 2
+        x: 20
+        y: 411
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5591a33053b5ee550800000000000000
+      internalID: 6191986820926544213
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "glow nh\xE2n v\u1EADt_8"
+      rect:
+        serializedVersion: 2
+        x: 644
+        y: 415
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 1bc730e4834b219d0800000000000000
+      internalID: -2804981463978378063
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "glow nh\xE2n v\u1EADt_9"
+      rect:
+        serializedVersion: 2
+        x: 644
+        y: 404
+        width: 12
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5cf47e26ded985c70800000000000000
+      internalID: 8960085101545738181
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "glow nh\xE2n v\u1EADt_10"
+      rect:
+        serializedVersion: 2
+        x: 17
+        y: 395
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: a805a0505f7138300800000000000000
+      internalID: 253072345181868170
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "glow nh\xE2n v\u1EADt_11"
+      rect:
+        serializedVersion: 2
+        x: 633
+        y: 365
+        width: 17
+        height: 30
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9806ab45bb281f540800000000000000
+      internalID: 5039953199096291465
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "glow nh\xE2n v\u1EADt_12"
+      rect:
+        serializedVersion: 2
+        x: 649
+        y: 390
+        width: 8
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b23186b39eb35ef00800000000000000
+      internalID: 1145387553145754411
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "glow nh\xE2n v\u1EADt_13"
+      rect:
+        serializedVersion: 2
+        x: 8
+        y: 381
+        width: 6
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: be3086af0721bfb00800000000000000
+      internalID: 863304030018339819
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "glow nh\xE2n v\u1EADt_14"
+      rect:
+        serializedVersion: 2
+        x: 655
+        y: 382
+        width: 10
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 267e381d3eab90c90800000000000000
+      internalID: -7203020641366972574
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "glow nh\xE2n v\u1EADt_15"
+      rect:
+        serializedVersion: 2
+        x: 11
+        y: 371
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9fd433e841c3d1450800000000000000
+      internalID: 6061066732493295097
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "glow nh\xE2n v\u1EADt_16"
+      rect:
+        serializedVersion: 2
+        x: 647
+        y: 365
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 93368bdc25cbbaf10800000000000000
+      internalID: 2282124700018041657
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "glow nh\xE2n v\u1EADt_17"
+      rect:
+        serializedVersion: 2
+        x: 647
+        y: 350
+        width: 7
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f0201fe88eeabf3b0800000000000000
+      internalID: -5477592207912271345
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "glow nh\xE2n v\u1EADt_18"
+      rect:
+        serializedVersion: 2
+        x: 650
+        y: 322
+        width: 7
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 9918cabb4c11251e0800000000000000
+      internalID: -2210684930425585255
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "glow nh\xE2n v\u1EADt_19"
+      rect:
+        serializedVersion: 2
+        x: 9
+        y: 308
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f31a10deef701b3b0800000000000000
+      internalID: -5498604878563270337
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "glow nh\xE2n v\u1EADt_20"
+      rect:
+        serializedVersion: 2
+        x: 20
+        y: 291
+        width: 7
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b9a52fcdc3ed5ba40800000000000000
+      internalID: 5383453282577570459
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "glow nh\xE2n v\u1EADt_21"
+      rect:
+        serializedVersion: 2
+        x: 656
+        y: 284
+        width: 6
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0ff60c7b9433c25e0800000000000000
+      internalID: -1933113748340314128
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "glow nh\xE2n v\u1EADt_22"
+      rect:
+        serializedVersion: 2
+        x: 20
+        y: 270
+        width: 8
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: c94908fda51d52850800000000000000
+      internalID: 6351713037702960284
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "glow nh\xE2n v\u1EADt_23"
+      rect:
+        serializedVersion: 2
+        x: 654
+        y: 275
+        width: 8
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 746b24038be7efc40800000000000000
+      internalID: 5548011120515790407
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "glow nh\xE2n v\u1EADt_24"
+      rect:
+        serializedVersion: 2
+        x: 17
+        y: 259
+        width: 10
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 2c45e40370cef77f0800000000000000
+      internalID: -612511508679732030
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "glow nh\xE2n v\u1EADt_25"
+      rect:
+        serializedVersion: 2
+        x: 643
+        y: 236
+        width: 7
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: bfa8879e8dc9ec200800000000000000
+      internalID: 202271488722111227
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "glow nh\xE2n v\u1EADt_26"
+      rect:
+        serializedVersion: 2
+        x: 238
+        y: 23
+        width: 9
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f32ce6f2babf8b330800000000000000
+      internalID: 3727005404302852671
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "glow nh\xE2n v\u1EADt_27"
+      rect:
+        serializedVersion: 2
+        x: 254
+        y: 22
+        width: 7
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 85792400bf8671d20800000000000000
+      internalID: 3249181083421546328
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "glow nh\xE2n v\u1EADt_28"
+      rect:
+        serializedVersion: 2
+        x: 275
+        y: 23
+        width: 8
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 37be98a84529b8d90800000000000000
+      internalID: -7094415896192881805
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "glow nh\xE2n v\u1EADt_29"
+      rect:
+        serializedVersion: 2
+        x: 279
+        y: 25
+        width: 7
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: d499c89a96bbd2920800000000000000
+      internalID: 2967233791997548877
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "glow nh\xE2n v\u1EADt_30"
+      rect:
+        serializedVersion: 2
+        x: 295
+        y: 17
+        width: 9
+        height: 12
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 165d57117897b3340800000000000000
+      internalID: 4844599445187581281
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "glow nh\xE2n v\u1EADt_31"
+      rect:
+        serializedVersion: 2
+        x: 343
+        y: 18
+        width: 11
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: b4affeee7f65fa220800000000000000
+      internalID: 2499311941079530059
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "glow nh\xE2n v\u1EADt_32"
+      rect:
+        serializedVersion: 2
+        x: 351
+        y: 15
+        width: 14
+        height: 23
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 151fe086e16141020800000000000000
+      internalID: 2311496828598546769
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "glow nh\xE2n v\u1EADt_33"
+      rect:
+        serializedVersion: 2
+        x: 384
+        y: 26
+        width: 9
+        height: 8
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 68224b2b4af54d490800000000000000
+      internalID: -7722442300056132986
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "glow nh\xE2n v\u1EADt_34"
+      rect:
+        serializedVersion: 2
+        x: 386
+        y: 14
+        width: 17
+        height: 19
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 27e57900f43c44470800000000000000
+      internalID: 8378035950895718002
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "glow nh\xE2n v\u1EADt_35"
+      rect:
+        serializedVersion: 2
+        x: 400
+        y: 26
+        width: 8
+        height: 9
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: af26d6a3653f0a130800000000000000
+      internalID: 3576125655805158138
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "glow nh\xE2n v\u1EADt_36"
+      rect:
+        serializedVersion: 2
+        x: 405
+        y: 19
+        width: 19
+        height: 11
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 0f17e0f0f44ecaaa0800000000000000
+      internalID: -6148288363061415440
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "glow nh\xE2n v\u1EADt_37"
+      rect:
+        serializedVersion: 2
+        x: 273
+        y: 10
+        width: 16
+        height: 14
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 648348a5873470fe0800000000000000
+      internalID: -1222934589614049210
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "glow nh\xE2n v\u1EADt_38"
+      rect:
+        serializedVersion: 2
+        x: 305
+        y: 14
+        width: 8
+        height: 6
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 5c7e1d10bfa403800800000000000000
+      internalID: 590053993113315269
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "glow nh\xE2n v\u1EADt_39"
+      rect:
+        serializedVersion: 2
+        x: 329
+        y: 9
+        width: 6
+        height: 7
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 249cefe0f8e14af90800000000000000
+      internalID: -6943391125717726910
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: "glow nh\xE2n v\u1EADt_40"
+      rect:
+        serializedVersion: 2
+        x: 336
+        y: 10
+        width: 13
+        height: 10
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 92cc24312eacd0380800000000000000
+      internalID: -9003317007709189079
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      "glow nh\xE2n v\u1EADt_0": -2918717355479349530
+      "glow nh\xE2n v\u1EADt_1": -346893435339293765
+      "glow nh\xE2n v\u1EADt_10": 253072345181868170
+      "glow nh\xE2n v\u1EADt_11": 5039953199096291465
+      "glow nh\xE2n v\u1EADt_12": 1145387553145754411
+      "glow nh\xE2n v\u1EADt_13": 863304030018339819
+      "glow nh\xE2n v\u1EADt_14": -7203020641366972574
+      "glow nh\xE2n v\u1EADt_15": 6061066732493295097
+      "glow nh\xE2n v\u1EADt_16": 2282124700018041657
+      "glow nh\xE2n v\u1EADt_17": -5477592207912271345
+      "glow nh\xE2n v\u1EADt_18": -2210684930425585255
+      "glow nh\xE2n v\u1EADt_19": -5498604878563270337
+      "glow nh\xE2n v\u1EADt_2": 5424445447523796579
+      "glow nh\xE2n v\u1EADt_20": 5383453282577570459
+      "glow nh\xE2n v\u1EADt_21": -1933113748340314128
+      "glow nh\xE2n v\u1EADt_22": 6351713037702960284
+      "glow nh\xE2n v\u1EADt_23": 5548011120515790407
+      "glow nh\xE2n v\u1EADt_24": -612511508679732030
+      "glow nh\xE2n v\u1EADt_25": 202271488722111227
+      "glow nh\xE2n v\u1EADt_26": 3727005404302852671
+      "glow nh\xE2n v\u1EADt_27": 3249181083421546328
+      "glow nh\xE2n v\u1EADt_28": -7094415896192881805
+      "glow nh\xE2n v\u1EADt_29": 2967233791997548877
+      "glow nh\xE2n v\u1EADt_3": -3199699401135786403
+      "glow nh\xE2n v\u1EADt_30": 4844599445187581281
+      "glow nh\xE2n v\u1EADt_31": 2499311941079530059
+      "glow nh\xE2n v\u1EADt_32": 2311496828598546769
+      "glow nh\xE2n v\u1EADt_33": -7722442300056132986
+      "glow nh\xE2n v\u1EADt_34": 8378035950895718002
+      "glow nh\xE2n v\u1EADt_35": 3576125655805158138
+      "glow nh\xE2n v\u1EADt_36": -6148288363061415440
+      "glow nh\xE2n v\u1EADt_37": -1222934589614049210
+      "glow nh\xE2n v\u1EADt_38": 590053993113315269
+      "glow nh\xE2n v\u1EADt_39": -6943391125717726910
+      "glow nh\xE2n v\u1EADt_4": -6128426340397119673
+      "glow nh\xE2n v\u1EADt_40": -9003317007709189079
+      "glow nh\xE2n v\u1EADt_5": -8840839109128668333
+      "glow nh\xE2n v\u1EADt_6": -7518988359178264530
+      "glow nh\xE2n v\u1EADt_7": 6191986820926544213
+      "glow nh\xE2n v\u1EADt_8": -2804981463978378063
+      "glow nh\xE2n v\u1EADt_9": 8960085101545738181
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
