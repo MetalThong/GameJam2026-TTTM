@@ -1697,6 +1697,11 @@ MonoBehaviour:
   lockMovementDuringAnimation: 1
   hidePlayerAfterAnimation: 1
   fallbackAnimationDuration: 0.6
+  freezeFinalFrameBeforeLoad: 1
+  finalFrameNormalizedTime: 0.98
+  animationStateWaitTimeout: 0.25
+  setFormBeforeLoad: 1
+  formBeforeLoad: 0
 --- !u!1 &2013918363
 GameObject:
   m_ObjectHideFlags: 0

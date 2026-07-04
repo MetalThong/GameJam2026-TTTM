@@ -829,7 +829,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7878350319992209165, guid: 2fc73062a259bac4095228f4464e9ca7, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.051
+      value: -0.035
       objectReference: {fileID: 0}
     - target: {fileID: 7878350319992209165, guid: 2fc73062a259bac4095228f4464e9ca7, type: 3}
       propertyPath: m_LocalPosition.y
@@ -917,6 +917,11 @@ MonoBehaviour:
   lockMovementDuringAnimation: 1
   hidePlayerAfterAnimation: 1
   fallbackAnimationDuration: 0.6
+  freezeFinalFrameBeforeLoad: 1
+  finalFrameNormalizedTime: 0.98
+  animationStateWaitTimeout: 0.25
+  setFormBeforeLoad: 1
+  formBeforeLoad: 1
 --- !u!114 &1209883682
 MonoBehaviour:
   m_ObjectHideFlags: 0
