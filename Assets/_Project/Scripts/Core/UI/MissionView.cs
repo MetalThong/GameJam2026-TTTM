@@ -112,9 +112,30 @@ public sealed class MissionView : MonoBehaviour
             return;
         }
 
+        MissionDefinition progressMission = FindMissionByProgressFlag(eventData.FlagId);
+        if (progressMission != null
+            && progressMission.IsAssigned(FlagManager.Instance)
+            && !progressMission.IsCompleted(FlagManager.Instance))
+        {
+            if (progressMission.TryCompleteFromProgress(FlagManager.Instance))
+            {
+                return;
+            }
+
+            if (IsCurrentMission(progressMission))
+            {
+                RefreshCurrentText();
+            }
+            else
+            {
+                RefreshFromFlags();
+            }
+        }
+
         if (assignedMission != null)
         {
             ShowMission(assignedMission, true);
+            assignedMission.TryCompleteFromProgress(FlagManager.Instance);
         }
     }
 
@@ -240,7 +261,9 @@ public sealed class MissionView : MonoBehaviour
             return;
         }
 
-        string title = VietnameseTextUtility.Normalize(_currentMission.GetTitle(LocalizationManager.Instance));
+        string title = VietnameseTextUtility.Normalize(_currentMission.GetDisplayTitle(
+            LocalizationManager.Instance,
+            FlagManager.Instance));
         string missionText = string.IsNullOrWhiteSpace(prefix) ? title : $"{prefix} {title}";
         titleText.text = _isCompleting ? $"<s>{missionText}</s>" : missionText;
     }
@@ -309,6 +332,20 @@ public sealed class MissionView : MonoBehaviour
         {
             MissionDefinition mission = missions[i];
             if (mission != null && mission.MatchesCompletedFlag(flagId))
+            {
+                return mission;
+            }
+        }
+
+        return null;
+    }
+
+    private MissionDefinition FindMissionByProgressFlag(string flagId)
+    {
+        for (int i = missions.Count - 1; i >= 0; i--)
+        {
+            MissionDefinition mission = missions[i];
+            if (mission != null && mission.MatchesProgressFlag(flagId))
             {
                 return mission;
             }

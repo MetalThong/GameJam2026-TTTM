@@ -151,18 +151,40 @@ MonoBehaviour:
     vietnameseTitle: "Gi\xFAp ch\u1EE7 nh\xE2n t\u1EC9nh d\u1EADy"
     englishTitle: Help your owner wake up
     restoreWhenAssignedOnLoad: 1
+    showProgress: 0
+    progressFlags: []
+    completeWhenProgressFull: 1
   - missionId: living_drop_box
     assignedFlag: mission_provoke_owner
     completedFlag: dropped_box
     vietnameseTitle: "Ch\u1ECDc gi\u1EADn \xF4ng ch\u1EE7"
     englishTitle: Make the owner angry
     restoreWhenAssignedOnLoad: 1
+    showProgress: 0
+    progressFlags: []
+    completeWhenProgressFull: 1
   - missionId: picked_up_box
     assignedFlag: dropped_box
     completedFlag: other
     vietnameseTitle: "\u0110i l\u1EA5y c\xE1i b\xE1t gi\xFAp c\u1EADu ch\u1EE7"
     englishTitle: 
     restoreWhenAssignedOnLoad: 1
+    showProgress: 0
+    progressFlags: []
+    completeWhenProgressFull: 1
+  - missionId: store_clean_cobwebs
+    assignedFlag: went_to_store
+    completedFlag: store_cobwebs_cleared
+    vietnameseTitle: "Qu\xE9t m\u1EA1ng nh\u1EC7n"
+    englishTitle: Clean the cobwebs
+    restoreWhenAssignedOnLoad: 1
+    showProgress: 1
+    progressFlags:
+    - store_cobweb_01
+    - store_cobweb_02
+    - store_cobweb_03
+    - store_cobweb_04
+    completeWhenProgressFull: 1
   visibleAlpha: 1
   assignStartOffset: {x: 0, y: 42}
   completeExitOffset: {x: 0, y: 36}
@@ -864,7 +886,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Unity.TextMeshPro::TMPro.TextMeshProUGUI
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -3905,8 +3927,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6f4f7b0656cb49d4bb7e3ef55a5e9f1d, type: 3}
-  m_Name:
-  m_EditorClassIdentifier:
+  m_Name: 
+  m_EditorClassIdentifier: 
   root: {fileID: 8593824841453457986}
   label: {fileID: 454910775920607726}
   defaultPromptKey: prompt.interact
