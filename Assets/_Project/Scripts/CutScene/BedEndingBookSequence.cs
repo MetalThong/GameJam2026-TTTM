@@ -44,7 +44,7 @@ public sealed class BedEndingBookSequence : MonoBehaviour
     [Header("Return To Menu")]
     [SerializeField] private bool showReturnPromptOnComplete = true;
     [SerializeField] private SceneId returnScene = SceneId.MainMenu;
-    [SerializeField] private string returnPromptText = "(Back to Main Menu)";
+    [SerializeField] private string returnPromptText = "(Press E to return to Main Menu)";
     [SerializeField] private TextMeshProUGUI returnPromptTextView;
     [SerializeField] private CanvasGroup returnPromptCanvasGroup;
     [SerializeField, Min(0f)] private float returnPromptFadeDuration = 0.35f;
@@ -58,6 +58,9 @@ public sealed class BedEndingBookSequence : MonoBehaviour
     private float _cachedAnimatorSpeed = 1f;
     private bool _isReturnPromptVisible;
     private bool _isLoadingReturnScene;
+    private IInputReader _inputReader;
+    private int _ignoreInputFrame = -1;
+    private int _lastAdvanceInputFrame = -1;
 
     private void Awake()
     {
@@ -71,27 +74,51 @@ public sealed class BedEndingBookSequence : MonoBehaviour
     {
         CancelPlayback();
         _playCts = new CancellationTokenSource();
+        _ignoreInputFrame = Time.frameCount;
+        SubscribeInput();
         ResetSequenceState();
     }
 
     private void Update()
     {
-        if (!WasPrimaryClickPressed())
+        SubscribeInput();
+
+        if (!WasInteractKeyPressed())
         {
             return;
         }
 
-        AdvanceSequence();
+        AdvanceSequenceFromInput();
     }
 
     private void OnDisable()
     {
+        UnsubscribeInput();
         CancelPlayback();
     }
 
     private void OnDestroy()
     {
+        UnsubscribeInput();
         CancelPlayback();
+    }
+
+    private void OnInteractPressed()
+    {
+        AdvanceSequenceFromInput();
+    }
+
+    private void AdvanceSequenceFromInput()
+    {
+        if (!isActiveAndEnabled
+            || Time.frameCount == _ignoreInputFrame
+            || Time.frameCount == _lastAdvanceInputFrame)
+        {
+            return;
+        }
+
+        _lastAdvanceInputFrame = Time.frameCount;
+        AdvanceSequence();
     }
 
     private void AdvanceSequence()
@@ -759,25 +786,34 @@ public sealed class BedEndingBookSequence : MonoBehaviour
         }
     }
 
-    private bool WasPrimaryClickPressed()
+    private static bool WasInteractKeyPressed()
     {
-        if (Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame)
-        {
-            return true;
-        }
-
-        if (Touchscreen.current != null
-            && Touchscreen.current.primaryTouch.press.wasPressedThisFrame)
-        {
-            return true;
-        }
-
         Keyboard keyboard = Keyboard.current;
-        return keyboard != null
-            && (keyboard.spaceKey.wasPressedThisFrame
-                || keyboard.enterKey.wasPressedThisFrame
-                || keyboard.numpadEnterKey.wasPressedThisFrame
-                || keyboard.escapeKey.wasPressedThisFrame);
+        return keyboard != null && keyboard.eKey.wasPressedThisFrame;
+    }
+
+    private void SubscribeInput()
+    {
+        IInputReader reader = InputManager.Instance != null ? InputManager.Instance.Reader : null;
+        if (reader == null || reader == _inputReader)
+        {
+            return;
+        }
+
+        UnsubscribeInput();
+        _inputReader = reader;
+        _inputReader.InteractPressed += OnInteractPressed;
+    }
+
+    private void UnsubscribeInput()
+    {
+        if (_inputReader == null)
+        {
+            return;
+        }
+
+        _inputReader.InteractPressed -= OnInteractPressed;
+        _inputReader = null;
     }
 
     private void ResolveReferences()

@@ -27,6 +27,14 @@ public sealed class MoveObjectInteractable : MonoBehaviour, IInteractable
     [SerializeField] private DialogueSO dialogueAfterMove;
     [SerializeField] private bool waitForCurrentDialogue = true;
 
+    [Header("Post Move Spawn")]
+    [SerializeField] private GameObject postMoveSpawnPrefab;
+    [SerializeField] private bool usePostMoveSpawnPosition;
+    [SerializeField] private Vector3 postMoveSpawnPosition;
+    [SerializeField] private bool disablePostMoveSpawnFormObjects;
+    [SerializeField] private bool disablePostMoveSpawnAnimators;
+    [SerializeField] private string[] postMoveSpawnChildNamesToDisable = { "DontMissCat" };
+
     [Header("Flag")]
     [SerializeField] private string completionFlagId;
 
@@ -80,6 +88,7 @@ public sealed class MoveObjectInteractable : MonoBehaviour, IInteractable
         try
         {
             await MoveTargetAsync(destroyToken);
+            SpawnPostMoveObject();
             await PlayDialogueAfterMoveAsync(destroyToken);
             CompleteMove();
         }
@@ -126,6 +135,57 @@ public sealed class MoveObjectInteractable : MonoBehaviour, IInteractable
         }
 
         cancellationToken.ThrowIfCancellationRequested();
+    }
+
+    private void SpawnPostMoveObject()
+    {
+        if (postMoveSpawnPrefab == null)
+        {
+            return;
+        }
+
+        Vector3 spawnPosition = usePostMoveSpawnPosition ? postMoveSpawnPosition : transform.position;
+        GameObject spawnedObject = InstantiatePostMovePrefab(spawnPosition);
+        if (spawnedObject == null)
+        {
+            return;
+        }
+
+        spawnedObject.name = postMoveSpawnPrefab.name;
+        DisablePostMoveSpawnFormObjects(spawnedObject);
+        DisablePostMoveSpawnAnimators(spawnedObject);
+        DisableSpawnedChildrenByName(spawnedObject);
+    }
+
+    private GameObject InstantiatePostMovePrefab(Vector3 spawnPosition)
+    {
+        try
+        {
+            UnityEngine.Object prefabObject = postMoveSpawnPrefab;
+            UnityEngine.Object spawned = UnityEngine.Object.Instantiate(prefabObject, spawnPosition, Quaternion.identity);
+
+            if (spawned is GameObject spawnedGameObject)
+            {
+                return spawnedGameObject;
+            }
+
+            if (spawned is Component spawnedComponent)
+            {
+                return spawnedComponent.gameObject;
+            }
+
+            Debug.LogWarning("MoveObjectInteractable: postMoveSpawnPrefab did not instantiate as a GameObject. Check the prefab reference in the scene.", this);
+            if (spawned != null)
+            {
+                Destroy(spawned);
+            }
+        }
+        catch (InvalidCastException exception)
+        {
+            Debug.LogWarning($"MoveObjectInteractable: failed to instantiate postMoveSpawnPrefab '{postMoveSpawnPrefab.name}'. Reassign the prefab reference to the prefab root GameObject. {exception.Message}", this);
+        }
+
+        return null;
     }
 
     private void CompleteMove()
@@ -192,6 +252,70 @@ public sealed class MoveObjectInteractable : MonoBehaviour, IInteractable
         }
 
         return dialogueManager;
+    }
+
+    private void DisablePostMoveSpawnFormObjects(GameObject spawnedObject)
+    {
+        if (!disablePostMoveSpawnFormObjects || spawnedObject == null)
+        {
+            return;
+        }
+
+        PlayerFormObject[] formObjects = spawnedObject.GetComponentsInChildren<PlayerFormObject>(true);
+        for (int i = 0; i < formObjects.Length; i++)
+        {
+            if (formObjects[i] != null)
+            {
+                formObjects[i].enabled = false;
+            }
+        }
+    }
+
+    private void DisablePostMoveSpawnAnimators(GameObject spawnedObject)
+    {
+        if (!disablePostMoveSpawnAnimators || spawnedObject == null)
+        {
+            return;
+        }
+
+        Animator[] animators = spawnedObject.GetComponentsInChildren<Animator>(true);
+        for (int i = 0; i < animators.Length; i++)
+        {
+            if (animators[i] != null)
+            {
+                animators[i].enabled = false;
+            }
+        }
+    }
+
+    private void DisableSpawnedChildrenByName(GameObject spawnedObject)
+    {
+        if (spawnedObject == null
+            || postMoveSpawnChildNamesToDisable == null
+            || postMoveSpawnChildNamesToDisable.Length == 0)
+        {
+            return;
+        }
+
+        Transform[] children = spawnedObject.GetComponentsInChildren<Transform>(true);
+        for (int i = 0; i < children.Length; i++)
+        {
+            Transform child = children[i];
+            if (child == null || child == spawnedObject.transform)
+            {
+                continue;
+            }
+
+            for (int j = 0; j < postMoveSpawnChildNamesToDisable.Length; j++)
+            {
+                string childName = postMoveSpawnChildNamesToDisable[j];
+                if (!string.IsNullOrWhiteSpace(childName) && child.name == childName)
+                {
+                    child.gameObject.SetActive(false);
+                    break;
+                }
+            }
+        }
     }
 
     private void OnFlagsLoaded(FlagsLoadedEvent eventData)

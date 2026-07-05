@@ -16,6 +16,6 @@ MonoBehaviour:
   lines:
   - speakerName: Silly
     englishSpeakerName: Silly
-    text: Con meo ben trai co ve dang doi ca. Minh can tim ca dua cho no.
+    text: "Con m\u00E8o b\u00EAn tr\u00E1i c\u00F3 v\u1EBB \u0111ang \u0111\u1EE3i c\u00E1. M\u00ECnh c\u1EA7n t\u00ECm c\u00E1 \u0111\u01B0a cho n\u00F3."
     englishText: The cat on the left looks like it wants fish. I should find a fish for it.
     portrait: {fileID: 6468568510307345621, guid: 0c05e137063d43e429af4b01ffae35ac, type: 3}

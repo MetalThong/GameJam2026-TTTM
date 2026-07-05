@@ -163,8 +163,15 @@ MonoBehaviour:
   pullAnimationTrigger: IsPull
   requireCatFormForPullAnimation: 1
   dialogueManager: {fileID: 0}
-  dialogueAfterMove: {fileID: 0}
+  dialogueAfterMove: {fileID: 11400000, guid: 85c85d49b384440692c98a9e27969a92, type: 2}
   waitForCurrentDialogue: 1
+  postMoveSpawnPrefab: {fileID: 4460802599194774219, guid: 035b606787c0fe64387e61aab294d1e5, type: 3}
+  usePostMoveSpawnPosition: 1
+  postMoveSpawnPosition: {x: 4.66, y: -4.19, z: 0}
+  disablePostMoveSpawnFormObjects: 1
+  disablePostMoveSpawnAnimators: 1
+  postMoveSpawnChildNamesToDisable:
+  - DontMissCat
   completionFlagId: pulled_first
 --- !u!114 &93410811
 MonoBehaviour:
