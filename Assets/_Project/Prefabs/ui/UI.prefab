@@ -194,6 +194,15 @@ MonoBehaviour:
     showProgress: 0
     progressFlags: []
     completeWhenProgressFull: 1
+  - missionId: find_owner_memento
+    assignedFlag: mission_find_owner_memento
+    completedFlag: owner_memento_found
+    vietnameseTitle: "T\xECm l\u1EA1i k\u1EC9 v\u1EADt g\u1EE3i nh\u1EDB cho c\u1EADu ch\u1EE7"
+    englishTitle: Find a keepsake to remind your owner
+    restoreWhenAssignedOnLoad: 1
+    showProgress: 0
+    progressFlags: []
+    completeWhenProgressFull: 1
   visibleAlpha: 1
   assignStartOffset: {x: 0, y: 42}
   completeExitOffset: {x: 0, y: 36}

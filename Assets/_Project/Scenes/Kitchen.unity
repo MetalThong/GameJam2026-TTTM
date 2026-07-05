@@ -555,6 +555,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SceneLoadInteractable
   targetScene: 3
   promptLocalizationKey: prompt.pass
+  targetOverrides:
+  - requiredFlag: dishes_washed
+    targetScene: 9
   restrictByForm: 0
   requiredForm: 0
   playerMovement: {fileID: 877334217}

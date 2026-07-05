@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0df2ddcceb2389b4d864a64d8b7d2cf4, type: 3}
+  m_Name: SO_Dialogue_WashingDishBrokenReaction
+  m_EditorClassIdentifier: 
+  background: {fileID: 0}
+  lines:
+  - speakerName: Silly
+    englishSpeakerName: Silly
+    text: "Oh meow, \u0111\u0129a y\u00eau th\u00edch c\u1ee7a m\u00ecnh v\u00e0 V\u0169 \u0111\u00e3 v\u1ee1 r\u1ed3i, \u0111\u00e2y l\u00e0 chi\u1ebfc \u0111\u0129a ng\u00e0y \u0111\u1ea7u c\u1eadu ch\u1ee7 cho m\u00ecnh \u0103n, gi\u1edd \u0111\u1ebfn n\u00f3 c\u0169ng bi\u1ebfn m\u1ea5t c\u1eadu \u1ea5y s\u1ebd qu\u00ean m\u00ecnh m\u1ea5t th\u00f4i, m\u00ecnh ph\u1ea3i l\u00e0m g\u00ec \u0111\u00f3 m\u1edbi \u0111\u01b0\u1ee3c m\u00ecnh kh\u00f4ng mu\u1ed1n b\u1ecb c\u1eadu ch\u1ee7 l\u00e3ng qu\u00ean."
+    englishText: "Oh meow, Vu's and my favorite dish broke. This was the dish he used to feed me on our first day together. Now even it is gone... he will forget me. I have to do something. I don't want him to forget me."
+    portrait: {fileID: 6468568510307345621, guid: 0c05e137063d43e429af4b01ffae35ac, type: 3}

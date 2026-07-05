@@ -8,5 +8,6 @@ public enum SceneId
     Kitchen = 5,
     GhostKitchen = 6,
     BedRoomEnding = 7,
-    StoreRoom = 8
+    StoreRoom = 8,
+    LivingRoomPart4 = 9
 }

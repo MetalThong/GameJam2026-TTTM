@@ -4,8 +4,25 @@ using UnityEngine;
 
 public class SceneLoadInteractable : MonoBehaviour, IInteractable, IInteractionPromptProvider, IInteractionAvailability
 {
+    [Serializable]
+    private sealed class FlagSceneOverride
+    {
+        [SerializeField] private string requiredFlag;
+        [SerializeField] private SceneId targetScene;
+
+        public SceneId TargetScene => targetScene;
+
+        public bool IsMatched()
+        {
+            return !string.IsNullOrWhiteSpace(requiredFlag)
+                && FlagManager.Instance != null
+                && FlagManager.Instance.HasFlag(requiredFlag);
+        }
+    }
+
     [SerializeField] private SceneId targetScene;
     [SerializeField] private string promptLocalizationKey = "prompt.pass";
+    [SerializeField] private FlagSceneOverride[] targetOverrides;
 
     [Header("Form Requirement")]
     [SerializeField] private bool restrictByForm;
@@ -62,7 +79,7 @@ public class SceneLoadInteractable : MonoBehaviour, IInteractable, IInteractionP
                 SaveManager.Instance.SaveGame();
             }
 
-            await _sceneLoader.FadeLoadAsync(targetScene);
+            await _sceneLoader.FadeLoadAsync(ResolveTargetScene());
         }
         catch (OperationCanceledException)
         {
@@ -76,6 +93,25 @@ public class SceneLoadInteractable : MonoBehaviour, IInteractable, IInteractionP
     protected virtual UniTask BeforeLoadAsync()
     {
         return UniTask.CompletedTask;
+    }
+
+    private SceneId ResolveTargetScene()
+    {
+        if (targetOverrides == null)
+        {
+            return targetScene;
+        }
+
+        for (int i = 0; i < targetOverrides.Length; i++)
+        {
+            FlagSceneOverride targetOverride = targetOverrides[i];
+            if (targetOverride != null && targetOverride.IsMatched())
+            {
+                return targetOverride.TargetScene;
+            }
+        }
+
+        return targetScene;
     }
 
     private Movement ResolvePlayerMovement()

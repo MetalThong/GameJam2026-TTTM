@@ -42,6 +42,11 @@ public sealed class WashingMinigameController : MonoBehaviour
     [SerializeField] private bool completeAfterFailureCutscene = true;
     [SerializeField] private bool deactivateAfterFailureCutscene = true;
 
+    [Header("Post Failure Story")]
+    [SerializeField] private DialogueManager dialogueManager;
+    [SerializeField] private DialogueSO postFailureDialogue;
+    [SerializeField] private string postFailureMissionAssignedFlag = "mission_find_owner_memento";
+
     [Header("Animation")]
     [SerializeField] private string idleStateName = "Idle";
     [SerializeField] private string washStateName = "Wash";
@@ -376,6 +381,14 @@ public sealed class WashingMinigameController : MonoBehaviour
             }
 
             cancellationToken.ThrowIfCancellationRequested();
+
+            if (completeAfterFailureCutscene)
+            {
+                SetCompletionFlag();
+            }
+
+            await PlayPostFailureDialogueAsync(cancellationToken);
+            SetPostFailureMissionAssignedFlag();
             shouldFinalize = true;
         }
         catch (OperationCanceledException)
@@ -387,11 +400,6 @@ public sealed class WashingMinigameController : MonoBehaviour
             {
                 _isPlayingFailureCutscene = false;
                 ReleaseGameStateLock();
-
-                if (completeAfterFailureCutscene)
-                {
-                    SetCompletionFlag();
-                }
 
                 if (deactivateAfterFailureCutscene)
                 {
@@ -886,5 +894,40 @@ public sealed class WashingMinigameController : MonoBehaviour
         }
 
         return null;
+    }
+
+    private async UniTask PlayPostFailureDialogueAsync(CancellationToken cancellationToken)
+    {
+        if (postFailureDialogue == null)
+        {
+            return;
+        }
+
+        DialogueManager manager = ResolveDialogueManager();
+        if (manager == null)
+        {
+            Debug.LogWarning("WashingMinigameController: post-failure dialogue is assigned but no DialogueManager was found.", this);
+            return;
+        }
+
+        await manager.PlayDialogueAsync(postFailureDialogue, cancellationToken);
+    }
+
+    private void SetPostFailureMissionAssignedFlag()
+    {
+        if (!string.IsNullOrWhiteSpace(postFailureMissionAssignedFlag) && FlagManager.Instance != null)
+        {
+            FlagManager.Instance.SetFlag(postFailureMissionAssignedFlag, true);
+        }
+    }
+
+    private DialogueManager ResolveDialogueManager()
+    {
+        if (dialogueManager == null)
+        {
+            dialogueManager = UnityEngine.Object.FindFirstObjectByType<DialogueManager>(FindObjectsInactive.Include);
+        }
+
+        return dialogueManager;
     }
 }
