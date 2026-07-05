@@ -347,7 +347,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 27dbe4b6646beb24bbd2838499029c91, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FlagBasedObject
   target: {fileID: 0}
   requiredFlag: dropped_box
@@ -861,7 +861,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a79441f348de89743a2939f4d699eac1, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Unity.RenderPipelines.Universal.Runtime::UnityEngine.Rendering.Universal.UniversalAdditionalCameraData
   m_RenderShadows: 1
   m_RequiresDepthTextureOption: 2
@@ -939,7 +939,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 381cb8e125ac413b90bba25b0b9e83b6, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CarryDropZone
   sceneId: 10
   carryId: cookie
@@ -1019,7 +1019,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9e0190c97ad07c94c820958bd3a509d3, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InteractButton
   button: {fileID: 0}
   extraPromptObjects: []
@@ -1043,11 +1043,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3626916397498700004, guid: 87e479c125e8b4b48a394cd5beb9a2df, type: 3}
       propertyPath: m_SortingLayer
-      value: 3
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 3626916397498700004, guid: 87e479c125e8b4b48a394cd5beb9a2df, type: 3}
       propertyPath: m_SortingLayerID
-      value: 1346041461
+      value: 1843868011
       objectReference: {fileID: 0}
     - target: {fileID: 7878350319992209165, guid: 87e479c125e8b4b48a394cd5beb9a2df, type: 3}
       propertyPath: m_LocalScale.x
@@ -1139,7 +1139,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 30657dda1cdb47e3bbf67bc555427247, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CarryableInteractable
   carryId: gift
   carryPrefab: {fileID: 930337656}
@@ -1196,17 +1196,17 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: 0.0019229352, y: 0.114415504}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 1, y: 1}
-    newSize: {x: 1, y: 1}
+    pivot: {x: 0.5, y: -0.1}
+    oldSize: {x: 0.16, y: 0.19}
+    newSize: {x: 0.16, y: 0.19}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 0.5, y: 0.5}
+  m_Size: {x: 0.20386586, y: 0.23655595}
   m_EdgeRadius: 0
 --- !u!114 &930337659
 MonoBehaviour:
@@ -1218,7 +1218,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9e0190c97ad07c94c820958bd3a509d3, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InteractButton
   button: {fileID: 0}
   extraPromptObjects: []
@@ -1491,7 +1491,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9e0190c97ad07c94c820958bd3a509d3, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InteractButton
   button: {fileID: 0}
   extraPromptObjects: []
@@ -1847,6 +1847,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: acfb272cdcd1fcd49a51afedbd6f635e, type: 3}
+--- !u!114 &1544917881 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2689432705537179304, guid: acfb272cdcd1fcd49a51afedbd6f635e, type: 3}
+  m_PrefabInstance: {fileID: 1544917880}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4fb32b39b2d344c4b8eaa5964bc12191, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Movement
 --- !u!1001 &1571453931
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2026,11 +2037,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3626916397498700004, guid: 69e608c38a96fa74596bd127135b861e, type: 3}
       propertyPath: m_SortingLayer
-      value: 3
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 3626916397498700004, guid: 69e608c38a96fa74596bd127135b861e, type: 3}
       propertyPath: m_SortingLayerID
-      value: 1346041461
+      value: 1843868011
       objectReference: {fileID: 0}
     - target: {fileID: 7878350319992209165, guid: 69e608c38a96fa74596bd127135b861e, type: 3}
       propertyPath: m_LocalScale.x
@@ -2131,7 +2142,7 @@ MonoBehaviour:
   hideSourceOnGrab: 1
   hideSourceWhenAlreadyCarried: 1
   allowReplaceCurrentCarry: 0
-  completionFlagId:
+  completionFlagId: 
   condition:
     requiredFlags:
     - picture_cookie_delivered_to_rcat
@@ -2140,6 +2151,10 @@ MonoBehaviour:
   action:
     setFlags: []
     unsetFlags: []
+  loadSceneAfterGrab: 0
+  sceneAfterGrab: 9
+  useFadeLoadAfterGrab: 1
+  saveBeforeSceneLoadAfterGrab: 1
 --- !u!61 &1743638052
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -2174,17 +2189,17 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: -0.0027618632, y: 0.041428007}
+  m_Offset: {x: -0.0027618706, y: 0.047243755}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0}
+    pivot: {x: 0.5, y: -0.1}
     oldSize: {x: 0.23, y: 0.08}
     newSize: {x: 0.23, y: 0.08}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 0.25143182, y: 0.10936947}
+  m_Size: {x: 0.25143182, y: 0.097737975}
   m_EdgeRadius: 0
 --- !u!114 &1743638053
 MonoBehaviour:
@@ -2196,7 +2211,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9e0190c97ad07c94c820958bd3a509d3, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InteractButton
   button: {fileID: 0}
   extraPromptObjects: []
@@ -2292,7 +2307,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &1853398472
 Transform:
   m_ObjectHideFlags: 0
@@ -2302,7 +2317,7 @@ Transform:
   m_GameObject: {fileID: 1853398471}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.29333335, y: 0.30533335, z: 0}
+  m_LocalPosition: {x: 0.014, y: 0.194, z: 0}
   m_LocalScale: {x: 0.53333336, y: 0.53333336, z: 0.53333336}
   m_ConstrainProportionsScale: 1
   m_Children: []
@@ -2649,11 +2664,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 7878350319992209165, guid: 7b79502f3d8aa124aa5c987dd21e7f3e, type: 3}
   m_PrefabInstance: {fileID: 1922366984}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &1922366986 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: -2253911629886400664, guid: 7b79502f3d8aa124aa5c987dd21e7f3e, type: 3}
-  m_PrefabInstance: {fileID: 1922366984}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1946192913
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2668,7 +2678,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3626916397498700004, guid: f2dc656e2f01b764e97e2f025d45da91, type: 3}
       propertyPath: m_SortingLayer
-      value: 3
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 3626916397498700004, guid: f2dc656e2f01b764e97e2f025d45da91, type: 3}
       propertyPath: m_SortingOrder
@@ -2676,7 +2686,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3626916397498700004, guid: f2dc656e2f01b764e97e2f025d45da91, type: 3}
       propertyPath: m_SortingLayerID
-      value: 1346041461
+      value: 1843868011
       objectReference: {fileID: 0}
     - target: {fileID: 7878350319992209165, guid: f2dc656e2f01b764e97e2f025d45da91, type: 3}
       propertyPath: m_LocalScale.x
@@ -2780,7 +2790,7 @@ MonoBehaviour:
   hideSourceOnGrab: 1
   hideSourceWhenAlreadyCarried: 1
   allowReplaceCurrentCarry: 0
-  completionFlagId:
+  completionFlagId: 
   condition:
     requiredFlags: []
     blockedFlags:
@@ -2788,6 +2798,10 @@ MonoBehaviour:
   action:
     setFlags: []
     unsetFlags: []
+  loadSceneAfterGrab: 0
+  sceneAfterGrab: 9
+  useFadeLoadAfterGrab: 1
+  saveBeforeSceneLoadAfterGrab: 1
 --- !u!61 &1946192917
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -2822,17 +2836,17 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: -0.009443231, y: 0.14727789}
+  m_Offset: {x: 0.0033802465, y: 0.038919512}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.6, y: -2}
+    pivot: {x: 0.5, y: -0.1}
     oldSize: {x: 0.1, y: 0.06}
     newSize: {x: 0.1, y: 0.06}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  m_Size: {x: 0.17270665, y: 0.13092567}
+  m_Size: {x: 0.1342362, y: 0.07578466}
   m_EdgeRadius: 0
 --- !u!114 &1946192919
 MonoBehaviour:
@@ -2844,7 +2858,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9e0190c97ad07c94c820958bd3a509d3, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InteractButton
   button: {fileID: 1853398471}
   extraPromptObjects: []
@@ -3113,7 +3127,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 27dbe4b6646beb24bbd2838499029c91, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FlagBasedObject
   target: {fileID: 710000000000011010}
   requiredFlag: picture_gift_taken
@@ -3163,7 +3177,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1c6580f15c5098346b1dc8ffaf80cc17, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SceneLoadInteractable
   targetScene: 9
   promptLocalizationKey: prompt.pass
@@ -3179,7 +3193,7 @@ MonoBehaviour:
     unsetFlags: []
   restrictByForm: 0
   requiredForm: 0
-  playerMovement: {fileID: 0}
+  playerMovement: {fileID: 1544917881}
 --- !u!114 &710000000000011013
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3190,7 +3204,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9e0190c97ad07c94c820958bd3a509d3, type: 3}
-  m_Name:
+  m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InteractButton
   button: {fileID: 0}
   extraPromptObjects: []

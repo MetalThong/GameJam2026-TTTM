@@ -300,13 +300,14 @@ public sealed class CarryManager : MonoBehaviour
 
         _visual = Instantiate(_carryPrefab, anchor);
         _visual.name = _carryPrefab.name;
-        SetHierarchyActive(_visual, true);
         _visual.transform.localPosition = carryLocalPosition;
         _visual.transform.localRotation = Quaternion.Euler(carryLocalEulerAngles);
         ApplyCarriedScale(_visual.transform);
 
         ApplyCarriedVisualPresentation(_visual);
         PrepareCarriedVisual(_visual);
+        SetHierarchyActive(_visual, true);
+        HideCarriedInteractionPrompts(_visual);
     }
 
     private void DestroyVisual()
@@ -422,12 +423,41 @@ public sealed class CarryManager : MonoBehaviour
             return;
         }
 
+        DisableCarriedInteractables(visual);
+    }
+
+    private void DisableCarriedInteractables(GameObject visual)
+    {
+        if (visual == null)
+        {
+            return;
+        }
+
         foreach (MonoBehaviour behaviour in visual.GetComponentsInChildren<MonoBehaviour>(true))
         {
             if (behaviour is IInteractable)
             {
                 behaviour.enabled = false;
             }
+        }
+    }
+
+    private static void HideCarriedInteractionPrompts(GameObject visual)
+    {
+        if (visual == null)
+        {
+            return;
+        }
+
+        foreach (InteractButton prompt in visual.GetComponentsInChildren<InteractButton>(true))
+        {
+            if (prompt == null)
+            {
+                continue;
+            }
+
+            prompt.HidePromptImmediately();
+            prompt.enabled = false;
         }
     }
 
