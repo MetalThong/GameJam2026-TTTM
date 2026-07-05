@@ -21,6 +21,11 @@ MonoBehaviour:
     portrait: {fileID: -4254258901546231152, guid: c5d997eca51e38d418373f1e8fdc90ce, type: 3}
   - speakerName: Silly
     englishSpeakerName: Silly
-    text: "\u01A0, th\u1EBF m\u00ECnh s\u1EBD d\u1ECDn h\u1EBFt b\u00E1t \u0111\u0169a cho c\u1EADu ch\u1EE7 lu\u00F4n."
-    englishText: Oh, then I will clean all the dishes for him too.
+    text: "B\u00E1t \u0111\u0169a n\u1EEFa \u00E0... n\u1EBFu m\u00ECnh r\u1EEDa xong, c\u1EADu \u1EA5y s\u1EBD th\u1EA5y m\u00ECnh c\u00F3 \u00EDch."
+    englishText: Dishes too... if I wash them, he will see that I am useful.
+    portrait: {fileID: 6468568510307345621, guid: 0c05e137063d43e429af4b01ffae35ac, type: 3}
+  - speakerName: Silly
+    englishSpeakerName: Silly
+    text: "L\u1EA7n n\u00E0y ch\u1EAFc ch\u1EAFn V\u0169 s\u1EBD \u0111\u1EC3 \u00FD."
+    englishText: This time, Vu will definitely notice.
     portrait: {fileID: 6468568510307345621, guid: 0c05e137063d43e429af4b01ffae35ac, type: 3}

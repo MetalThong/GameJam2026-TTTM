@@ -16,6 +16,16 @@ MonoBehaviour:
   lines:
   - speakerName: Silly
     englishSpeakerName: Silly
-    text: "\u01A0... \u0111\u1EBFn m\u1EE9c n\u00E0y r\u1ED3i m\u00E0 v\u1EABn kh\u00F4ng ch\u00FA \u00FD \u0111\u1EBFn m\u00ECnh sao..."
-    englishText: Huh... even after all this, he still does not notice me?
+    text: "\u01A0... m\u00ECnh t\u00ECm \u0111\u01B0\u1EE3c b\u00E1t r\u1ED3i m\u00E0."
+    englishText: Huh... I found the bowl.
+    portrait: {fileID: 6468568510307345621, guid: 0c05e137063d43e429af4b01ffae35ac, type: 3}
+  - speakerName: Silly
+    englishSpeakerName: Silly
+    text: "C\u1EADu \u1EA5y ch\u1EC9 nh\u00ECn c\u00E1i b\u00E1t... kh\u00F4ng nh\u00ECn m\u00ECnh."
+    englishText: He only looked at the bowl... not at me.
+    portrait: {fileID: 6468568510307345621, guid: 0c05e137063d43e429af4b01ffae35ac, type: 3}
+  - speakerName: Silly
+    englishSpeakerName: Silly
+    text: "Ch\u1EAFc m\u00ECnh v\u1EABn ch\u01B0a gi\u00FAp \u0111\u1EE7. N\u1EBFu m\u00ECnh l\u00E0m th\u00EAm g\u00EC \u0111\u00F3, V\u0169 s\u1EBD nh\u1EADn ra th\u00F4i... \u0111\u00FAng kh\u00F4ng?"
+    englishText: Maybe I still have not helped enough. If I do something more, Vu will notice... right?
     portrait: {fileID: 6468568510307345621, guid: 0c05e137063d43e429af4b01ffae35ac, type: 3}

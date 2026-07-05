@@ -16,16 +16,16 @@ MonoBehaviour:
   lines:
   - speakerName: Silly
     englishSpeakerName: Silly
-    text: "Meo... anh Vũ ơi, dậy đi!"
-    englishText: Meow... Vu, wake up!
+    text: "Meo... V\u0169 \u01A1i, d\u1EADy \u0111i. Nh\u00ECn Silly n\u00E8."
+    englishText: Meow... Vu, wake up. Look at Silly.
     portrait: {fileID: 6468568510307345621, guid: 0c05e137063d43e429af4b01ffae35ac, type: 3}
   - speakerName: Silly
     englishSpeakerName: Silly
-    text: "Ngủ say quá. Chắc mình phải gọi lớn hơn một chút."
-    englishText: He's sleeping so deeply. I guess I need to call a little louder.
+    text: "Sao anh \u1EA5y kh\u00F4ng quay l\u1EA1i nh\u1EC9... m\u00ECnh k\u00EAu nh\u1ECF qu\u00E1 sao?"
+    englishText: Why is he not turning around... was my meow too quiet?
     portrait: {fileID: 6468568510307345621, guid: 0c05e137063d43e429af4b01ffae35ac, type: 3}
   - speakerName: Silly
     englishSpeakerName: Silly
-    text: "Ấn E liên tục để gọi anh ấy dậy."
-    englishText: Press E repeatedly to wake him up.
+    text: "M\u00ECnh g\u1ECDi l\u1EDBn h\u01A1n m\u1ED9t ch\u00FAt. Ch\u1EAFc ch\u1EAFn anh \u1EA5y s\u1EBD nghe m\u00E0."
+    englishText: I will call a little louder. He will definitely hear me.
     portrait: {fileID: 6468568510307345621, guid: 0c05e137063d43e429af4b01ffae35ac, type: 3}
