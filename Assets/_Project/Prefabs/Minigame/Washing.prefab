@@ -565,22 +565,32 @@ MonoBehaviour:
   hideMinigameUntilStarted: 1
   lockGameStateWhilePlaying: 1
   tutorialTravelDuration: 3
-  normalTravelDuration: 2
-  speedMultiplier: 0.9
-  minimumTravelDuration: 0.75
+  normalTravelDuration: 1.8
+  speedMultiplier: 0.78
+  minimumTravelDuration: 0.35
   failDistancePastCheck: 1.2
   timingWindowPadding: 0.35
-  washLockoutDuration: 0.33
+  washLockoutDuration: 0
   requiredSuccessfulHits: 5
   completionFlagId: dishes_washed
   deactivateOnComplete: 1
+  playUntilFail: 1
+  failureCutscene: {fileID: 0}
+  completeAfterFailureCutscene: 1
+  deactivateAfterFailureCutscene: 1
+  dialogueManager: {fileID: 0}
+  postFailureDialogue: {fileID: 11400000, guid: b4c1c05e3dcf4803a260cc21a0d1a967, type: 2}
+  postFailureMissionAssignedFlag: mission_find_owner_memento
   idleStateName: Idle
   washStateName: Wash
-  dishConsumeDuration: 0.18
+  washCrossFadeDuration: 0.04
+  idleReturnDelay: 0.18
+  dishConsumeDuration: 0.07
   promptFadeDuration: 0.15
   promptPulseDuration: 0.55
   checkPulseDuration: 0.5
-  promptPunchScale: {x: 0.22, y: 0.22, z: 0}
+  promptPunchDuration: 0.12
+  promptPunchScale: {x: 0.14, y: 0.14, z: 0}
   checkPulseScale: {x: 0.45, y: 0.45, z: 0}
 --- !u!1001 &692442752619140598
 PrefabInstance:

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using DG.Tweening;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 [DisallowMultipleComponent]
 public sealed class EmotionProgressEmojiView : MonoBehaviour
@@ -42,6 +43,13 @@ public sealed class EmotionProgressEmojiView : MonoBehaviour
     [SerializeField] private List<EmotionStage> stages = new();
     [SerializeField] private bool autoBindChildrenByIndex = true;
 
+    [Header("Visibility")]
+    [SerializeField] private CanvasGroup containerGroup;
+    [SerializeField] private bool requireGameplayState = true;
+    [SerializeField] private bool visibleDuringDialogue = true;
+    [SerializeField] private bool visibleWhilePaused;
+    [SerializeField] private string hiddenSceneName = "MainMenu";
+
     [Header("Animation")]
     [SerializeField, Range(0f, 1f)] private float visibleAlpha = 1f;
     [SerializeField, Min(0.01f)] private float hiddenScale = 0.45f;
@@ -52,24 +60,32 @@ public sealed class EmotionProgressEmojiView : MonoBehaviour
 
     private readonly List<RuntimeStage> _runtimeStages = new();
     private bool _hasBuiltStages;
+    private bool _isSubscribedToGameState;
 
     private void Awake()
     {
+        ResolveContainerGroup();
         BuildStages();
         RefreshFromFlags(false);
+        RefreshContainerVisibility();
     }
 
     private void OnEnable()
     {
+        TrySubscribeGameState();
+        SceneManager.activeSceneChanged += OnActiveSceneChanged;
         EventBus.Subscribe<FlagChangedEvent>(OnFlagChanged);
         EventBus.Subscribe<FlagsLoadedEvent>(OnFlagsLoaded);
 
         BuildStages();
         RefreshFromFlags(false);
+        RefreshContainerVisibility();
     }
 
     private void OnDisable()
     {
+        UnsubscribeGameState();
+        SceneManager.activeSceneChanged -= OnActiveSceneChanged;
         EventBus.Unsubscribe<FlagChangedEvent>(OnFlagChanged);
         EventBus.Unsubscribe<FlagsLoadedEvent>(OnFlagsLoaded);
         KillTweens();
@@ -83,8 +99,15 @@ public sealed class EmotionProgressEmojiView : MonoBehaviour
     private void OnFlagChanged(FlagChangedEvent eventData)
     {
         BuildStages();
+        RefreshContainerVisibility();
 
         if (!eventData.Value)
+        {
+            RefreshFromFlags(false);
+            return;
+        }
+
+        if (!ShouldShowContainer())
         {
             RefreshFromFlags(false);
             return;
@@ -112,11 +135,14 @@ public sealed class EmotionProgressEmojiView : MonoBehaviour
     private void OnFlagsLoaded(FlagsLoadedEvent eventData)
     {
         RefreshFromFlags(false);
+        RefreshContainerVisibility();
     }
 
     private void RefreshFromFlags(bool animateNewUnlocks)
     {
         BuildStages();
+        RefreshContainerVisibility();
+        bool canAnimate = animateNewUnlocks && ShouldShowContainer();
 
         for (int i = 0; i < _runtimeStages.Count; i++)
         {
@@ -126,7 +152,7 @@ public sealed class EmotionProgressEmojiView : MonoBehaviour
                 continue;
             }
 
-            ApplyStageState(stage, HasFlag(stage.Definition.UnlockFlag), animateNewUnlocks);
+            ApplyStageState(stage, HasFlag(stage.Definition.UnlockFlag), canAnimate);
         }
     }
 
@@ -294,6 +320,96 @@ public sealed class EmotionProgressEmojiView : MonoBehaviour
         return !string.IsNullOrWhiteSpace(flagId)
             && FlagManager.Instance != null
             && FlagManager.Instance.HasFlag(flagId);
+    }
+
+    private void OnGameStateChanged(GameState previousState, GameState currentState)
+    {
+        RefreshContainerVisibility();
+        RefreshFromFlags(false);
+    }
+
+    private void OnActiveSceneChanged(Scene previousScene, Scene currentScene)
+    {
+        RefreshContainerVisibility();
+        RefreshFromFlags(false);
+    }
+
+    private void RefreshContainerVisibility()
+    {
+        ResolveContainerGroup();
+        bool visible = ShouldShowContainer();
+
+        if (containerGroup == null)
+        {
+            return;
+        }
+
+        containerGroup.alpha = visible ? 1f : 0f;
+        containerGroup.blocksRaycasts = false;
+        containerGroup.interactable = false;
+    }
+
+    private bool ShouldShowContainer()
+    {
+        if (!requireGameplayState)
+        {
+            return true;
+        }
+
+        GameManager gameManager = GameManager.Instance;
+        if (gameManager == null)
+        {
+            return false;
+        }
+
+        if (!string.IsNullOrWhiteSpace(hiddenSceneName)
+            && SceneManager.GetActiveScene().name == hiddenSceneName)
+        {
+            return false;
+        }
+
+        return gameManager.CurrentState == GameState.Playing
+            || (visibleDuringDialogue && gameManager.CurrentState == GameState.OnDialog)
+            || (visibleWhilePaused && gameManager.CurrentState == GameState.Paused);
+    }
+
+    private void TrySubscribeGameState()
+    {
+        if (_isSubscribedToGameState || GameManager.Instance == null)
+        {
+            return;
+        }
+
+        GameManager.Instance.StateChanged += OnGameStateChanged;
+        _isSubscribedToGameState = true;
+    }
+
+    private void UnsubscribeGameState()
+    {
+        if (!_isSubscribedToGameState || GameManager.Instance == null)
+        {
+            _isSubscribedToGameState = false;
+            return;
+        }
+
+        GameManager.Instance.StateChanged -= OnGameStateChanged;
+        _isSubscribedToGameState = false;
+    }
+
+    private void ResolveContainerGroup()
+    {
+        if (containerGroup == null)
+        {
+            containerGroup = GetComponent<CanvasGroup>();
+        }
+
+        if (containerGroup == null)
+        {
+            containerGroup = gameObject.AddComponent<CanvasGroup>();
+        }
+
+        containerGroup.blocksRaycasts = false;
+        containerGroup.interactable = false;
     }
 
     private void KillTweens()

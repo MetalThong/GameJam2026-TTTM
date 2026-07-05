@@ -1,3 +1,6 @@
+using System;
+using System.Threading;
+using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -26,23 +29,37 @@ public sealed class WashingMinigameController : MonoBehaviour
     [SerializeField, Min(0.05f)] private float minimumTravelDuration = 0.75f;
     [SerializeField, Min(0f)] private float failDistancePastCheck = 1.2f;
     [SerializeField, Min(0f)] private float timingWindowPadding = 0.35f;
-    [SerializeField, Min(0f)] private float washLockoutDuration = 0.33f;
+    [SerializeField, Min(0f)] private float washLockoutDuration;
 
     [Header("Completion")]
     [SerializeField, Min(1)] private int requiredSuccessfulHits = 5;
     [SerializeField] private string completionFlagId = "dishes_washed";
     [SerializeField] private bool deactivateOnComplete = true;
 
+    [Header("Failure Cutscene")]
+    [SerializeField] private bool playUntilFail = true;
+    [SerializeField] private WashingFailureCutscene failureCutscene;
+    [SerializeField] private bool completeAfterFailureCutscene = true;
+    [SerializeField] private bool deactivateAfterFailureCutscene = true;
+
+    [Header("Post Failure Story")]
+    [SerializeField] private DialogueManager dialogueManager;
+    [SerializeField] private DialogueSO postFailureDialogue;
+    [SerializeField] private string postFailureMissionAssignedFlag = "mission_find_owner_memento";
+
     [Header("Animation")]
     [SerializeField] private string idleStateName = "Idle";
     [SerializeField] private string washStateName = "Wash";
+    [SerializeField, Min(0f)] private float washCrossFadeDuration = 0.04f;
+    [SerializeField, Min(0f)] private float idleReturnDelay = 0.18f;
 
     [Header("Polish")]
-    [SerializeField, Min(0f)] private float dishConsumeDuration = 0.18f;
+    [SerializeField, Min(0f)] private float dishConsumeDuration = 0.07f;
     [SerializeField, Min(0f)] private float promptFadeDuration = 0.15f;
     [SerializeField, Min(0f)] private float promptPulseDuration = 0.55f;
     [SerializeField, Min(0f)] private float checkPulseDuration = 0.5f;
-    [SerializeField] private Vector3 promptPunchScale = new(0.22f, 0.22f, 0f);
+    [SerializeField, Min(0f)] private float promptPunchDuration = 0.12f;
+    [SerializeField] private Vector3 promptPunchScale = new(0.14f, 0.14f, 0f);
     [SerializeField] private Vector3 checkPulseScale = new(0.12f, 0.12f, 0f);
 
     private SpriteRenderer[] _movingDishRenderers;
@@ -52,22 +69,31 @@ public sealed class WashingMinigameController : MonoBehaviour
     private Vector3 _checkPulseStartScale;
     private Color _buttonPromptStartColor;
     private float _currentTravelDuration;
+    private float _cachedCheckLocalX;
+    private float _cachedMovingDishColliderOffsetX;
+    private float _cachedCheckHalfWidthLocal;
+    private float _cachedMovingDishHalfWidthLocal;
     private int _successCount;
+    private int _hitVersion;
     private bool _isPlaying;
     private bool _roundActive;
     private bool _isResolvingRound;
     private bool _failed;
     private bool _hasLockedGameState;
     private bool _hasCachedInitialState;
+    private bool _hasCachedTimingGeometry;
+    private bool _isPlayingFailureCutscene;
     private bool _warnedMissingUi;
+    private bool _warnedMissingFailureCutscene;
     private bool _warnedMissingAnimatorState;
     private GameState _previousGameState = GameState.Playing;
     private Tween _moveTween;
     private Sequence _successSequence;
     private Tween _promptPulseTween;
     private Tween _checkPulseTween;
+    private Tween _idleReturnTween;
 
-    public bool IsPlaying => _isPlaying;
+    public bool IsPlaying => _isPlaying || _isPlayingFailureCutscene;
 
     private void Awake()
     {
@@ -117,6 +143,7 @@ public sealed class WashingMinigameController : MonoBehaviour
         _isPlaying = false;
         _roundActive = false;
         _isResolvingRound = false;
+        _isPlayingFailureCutscene = false;
     }
 
     private void OnDestroy()
@@ -144,11 +171,16 @@ public sealed class WashingMinigameController : MonoBehaviour
         StopAllTweens();
 
         _failed = false;
+        _isPlayingFailureCutscene = false;
         _successCount = 0;
+        _hitVersion = 0;
+        _hasCachedTimingGeometry = false;
         _currentTravelDuration = tutorialTravelDuration;
         _isPlaying = true;
         _isResolvingRound = false;
         SetMinigameVisible(true);
+        ResetVisualsForNextDish();
+        CacheTimingGeometry();
         LockGameState();
         HidePromptCue(false);
         StartCheckPulse();
@@ -232,9 +264,12 @@ public sealed class WashingMinigameController : MonoBehaviour
         _roundActive = false;
         _moveTween?.Kill();
         _moveTween = null;
+        _idleReturnTween?.Kill();
+        _idleReturnTween = null;
         _successCount++;
 
-        PlayAnimatorState(washStateName, true);
+        int hitVersion = ++_hitVersion;
+        PlayAnimatorState(washStateName, true, washCrossFadeDuration);
         PunchPrompt();
 
         _successSequence?.Kill();
@@ -250,8 +285,7 @@ public sealed class WashingMinigameController : MonoBehaviour
 
         _successSequence.OnComplete(() =>
         {
-            PlayAnimatorState(idleStateName, false);
-            if (_successCount >= Mathf.Max(1, requiredSuccessfulHits))
+            if (!playUntilFail && _successCount >= Mathf.Max(1, requiredSuccessfulHits))
             {
                 CompleteMinigame();
                 return;
@@ -259,6 +293,7 @@ public sealed class WashingMinigameController : MonoBehaviour
 
             _currentTravelDuration = Mathf.Max(minimumTravelDuration, normalTravelDuration * Mathf.Pow(speedMultiplier, _successCount - 1));
             StartRound();
+            ScheduleIdleReturn(hitVersion);
         });
     }
 
@@ -289,19 +324,22 @@ public sealed class WashingMinigameController : MonoBehaviour
             return false;
         }
 
-        Physics2D.SyncTransforms();
         if (!checkCollider.enabled || (movingDishCollider != null && !movingDishCollider.enabled))
         {
             return false;
         }
 
-        float dishCenterX = ResolveMovingDishCenterLocalX();
-        float checkCenterX = ResolveCheckLocalX();
-        float timingHalfWidth = ResolveColliderHalfWidthLocal(checkCollider)
-            + ResolveColliderHalfWidthLocal(movingDishCollider)
+        if (!_hasCachedTimingGeometry)
+        {
+            CacheTimingGeometry();
+        }
+
+        float dishCenterX = movingDish.localPosition.x + _cachedMovingDishColliderOffsetX;
+        float timingHalfWidth = _cachedCheckHalfWidthLocal
+            + _cachedMovingDishHalfWidthLocal
             + timingWindowPadding;
 
-        return Mathf.Abs(dishCenterX - checkCenterX) <= timingHalfWidth;
+        return Mathf.Abs(dishCenterX - _cachedCheckLocalX) <= timingHalfWidth;
     }
 
     private void FailMinigame(string reason)
@@ -315,25 +353,59 @@ public sealed class WashingMinigameController : MonoBehaviour
         _roundActive = false;
         _isResolvingRound = false;
         _isPlaying = false;
+        _isPlayingFailureCutscene = true;
         StopAllTweens();
-        ReleaseGameStateLock();
+        HidePromptCue(false);
+        _checkPulseTween?.Kill();
+        _checkPulseTween = null;
+        SetMinigameVisible(false);
 
-        if (GameManager.Instance != null)
+        RunFailureCutsceneAsync(reason, this.GetCancellationTokenOnDestroy()).Forget();
+    }
+
+    private async UniTaskVoid RunFailureCutsceneAsync(string reason, CancellationToken cancellationToken)
+    {
+        bool shouldFinalize = false;
+
+        try
         {
-            GameManager.Instance.SetState(GameState.GameOver);
+            WashingFailureCutscene resolvedCutscene = ResolveFailureCutscene();
+            if (resolvedCutscene != null)
+            {
+                await resolvedCutscene.PlayAsync(cancellationToken);
+            }
+            else if (!_warnedMissingFailureCutscene)
+            {
+                _warnedMissingFailureCutscene = true;
+                Debug.LogWarning($"WashingMinigameController: failed but no failure cutscene was found. Reason: {reason}", this);
+            }
+
+            cancellationToken.ThrowIfCancellationRequested();
+
+            if (completeAfterFailureCutscene)
+            {
+                SetCompletionFlag();
+            }
+
+            await PlayPostFailureDialogueAsync(cancellationToken);
+            SetPostFailureMissionAssignedFlag();
+            shouldFinalize = true;
         }
-
-        UIManager resolvedUiManager = ResolveUiManager();
-        if (resolvedUiManager != null)
+        catch (OperationCanceledException)
         {
-            resolvedUiManager.OpenPanel(PanelId.Lose);
-            return;
         }
-
-        if (!_warnedMissingUi)
+        finally
         {
-            _warnedMissingUi = true;
-            Debug.LogWarning($"WashingMinigameController: failed but no UIManager was found. Reason: {reason}", this);
+            if (shouldFinalize && this != null)
+            {
+                _isPlayingFailureCutscene = false;
+                ReleaseGameStateLock();
+
+                if (deactivateAfterFailureCutscene)
+                {
+                    gameObject.SetActive(false);
+                }
+            }
         }
     }
 
@@ -488,20 +560,26 @@ public sealed class WashingMinigameController : MonoBehaviour
         buttonPrompt.DOKill();
         buttonPrompt.localScale = _buttonPromptStartScale;
         buttonPrompt
-            .DOPunchScale(promptPunchScale, 0.22f, 6, 0.65f)
+            .DOPunchScale(promptPunchScale, Mathf.Max(0.01f, promptPunchDuration), 4, 0.45f)
             .SetTarget(this)
-            .OnComplete(StartPromptPulse);
+            .OnComplete(() =>
+            {
+                if (_roundActive && !_failed)
+                {
+                    StartPromptPulse();
+                }
+            });
 
         if (buttonPromptRenderer != null)
         {
             buttonPromptRenderer.color = new Color(1f, 0.92f, 0.25f, _buttonPromptStartColor.a);
             buttonPromptRenderer
-                .DOColor(_buttonPromptStartColor, 0.18f)
+                .DOColor(_buttonPromptStartColor, Mathf.Max(0.01f, promptPunchDuration))
                 .SetTarget(this);
         }
     }
 
-    private void PlayAnimatorState(string stateName, bool restart)
+    private void PlayAnimatorState(string stateName, bool restart, float crossFadeDuration = 0f)
     {
         if (washingCatAnimator == null || string.IsNullOrWhiteSpace(stateName))
         {
@@ -520,18 +598,22 @@ public sealed class WashingMinigameController : MonoBehaviour
             return;
         }
 
+        if (crossFadeDuration > 0f && washingCatAnimator.isActiveAndEnabled)
+        {
+            washingCatAnimator.CrossFadeInFixedTime(stateHash, crossFadeDuration, 0, 0f);
+            return;
+        }
+
         washingCatAnimator.Play(stateHash, 0, restart ? 0f : 0f);
-        washingCatAnimator.Update(0f);
+        if (!restart)
+        {
+            washingCatAnimator.Update(0f);
+        }
     }
 
     private float ResolveCheckLocalX()
     {
-        if (checkCollider != null)
-        {
-            return transform.InverseTransformPoint(checkCollider.bounds.center).x;
-        }
-
-        return _movingDishStartPosition.x - 1f;
+        return _hasCachedTimingGeometry ? _cachedCheckLocalX : CalculateCheckLocalX();
     }
 
     private Vector3 ResolveCheckStopPosition()
@@ -542,23 +624,64 @@ public sealed class WashingMinigameController : MonoBehaviour
 
     private float ResolveMovingDishColliderLocalOffsetX()
     {
+        return _hasCachedTimingGeometry ? _cachedMovingDishColliderOffsetX : CalculateMovingDishColliderLocalOffsetX();
+    }
+
+    private void CacheTimingGeometry()
+    {
+        Physics2D.SyncTransforms();
+        _cachedCheckLocalX = CalculateCheckLocalX();
+        _cachedMovingDishColliderOffsetX = CalculateMovingDishColliderLocalOffsetX();
+        _cachedCheckHalfWidthLocal = ResolveColliderHalfWidthLocal(checkCollider);
+        _cachedMovingDishHalfWidthLocal = ResolveColliderHalfWidthLocal(movingDishCollider);
+        _hasCachedTimingGeometry = true;
+    }
+
+    private float CalculateCheckLocalX()
+    {
+        if (checkCollider != null)
+        {
+            return transform.InverseTransformPoint(checkCollider.bounds.center).x;
+        }
+
+        return _movingDishStartPosition.x - 1f;
+    }
+
+    private float CalculateMovingDishColliderLocalOffsetX()
+    {
         if (movingDishCollider == null || movingDish == null)
         {
             return 0f;
         }
 
-        Physics2D.SyncTransforms();
         return transform.InverseTransformPoint(movingDishCollider.bounds.center).x - movingDish.localPosition.x;
     }
 
-    private float ResolveMovingDishCenterLocalX()
+    private void ScheduleIdleReturn(int hitVersion)
     {
-        if (movingDishCollider != null)
+        _idleReturnTween?.Kill();
+        _idleReturnTween = null;
+
+        if (idleReturnDelay <= 0f)
         {
-            return transform.InverseTransformPoint(movingDishCollider.bounds.center).x;
+            TryReturnToIdle(hitVersion);
+            return;
         }
 
-        return movingDish.localPosition.x;
+        _idleReturnTween = DOVirtual
+            .DelayedCall(idleReturnDelay, () => TryReturnToIdle(hitVersion))
+            .SetTarget(this);
+    }
+
+    private void TryReturnToIdle(int hitVersion)
+    {
+        _idleReturnTween = null;
+        if (hitVersion != _hitVersion || !_isPlaying || _failed || _isResolvingRound)
+        {
+            return;
+        }
+
+        PlayAnimatorState(idleStateName, false, washCrossFadeDuration);
     }
 
     private float ResolveColliderHalfWidthLocal(Collider2D collider)
@@ -580,6 +703,7 @@ public sealed class WashingMinigameController : MonoBehaviour
         _successSequence?.Kill();
         _promptPulseTween?.Kill();
         _checkPulseTween?.Kill();
+        _idleReturnTween?.Kill();
         DOTween.Kill(this);
 
         if (movingDish != null)
@@ -643,10 +767,20 @@ public sealed class WashingMinigameController : MonoBehaviour
     {
         if (uiManager == null)
         {
-            uiManager = Object.FindFirstObjectByType<UIManager>(FindObjectsInactive.Include);
+            uiManager = UnityEngine.Object.FindFirstObjectByType<UIManager>(FindObjectsInactive.Include);
         }
 
         return uiManager;
+    }
+
+    private WashingFailureCutscene ResolveFailureCutscene()
+    {
+        if (failureCutscene == null)
+        {
+            failureCutscene = UnityEngine.Object.FindFirstObjectByType<WashingFailureCutscene>(FindObjectsInactive.Include);
+        }
+
+        return failureCutscene;
     }
 
     private void ResolveReferences()
@@ -698,6 +832,8 @@ public sealed class WashingMinigameController : MonoBehaviour
         {
             trackRoot = FindDeepChild(transform, "Square");
         }
+
+        ResolveFailureCutscene();
 
         _movingDishRenderers = movingDish != null
             ? movingDish.GetComponentsInChildren<SpriteRenderer>(true)
@@ -758,5 +894,40 @@ public sealed class WashingMinigameController : MonoBehaviour
         }
 
         return null;
+    }
+
+    private async UniTask PlayPostFailureDialogueAsync(CancellationToken cancellationToken)
+    {
+        if (postFailureDialogue == null)
+        {
+            return;
+        }
+
+        DialogueManager manager = ResolveDialogueManager();
+        if (manager == null)
+        {
+            Debug.LogWarning("WashingMinigameController: post-failure dialogue is assigned but no DialogueManager was found.", this);
+            return;
+        }
+
+        await manager.PlayDialogueAsync(postFailureDialogue, cancellationToken);
+    }
+
+    private void SetPostFailureMissionAssignedFlag()
+    {
+        if (!string.IsNullOrWhiteSpace(postFailureMissionAssignedFlag) && FlagManager.Instance != null)
+        {
+            FlagManager.Instance.SetFlag(postFailureMissionAssignedFlag, true);
+        }
+    }
+
+    private DialogueManager ResolveDialogueManager()
+    {
+        if (dialogueManager == null)
+        {
+            dialogueManager = UnityEngine.Object.FindFirstObjectByType<DialogueManager>(FindObjectsInactive.Include);
+        }
+
+        return dialogueManager;
     }
 }

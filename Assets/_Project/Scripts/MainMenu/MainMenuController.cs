@@ -22,6 +22,7 @@ public sealed class MainMenuController : MonoBehaviour
     private void Awake()
     {
         ResolveComponents();
+        HideContinueButton();
     }
 
     private void OnEnable()
@@ -30,12 +31,6 @@ public sealed class MainMenuController : MonoBehaviour
         {
             AudioFeedback.AddButtonClick(startButton);
             startButton.onClick.AddListener(gameFlow.StartNewGame);
-        }
-
-        if (continueButton != null)
-        {
-            AudioFeedback.AddButtonClick(continueButton);
-            continueButton.onClick.AddListener(gameFlow.ContinueGame);
         }
 
         if (settingsButton != null)
@@ -70,7 +65,7 @@ public sealed class MainMenuController : MonoBehaviour
         }
 
         settingsPanelView.Close();
-        RefreshContinueButton();
+        HideContinueButton();
         RefreshTexts();
     }
 
@@ -80,12 +75,6 @@ public sealed class MainMenuController : MonoBehaviour
         {
             AudioFeedback.RemoveButtonClick(startButton);
             startButton.onClick.RemoveListener(gameFlow.StartNewGame);
-        }
-
-        if (continueButton != null)
-        {
-            AudioFeedback.RemoveButtonClick(continueButton);
-            continueButton.onClick.RemoveListener(gameFlow.ContinueGame);
         }
 
         if (settingsButton != null)
@@ -120,21 +109,20 @@ public sealed class MainMenuController : MonoBehaviour
     private void RefreshTexts()
     {
         SetButtonText(startButton, GetText("main.start", "Bắt đầu"));
-        SetButtonText(continueButton, GetText("main.continue", "Tiếp tục"));
         SetButtonText(settingsButton, GetText("main.settings", "Cài đặt"));
         SetButtonText(quitButton, GetText("main.quit", "Thoát"));
     }
 
-    private void RefreshContinueButton()
+    private void HideContinueButton()
     {
         if (continueButton == null)
         {
             return;
         }
 
-        bool hasSaveFile = SaveManager.Instance != null && SaveManager.Instance.HasSaveFile;
-        continueButton.gameObject.SetActive(hasSaveFile);
-        continueButton.interactable = hasSaveFile;
+        continueButton.onClick.RemoveAllListeners();
+        continueButton.interactable = false;
+        continueButton.gameObject.SetActive(false);
     }
 
     private void ResolveComponents()
