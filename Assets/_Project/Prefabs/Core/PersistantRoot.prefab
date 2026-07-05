@@ -737,6 +737,7 @@ MonoBehaviour:
   playerTag: Player
   paintingScenes:
   - 6
+  - 9
   carryAnchorName: CarryAnchor
   carryLocalPosition: {x: 0, y: 0.45, z: 0}
   carryLocalEulerAngles: {x: 0, y: 0, z: 0}

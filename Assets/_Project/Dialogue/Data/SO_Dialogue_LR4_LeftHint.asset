@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0df2ddcceb2389b4d864a64d8b7d2cf4, type: 3}
+  m_Name: SO_Dialogue_LR4_LeftHint
+  m_EditorClassIdentifier: 
+  background: {fileID: -4987337320017983735, guid: ef76815bb5462ca40918f9ee00dd2b1b, type: 3}
+  lines:
+  - speakerName: Silly
+    englishSpeakerName: Silly
+    text: Con meo ben trai co ve dang doi ca. Minh can tim ca dua cho no.
+    englishText: The cat on the left looks like it wants fish. I should find a fish for it.
+    portrait: {fileID: 6468568510307345621, guid: 0c05e137063d43e429af4b01ffae35ac, type: 3}
