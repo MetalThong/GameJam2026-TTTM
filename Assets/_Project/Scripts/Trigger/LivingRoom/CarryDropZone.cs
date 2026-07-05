@@ -191,7 +191,10 @@ public sealed class CarryDropZone : MonoBehaviour
 
     private void RefreshState()
     {
-        SetDropZoneEnabled(!IsCompleted());
+        bool completed = IsCompleted();
+        SetDropZoneEnabled(!completed);
+        SetTargetsActive(hideOnComplete, !completed);
+        SetTargetsActive(showOnComplete, completed);
     }
 
     private bool IsCompleted()

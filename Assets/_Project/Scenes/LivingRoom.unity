@@ -1471,6 +1471,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SceneLoadInteractable
   targetScene: 4
   promptLocalizationKey: prompt.pass
+  targetOverrides: []
+  restrictByForm: 0
+  requiredForm: 0
+  playerMovement: {fileID: 1960256532}
 --- !u!114 &815857767
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1732,6 +1736,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SceneLoadInteractable
   targetScene: 5
   promptLocalizationKey: prompt.pass
+  targetOverrides: []
+  restrictByForm: 0
+  requiredForm: 0
+  playerMovement: {fileID: 1960256532}
 --- !u!114 &1015589338
 MonoBehaviour:
   m_ObjectHideFlags: 0
