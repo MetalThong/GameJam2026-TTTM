@@ -26,7 +26,7 @@ public sealed class CarryManager : MonoBehaviour
     public static event Action<CarryDropInfo> CarriedObjectDropped;
 
     [SerializeField] private string playerTag = "Player";
-    [SerializeField] private SceneId[] paintingScenes = { SceneId.GhostKitchen, SceneId.LivingRoomPart4, SceneId.Picture };
+    [SerializeField] private SceneId[] paintingScenes = { SceneId.GhostKitchen, SceneId.Picture };
     [SerializeField] private string carryAnchorName = "CarryAnchor";
     [SerializeField] private Vector3 carryLocalPosition;
     [SerializeField] private Vector3 carryLocalEulerAngles;

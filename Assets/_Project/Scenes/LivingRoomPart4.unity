@@ -1060,7 +1060,8 @@ MonoBehaviour:
   promptLocalizationKey: prompt.pass
   targetOverrides: []
   condition:
-    requiredFlags: []
+    requiredFlags:
+    - owner_memento_found
     blockedFlags: []
   action:
     setFlags: []
@@ -2503,6 +2504,76 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 1.8, y: 1.25}
   m_EdgeRadius: 0
+--- !u!1 &710000000000012000
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 710000000000012001}
+  - component: {fileID: 710000000000012002}
+  m_Layer: 0
+  m_Name: PictureGiftMementoSequence
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &710000000000012001
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 710000000000012000}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &710000000000012002
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 710000000000012000}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ad2f08d47f5c4f3f9d75f5a7ec02f4b1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PictureGiftMementoSequence
+  sceneId: 9
+  carryId: gift
+  completionFlagId: owner_memento_found
+  nextMissionFlagId: mission_go_to_bedroom
+  startDelay: 0.2
+  bellCatPrefab: {fileID: -8435245712485981826, guid: 5a1486b392f504942bb0357a84aacfc7, type: 3}
+  bellCatGroundOffset: {x: 0, y: 0, z: 0}
+  bellCatSpawnOffset: {x: 0, y: 1.2, z: 0}
+  bellCatSpawnScale: {x: 1, y: 1, z: 1}
+  bellCatFallDuration: 0.45
+  bellCatFallEase: 30
+  ownerPrefab: {fileID: 4460802599194774219, guid: 035b606787c0fe64387e61aab294d1e5, type: 3}
+  ownerResourcePath: Main/thang chu di
+  spawnOwnerAtDropPosition: 1
+  ownerDropSpawnOffset: {x: 1.2, y: 0, z: 0}
+  ownerSpawnPoint: {fileID: 0}
+  ownerSpawnOffset: {x: 0, y: 0, z: 0}
+  ownerSpawnScale: {x: 1.3, y: 1.3, z: 1.3}
+  flipOwnerOnSpawn: 1
+  disableOwnerAnimatorOnSpawn: 1
+  ownerSpawnFadeDuration: 0.25
+  ownerDespawnFadeDuration: 0.35
+  hideDroppedGiftOnBellCatSpawn: 1
+  droppedGiftFadeDuration: 0.2
+  dialogueManager: {fileID: 0}
+  ownerFoundDialogue: {fileID: 11400000, guid: d51d77f6b5e44f78a11cf627f5ac6242, type: 2}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -2514,3 +2585,4 @@ SceneRoots:
   - {fileID: 815857769}
   - {fileID: 353672565}
   - {fileID: 710000000000010001}
+  - {fileID: 710000000000012001}

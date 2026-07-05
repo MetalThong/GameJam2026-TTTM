@@ -230,6 +230,15 @@ MonoBehaviour:
     showProgress: 0
     progressFlags: []
     completeWhenProgressFull: 1
+  - missionId: go_to_bedroom
+    assignedFlag: mission_go_to_bedroom
+    completedFlag: bedroom_memento_stored
+    vietnameseTitle: "L\u00EAn ph\u00F2ng ng\u1EE7 \u0111\u1EC3 c\u1EA5t k\u1EC9 v\u1EADt"
+    englishTitle: Go to the bedroom to put the keepsake away
+    restoreWhenAssignedOnLoad: 1
+    showProgress: 0
+    progressFlags: []
+    completeWhenProgressFull: 1
   visibleAlpha: 1
   assignStartOffset: {x: 0, y: 42}
   completeExitOffset: {x: 0, y: 36}
