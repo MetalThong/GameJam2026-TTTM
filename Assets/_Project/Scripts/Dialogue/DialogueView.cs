@@ -29,6 +29,8 @@ public sealed class DialogueView : MonoBehaviour
 
     private string _fullBodyText = string.Empty;
     private int _visibleCharacterCount;
+    private DialogueLine _currentLine;
+    private LocalizationManager _localizationManager;
 
     public void SetReferences(
         GameObject root,
@@ -44,6 +46,16 @@ public sealed class DialogueView : MonoBehaviour
         speakerNameText = speakerName;
         bodyText = body;
         defaultPortrait = fallbackPortrait;
+    }
+
+    private void OnEnable()
+    {
+        TrySubscribeLocalization();
+    }
+
+    private void OnDisable()
+    {
+        UnsubscribeLocalization();
     }
 
     // Instant show, no typewriter. Kept for simple callers and prototype flows.
@@ -120,6 +132,8 @@ public sealed class DialogueView : MonoBehaviour
         {
             panelRoot.SetActive(false);
         }
+
+        _currentLine = null;
     }
 
     public void SetBackground(Sprite sprite)
@@ -148,12 +162,9 @@ public sealed class DialogueView : MonoBehaviour
             return false;
         }
 
-        LocalizationManager localizationManager = LocalizationManager.Instance;
-        string speakerName = line.GetSpeakerName(localizationManager);
-        string body = line.GetText(localizationManager);
-
-        speakerNameText.text = string.IsNullOrWhiteSpace(speakerName) ? "???" : VietnameseTextUtility.Normalize(speakerName);
-        _fullBodyText = string.IsNullOrWhiteSpace(body) ? string.Empty : VietnameseTextUtility.Normalize(body);
+        TrySubscribeLocalization();
+        _currentLine = line;
+        ApplyLineLocalization(line);
         _visibleCharacterCount = 0;
 
         if (portraitImage != null)
@@ -164,6 +175,62 @@ public sealed class DialogueView : MonoBehaviour
 
         panelRoot.SetActive(true);
         return true;
+    }
+
+    private void ApplyLineLocalization(DialogueLine line)
+    {
+        LocalizationManager localizationManager = LocalizationManager.Instance;
+        string speakerName = line.GetSpeakerName(localizationManager);
+        string body = line.GetText(localizationManager);
+
+        speakerNameText.text = string.IsNullOrWhiteSpace(speakerName)
+            ? "???"
+            : VietnameseTextUtility.Normalize(speakerName);
+        _fullBodyText = string.IsNullOrWhiteSpace(body) ? string.Empty : VietnameseTextUtility.Normalize(body);
+        bodyText.text = _fullBodyText;
+    }
+
+    private void OnLanguageChanged(Language language)
+    {
+        RefreshCurrentLineLocalization();
+    }
+
+    private void RefreshCurrentLineLocalization()
+    {
+        if (_currentLine == null || !IsVisible || !HasRequiredReferences())
+        {
+            return;
+        }
+
+        int currentVisibleCharacters = bodyText.maxVisibleCharacters;
+        ApplyLineLocalization(_currentLine);
+        bodyText.ForceMeshUpdate();
+        _visibleCharacterCount = bodyText.textInfo.characterCount;
+        bodyText.maxVisibleCharacters = IsRevealing
+            ? Mathf.Clamp(currentVisibleCharacters, 0, _visibleCharacterCount)
+            : int.MaxValue;
+    }
+
+    private void TrySubscribeLocalization()
+    {
+        if (_localizationManager != null || LocalizationManager.Instance == null)
+        {
+            return;
+        }
+
+        _localizationManager = LocalizationManager.Instance;
+        _localizationManager.LanguageChanged += OnLanguageChanged;
+    }
+
+    private void UnsubscribeLocalization()
+    {
+        if (_localizationManager == null)
+        {
+            return;
+        }
+
+        _localizationManager.LanguageChanged -= OnLanguageChanged;
+        _localizationManager = null;
     }
 
     private bool HasRequiredReferences()

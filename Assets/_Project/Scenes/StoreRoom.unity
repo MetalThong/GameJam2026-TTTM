@@ -1251,7 +1251,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FlagBasedObject
   target: {fileID: 1920179373}
-  requiredFlag: store_cobwebs_cleared
+  requiredFlag: go_to_dishes
   blockedFlag: 
   activeWhenFlagExists: 1
 --- !u!4 &642294963
@@ -1540,6 +1540,8 @@ MonoBehaviour:
   playMeowAudio: 1
   showFallbackPrompt: 1
   fallbackPromptKey: prompt.store_meow
+  blockedAfterFlag: store_cobwebs_cleared
+  forceInactiveFormWhenBlocked: 1
 --- !u!1 &743559115
 GameObject:
   m_ObjectHideFlags: 0
@@ -5293,6 +5295,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SceneLoadInteractable
   targetScene: 4
   promptLocalizationKey: prompt.pass
+  restrictByForm: 1
+  requiredForm: 1
+  playerMovement: {fileID: 409702061}
 --- !u!114 &1920179375
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5311,8 +5316,8 @@ MonoBehaviour:
   animateExtraPromptObjects: 1
   extraPromptFadeInDuration: 0.2
   extraPromptFadeOutDuration: 0.12
-  restrictByForm: 0
-  requiredForm: 0
+  restrictByForm: 1
+  requiredForm: 1
 --- !u!61 &1920179376
 BoxCollider2D:
   m_ObjectHideFlags: 0

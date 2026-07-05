@@ -2,10 +2,15 @@ using System;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 
-public class SceneLoadInteractable : MonoBehaviour, IInteractable, IInteractionPromptProvider
+public class SceneLoadInteractable : MonoBehaviour, IInteractable, IInteractionPromptProvider, IInteractionAvailability
 {
     [SerializeField] private SceneId targetScene;
     [SerializeField] private string promptLocalizationKey = "prompt.pass";
+
+    [Header("Form Requirement")]
+    [SerializeField] private bool restrictByForm;
+    [SerializeField] private MovementForm requiredForm = MovementForm.Cat;
+    [SerializeField] private Movement playerMovement;
 
     private readonly SceneLoader _sceneLoader = new();
     private bool _isLoading = false;
@@ -14,7 +19,7 @@ public class SceneLoadInteractable : MonoBehaviour, IInteractable, IInteractionP
 
     public virtual bool TryInteract()
     {
-        if (_isLoading)
+        if (_isLoading || !IsInteractionAvailable(null))
         {
             return false;
         }
@@ -26,6 +31,17 @@ public class SceneLoadInteractable : MonoBehaviour, IInteractable, IInteractionP
 
         LoadAsync().Forget();
         return true;
+    }
+
+    public bool IsInteractionAvailable(Movement movement)
+    {
+        if (!restrictByForm)
+        {
+            return true;
+        }
+
+        Movement resolvedMovement = movement != null ? movement : ResolvePlayerMovement();
+        return resolvedMovement != null && resolvedMovement.CurrentForm == requiredForm;
     }
 
     private async UniTaskVoid LoadAsync()
@@ -61,4 +77,24 @@ public class SceneLoadInteractable : MonoBehaviour, IInteractable, IInteractionP
     {
         return UniTask.CompletedTask;
     }
+
+    private Movement ResolvePlayerMovement()
+    {
+        if (playerMovement == null)
+        {
+            playerMovement = UnityEngine.Object.FindFirstObjectByType<Movement>(FindObjectsInactive.Exclude);
+        }
+
+        return playerMovement;
+    }
+
+#if UNITY_EDITOR
+    private void OnValidate()
+    {
+        if (playerMovement == null)
+        {
+            playerMovement = UnityEngine.Object.FindFirstObjectByType<Movement>(FindObjectsInactive.Exclude);
+        }
+    }
+#endif
 }

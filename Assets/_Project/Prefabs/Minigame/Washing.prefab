@@ -570,17 +570,24 @@ MonoBehaviour:
   minimumTravelDuration: 0.75
   failDistancePastCheck: 1.2
   timingWindowPadding: 0.35
-  washLockoutDuration: 0.33
+  washLockoutDuration: 0
   requiredSuccessfulHits: 5
   completionFlagId: dishes_washed
   deactivateOnComplete: 1
+  playUntilFail: 1
+  failureCutscene: {fileID: 0}
+  completeAfterFailureCutscene: 1
+  deactivateAfterFailureCutscene: 1
   idleStateName: Idle
   washStateName: Wash
-  dishConsumeDuration: 0.18
+  washCrossFadeDuration: 0.04
+  idleReturnDelay: 0.18
+  dishConsumeDuration: 0.07
   promptFadeDuration: 0.15
   promptPulseDuration: 0.55
   checkPulseDuration: 0.5
-  promptPunchScale: {x: 0.22, y: 0.22, z: 0}
+  promptPunchDuration: 0.12
+  promptPunchScale: {x: 0.14, y: 0.14, z: 0}
   checkPulseScale: {x: 0.45, y: 0.45, z: 0}
 --- !u!1001 &692442752619140598
 PrefabInstance:

@@ -48,6 +48,10 @@ public sealed class StoreRoomCatMeowTransformAbility : MonoBehaviour
     [SerializeField] private bool showFallbackPrompt = true;
     [SerializeField] private string fallbackPromptKey = "prompt.store_meow";
 
+    [Header("Completion Lock")]
+    [SerializeField] private string blockedAfterFlag = "store_cobwebs_cleared";
+    [SerializeField] private bool forceInactiveFormWhenBlocked = true;
+
     private AbilityState _state = AbilityState.Ready;
     private CancellationTokenSource _sequenceCts;
     private bool _fallbackPromptVisible;
@@ -78,13 +82,18 @@ public sealed class StoreRoomCatMeowTransformAbility : MonoBehaviour
         }
 
         SceneManager.activeSceneChanged += OnActiveSceneChanged;
+        EventBus.Subscribe<FlagChangedEvent>(OnFlagChanged);
+        EventBus.Subscribe<FlagsLoadedEvent>(OnFlagsLoaded);
 
         if (hideTimerWhenReady && _state == AbilityState.Ready)
         {
             SetTimerVisible(false);
         }
 
-        RefreshFallbackPrompt();
+        if (!ApplyCompletionLockIfNeeded())
+        {
+            RefreshFallbackPrompt();
+        }
     }
 
     private void OnDisable()
@@ -105,6 +114,8 @@ public sealed class StoreRoomCatMeowTransformAbility : MonoBehaviour
         }
 
         SceneManager.activeSceneChanged -= OnActiveSceneChanged;
+        EventBus.Unsubscribe<FlagChangedEvent>(OnFlagChanged);
+        EventBus.Unsubscribe<FlagsLoadedEvent>(OnFlagsLoaded);
         HideFallbackPrompt();
         CancelSequence(revertToInactiveFormOnCancel);
     }
@@ -227,6 +238,7 @@ public sealed class StoreRoomCatMeowTransformAbility : MonoBehaviour
         if (_state != AbilityState.Ready
             || movement == null
             || !IsInRequiredScene()
+            || IsBlockedAfterCompletion()
             || IsGameplayBlocked())
         {
             return false;
@@ -259,6 +271,11 @@ public sealed class StoreRoomCatMeowTransformAbility : MonoBehaviour
             return;
         }
 
+        if (ApplyCompletionLockIfNeeded())
+        {
+            return;
+        }
+
         if (hideTimerWhenReady && _state == AbilityState.Ready)
         {
             SetTimerVisible(false);
@@ -269,11 +286,46 @@ public sealed class StoreRoomCatMeowTransformAbility : MonoBehaviour
 
     private void OnFormChanged(MovementForm previousForm, MovementForm currentForm)
     {
+        if (ApplyCompletionLockIfNeeded())
+        {
+            return;
+        }
+
         RefreshFallbackPrompt();
     }
 
     private void OnGameStateChanged(GameState previousState, GameState currentState)
     {
+        if (ApplyCompletionLockIfNeeded())
+        {
+            return;
+        }
+
+        RefreshFallbackPrompt();
+    }
+
+    private void OnFlagChanged(FlagChangedEvent eventData)
+    {
+        if (eventData.FlagId != blockedAfterFlag)
+        {
+            return;
+        }
+
+        if (eventData.Value && ApplyCompletionLockIfNeeded())
+        {
+            return;
+        }
+
+        RefreshFallbackPrompt();
+    }
+
+    private void OnFlagsLoaded(FlagsLoadedEvent eventData)
+    {
+        if (ApplyCompletionLockIfNeeded())
+        {
+            return;
+        }
+
         RefreshFallbackPrompt();
     }
 
@@ -320,6 +372,38 @@ public sealed class StoreRoomCatMeowTransformAbility : MonoBehaviour
         {
             timerUI.gameObject.SetActive(isVisible);
         }
+    }
+
+    private bool ApplyCompletionLockIfNeeded()
+    {
+        if (_isDestroying || !IsInRequiredScene() || !IsBlockedAfterCompletion())
+        {
+            return false;
+        }
+
+        HideFallbackPrompt();
+        CancelSequence(revertToInactiveFormOnCancel, false);
+
+        if (forceInactiveFormWhenBlocked
+            && movement != null
+            && movement.CurrentForm != inactiveForm)
+        {
+            movement.SetForm(inactiveForm);
+        }
+
+        if (hideTimerWhenReady)
+        {
+            SetTimerVisible(false);
+        }
+
+        return true;
+    }
+
+    private bool IsBlockedAfterCompletion()
+    {
+        return !string.IsNullOrWhiteSpace(blockedAfterFlag)
+            && FlagManager.Instance != null
+            && FlagManager.Instance.HasFlag(blockedAfterFlag);
     }
 
     private void ResolveReferences()

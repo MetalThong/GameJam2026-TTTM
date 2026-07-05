@@ -167,7 +167,7 @@ MonoBehaviour:
     assignedFlag: picked_up_box
     completedFlag: kitchen_bowl_taken
     vietnameseTitle: "\u0110i l\u1EA5y c\xE1i b\xE1t gi\xFAp c\u1EADu ch\u1EE7"
-    englishTitle: 
+    englishTitle: Go get the bowl for your owner
     restoreWhenAssignedOnLoad: 1
     showProgress: 0
     progressFlags: []
@@ -1073,19 +1073,19 @@ MonoBehaviour:
     root: {fileID: 8532505830791692429}
     canvasGroup: {fileID: 0}
     rectTransform: {fileID: 5724679420637980103}
-  - unlockFlag: dropped_box
+  - unlockFlag: mission_provoke_owner
     root: {fileID: 701998324479613849}
     canvasGroup: {fileID: 0}
     rectTransform: {fileID: 6655576097454999237}
-  - unlockFlag: kitchen_bowl_taken
+  - unlockFlag: picked_up_box
     root: {fileID: 7669022016929358091}
     canvasGroup: {fileID: 0}
     rectTransform: {fileID: 3686710337325396171}
-  - unlockFlag: store_cobwebs_cleared
+  - unlockFlag: dishes_washed
     root: {fileID: 2980293420562813428}
     canvasGroup: {fileID: 0}
     rectTransform: {fileID: 1511390402395368365}
-  - unlockFlag: dishes_washed
+  - unlockFlag: emotion_progress_reserved_4
     root: {fileID: 773127959865222397}
     canvasGroup: {fileID: 0}
     rectTransform: {fileID: 3753098840452122914}
