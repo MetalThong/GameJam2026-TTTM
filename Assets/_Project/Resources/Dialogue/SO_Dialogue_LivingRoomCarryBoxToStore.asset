@@ -16,6 +16,16 @@ MonoBehaviour:
   lines:
   - speakerName: Silly
     englishSpeakerName: Silly
-    text: "Sao c\u1EADu \u1EA5y l\u1EA1i mang th\u00F9ng xu\u1ED1ng ph\u00F2ng kho nh\u1EC9?"
-    englishText: Why is he carrying that box down to the storage room?
+    text: "V\u0169 mang th\u00F9ng \u0111\u1ED3 c\u0169 xu\u1ED1ng ph\u00F2ng kho..."
+    englishText: Vu is carrying the old box down to the storage room...
+    portrait: {fileID: 6468568510307345621, guid: 0c05e137063d43e429af4b01ffae35ac, type: 3}
+  - speakerName: Silly
+    englishSpeakerName: Silly
+    text: "C\u00F3 ph\u1EA3i c\u1EADu \u1EA5y \u0111ang c\u1EA5t nh\u1EEFng th\u1EE9 c\u1EE7a m\u00ECnh \u0111i kh\u00F4ng?"
+    englishText: Is he putting my things away?
+    portrait: {fileID: 6468568510307345621, guid: 0c05e137063d43e429af4b01ffae35ac, type: 3}
+  - speakerName: Silly
+    englishSpeakerName: Silly
+    text: "Kh\u00F4ng \u0111\u01B0\u1EE3c, m\u00ECnh ph\u1EA3i \u0111i theo. Bi\u1EBFt \u0111\u00E2u m\u00ECnh c\u00F2n gi\u00FAp \u0111\u01B0\u1EE3c c\u1EADu \u1EA5y."
+    englishText: No, I have to follow him. Maybe I can still help him.
     portrait: {fileID: 6468568510307345621, guid: 0c05e137063d43e429af4b01ffae35ac, type: 3}

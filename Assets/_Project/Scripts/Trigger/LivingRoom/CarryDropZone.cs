@@ -3,15 +3,17 @@ using System.Threading;
 using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 [DisallowMultipleComponent]
-public sealed class CarryDropZone : MonoBehaviour
+public sealed class CarryDropZone : MonoBehaviour, IInteractable, IInteractionPromptProvider, IInteractionAvailability
 {
     [Header("Drop Match")]
     [SerializeField] private SceneId sceneId = SceneId.LivingRoomPart4;
     [SerializeField] private string carryId = "fish";
     [SerializeField] private Collider2D dropZoneCollider;
     [SerializeField] private bool requireDropInsideCollider = true;
+    [SerializeField] private string promptLocalizationKey = "prompt.interact";
 
     [Header("Completion")]
     [SerializeField] private string completionFlagId = "lr4_fish_delivered";
@@ -30,6 +32,8 @@ public sealed class CarryDropZone : MonoBehaviour
     [SerializeField, Min(0f)] private float startDelay = 0.1f;
 
     private bool _isPlaying;
+
+    public string PromptLocalizationKey => promptLocalizationKey;
 
     private void OnEnable()
     {
@@ -54,6 +58,22 @@ public sealed class CarryDropZone : MonoBehaviour
         }
 
         CompleteAsync(dropInfo, this.GetCancellationTokenOnDestroy()).Forget();
+    }
+
+    public bool TryInteract()
+    {
+        if (!IsInteractionAvailable(null))
+        {
+            return false;
+        }
+
+        CarryManager.Instance.DropAt(ResolveDropPoint());
+        return true;
+    }
+
+    public bool IsInteractionAvailable(Movement playerMovement)
+    {
+        return CanAcceptCurrentCarry();
     }
 
     private async UniTaskVoid CompleteAsync(CarryManager.CarryDropInfo dropInfo, CancellationToken cancellationToken)
@@ -94,7 +114,7 @@ public sealed class CarryDropZone : MonoBehaviour
             return false;
         }
 
-        if (condition != null && FlagManager.Instance != null && !condition.IsMet(FlagManager.Instance.Flags))
+        if (!IsConditionMet())
         {
             return false;
         }
@@ -106,6 +126,59 @@ public sealed class CarryDropZone : MonoBehaviour
 
         Collider2D targetCollider = ResolveDropZoneCollider();
         return targetCollider != null && targetCollider.OverlapPoint(dropInfo.DropPosition);
+    }
+
+    private bool CanAcceptCurrentCarry()
+    {
+        if (_isPlaying || IsCompleted() || string.IsNullOrWhiteSpace(carryId))
+        {
+            return false;
+        }
+
+        CarryManager carryManager = CarryManager.Instance;
+        if (carryManager == null || !carryManager.IsCarryingId(carryId))
+        {
+            return false;
+        }
+
+        Scene activeScene = SceneManager.GetActiveScene();
+        if (!activeScene.IsValid() || !string.Equals(activeScene.name, sceneId.ToString(), StringComparison.Ordinal))
+        {
+            return false;
+        }
+
+        return IsConditionMet();
+    }
+
+    private bool IsConditionMet()
+    {
+        if (condition == null)
+        {
+            return true;
+        }
+
+        FlagManager flagManager = FlagManager.Instance;
+        if (flagManager == null)
+        {
+            bool hasRequiredFlags = condition.requiredFlags != null && condition.requiredFlags.Count > 0;
+            bool hasBlockedFlags = condition.blockedFlags != null && condition.blockedFlags.Count > 0;
+            return !hasRequiredFlags && !hasBlockedFlags;
+        }
+
+        return condition.IsMet(flagManager.Flags);
+    }
+
+    private Vector3 ResolveDropPoint()
+    {
+        Collider2D targetCollider = ResolveDropZoneCollider();
+        if (targetCollider == null)
+        {
+            return transform.position;
+        }
+
+        Vector3 center = targetCollider.bounds.center;
+        center.z = transform.position.z;
+        return center;
     }
 
     private async UniTask HideDroppedObjectAsync(GameObject droppedObject, CancellationToken cancellationToken)

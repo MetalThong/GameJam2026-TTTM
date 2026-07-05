@@ -16,6 +16,16 @@ MonoBehaviour:
   lines:
   - speakerName: Silly
     englishSpeakerName: Silly
-    text: "\u00D4ng ch\u1EE7 \u0111ang t\u00ECm b\u00E1t \u0103n c\u1EE7a m\u00ECnh, c\u00F3 ph\u1EA3i \u0111\u1ECBnh cho m\u00ECnh \u0103n kh\u00F4ng v\u1EADy, \u0111\u1EC3 m\u00ECnh \u0111i t\u00ECm cho \u00F4ng ch\u1EE7"
-    englishText: My owner is looking for my food bowl. Is he going to feed me? I'll go find it for him.
+    text: "V\u0169 \u0111ang t\u00ECm b\u00E1t \u0103n c\u1EE7a m\u00ECnh... c\u1EADu \u1EA5y v\u1EABn nh\u1EDB Silly \u0111\u00FAng kh\u00F4ng?"
+    englishText: Vu is looking for my food bowl... he still remembers Silly, right?
+    portrait: {fileID: 6468568510307345621, guid: 0c05e137063d43e429af4b01ffae35ac, type: 3}
+  - speakerName: Silly
+    englishSpeakerName: Silly
+    text: "N\u1EBFu m\u00ECnh t\u00ECm \u0111\u01B0\u1EE3c c\u00E1i b\u00E1t, ch\u1EAFc c\u1EADu \u1EA5y s\u1EBD bi\u1EBFt m\u00ECnh v\u1EABn \u1EDF \u0111\u00E2y."
+    englishText: If I find the bowl, maybe he will know I am still here.
+    portrait: {fileID: 6468568510307345621, guid: 0c05e137063d43e429af4b01ffae35ac, type: 3}
+  - speakerName: Silly
+    englishSpeakerName: Silly
+    text: "M\u00ECnh s\u1EBD gi\u00FAp c\u1EADu \u1EA5y. Ch\u1EC9 c\u1EA7n c\u1EADu \u1EA5y nh\u00ECn v\u1EC1 ph\u00EDa m\u00ECnh m\u1ED9t ch\u00FAt th\u00F4i."
+    englishText: I will help him. I only need him to look my way, just a little.
     portrait: {fileID: 6468568510307345621, guid: 0c05e137063d43e429af4b01ffae35ac, type: 3}

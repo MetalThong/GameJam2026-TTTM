@@ -67,12 +67,17 @@ public sealed class MissionDefinition
 
     public string GetTitle(LocalizationManager localizationManager)
     {
+        string normalizedVietnameseTitle = VietnameseTextUtility.Normalize(vietnameseTitle);
+        string normalizedEnglishTitle = VietnameseTextUtility.Normalize(englishTitle);
+
         if (localizationManager == null)
         {
-            return !string.IsNullOrWhiteSpace(vietnameseTitle) ? vietnameseTitle : MissionId;
+            return !string.IsNullOrWhiteSpace(normalizedVietnameseTitle)
+                ? normalizedVietnameseTitle
+                : MissionId;
         }
 
-        return localizationManager.GetDialogueText(vietnameseTitle, englishTitle);
+        return localizationManager.GetDialogueText(normalizedVietnameseTitle, normalizedEnglishTitle);
     }
 
     public string GetDisplayTitle(LocalizationManager localizationManager, FlagManager flagManager)
@@ -162,6 +167,9 @@ public sealed class MissionDefinition
             return completedFlag;
         }
 
-        return !string.IsNullOrWhiteSpace(vietnameseTitle) ? vietnameseTitle : nameof(MissionDefinition);
+        string normalizedVietnameseTitle = VietnameseTextUtility.Normalize(vietnameseTitle);
+        return !string.IsNullOrWhiteSpace(normalizedVietnameseTitle)
+            ? normalizedVietnameseTitle
+            : nameof(MissionDefinition);
     }
 }

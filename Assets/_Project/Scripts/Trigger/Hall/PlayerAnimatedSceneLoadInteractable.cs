@@ -6,7 +6,6 @@ using UnityEngine;
 public sealed class PlayerAnimatedSceneLoadInteractable : SceneLoadInteractable
 {
     [Header("Player Animation")]
-    [SerializeField] private Movement playerMovement;
     [SerializeField] private string animationTrigger = "IsPicture";
     [SerializeField] private string animationStateName = "GoToPicture";
     [SerializeField] private bool requireCatForm;
@@ -89,16 +88,6 @@ public sealed class PlayerAnimatedSceneLoadInteractable : SceneLoadInteractable
                     : previousState);
             }
         }
-    }
-
-    private Movement ResolvePlayerMovement()
-    {
-        if (playerMovement == null)
-        {
-            playerMovement = UnityEngine.Object.FindFirstObjectByType<Movement>(FindObjectsInactive.Exclude);
-        }
-
-        return playerMovement;
     }
 
     private float ResolveAnimationDuration(Movement movement)
@@ -286,10 +275,7 @@ public sealed class PlayerAnimatedSceneLoadInteractable : SceneLoadInteractable
 #if UNITY_EDITOR
     private void OnValidate()
     {
-        if (playerMovement == null)
-        {
-            playerMovement = UnityEngine.Object.FindFirstObjectByType<Movement>(FindObjectsInactive.Exclude);
-        }
+        ResolvePlayerMovement();
     }
 #endif
 }

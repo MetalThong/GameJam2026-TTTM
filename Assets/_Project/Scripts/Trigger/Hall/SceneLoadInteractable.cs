@@ -23,6 +23,8 @@ public class SceneLoadInteractable : MonoBehaviour, IInteractable, IInteractionP
     [SerializeField] private SceneId targetScene;
     [SerializeField] private string promptLocalizationKey = "prompt.pass";
     [SerializeField] private FlagSceneOverride[] targetOverrides;
+    [SerializeField] private StoryFlagCondition condition = new();
+    [SerializeField] private StoryFlagAction action = new();
 
     [Header("Form Requirement")]
     [SerializeField] private bool restrictByForm;
@@ -52,6 +54,11 @@ public class SceneLoadInteractable : MonoBehaviour, IInteractable, IInteractionP
 
     public bool IsInteractionAvailable(Movement movement)
     {
+        if (!IsStoryConditionMet())
+        {
+            return false;
+        }
+
         if (!restrictByForm)
         {
             return true;
@@ -68,6 +75,7 @@ public class SceneLoadInteractable : MonoBehaviour, IInteractable, IInteractionP
         try
         {
             await BeforeLoadAsync();
+            ExecuteAction();
 
             if (GameManager.Instance != null)
             {
@@ -114,7 +122,34 @@ public class SceneLoadInteractable : MonoBehaviour, IInteractable, IInteractionP
         return targetScene;
     }
 
-    private Movement ResolvePlayerMovement()
+    private bool IsStoryConditionMet()
+    {
+        if (condition == null)
+        {
+            return true;
+        }
+
+        if (FlagManager.Instance == null)
+        {
+            bool hasRequiredFlags = condition.requiredFlags != null && condition.requiredFlags.Count > 0;
+            bool hasBlockedFlags = condition.blockedFlags != null && condition.blockedFlags.Count > 0;
+            return !hasRequiredFlags && !hasBlockedFlags;
+        }
+
+        return condition.IsMet(FlagManager.Instance.Flags);
+    }
+
+    private void ExecuteAction()
+    {
+        if (action == null || FlagManager.Instance == null)
+        {
+            return;
+        }
+
+        action.Execute(FlagManager.Instance);
+    }
+
+    protected Movement ResolvePlayerMovement()
     {
         if (playerMovement == null)
         {

@@ -16,16 +16,21 @@ MonoBehaviour:
   lines:
   - speakerName: Silly
     englishSpeakerName: Silly
-    text: "Ơ... sao tự nhiên mình lại biến thành dạng này?"
-    englishText: "Huh... why did I suddenly turn into this form?"
+    text: "\u01A0... sao m\u00ECnh l\u1EA1i th\u00E0nh d\u1EA1ng n\u00E0y n\u1EEFa?"
+    englishText: "Huh... why did I turn into this form again?"
     portrait: {fileID: 6468568510307345621, guid: 0c05e137063d43e429af4b01ffae35ac, type: 3}
   - speakerName: Silly
     englishSpeakerName: Silly
-    text: "Phải chọc giận ông chủ mới được."
-    englishText: "I need to make the owner angry."
+    text: "Kh\u00F4ng sao, ch\u1EAFc V\u0169 ch\u1EC9 ch\u01B0a nh\u00ECn th\u1EA5y m\u00ECnh th\u00F4i."
+    englishText: "It is okay, maybe Vu just has not seen me yet."
     portrait: {fileID: 6468568510307345621, guid: 0c05e137063d43e429af4b01ffae35ac, type: 3}
   - speakerName: Silly
     englishSpeakerName: Silly
-    text: "DÁM KHÔNG VUỐT VE CẢM ƠN TA."
-    englishText: "How dare he refuse to pet me and thank me."
+    text: "M\u00ECnh \u0111\u00E3 g\u1ECDi, \u0111\u00E3 ch\u1EA1y quanh c\u1EADu \u1EA5y, v\u1EADy m\u00E0 c\u1EADu \u1EA5y v\u1EABn \u0111i qua nh\u01B0 m\u00ECnh kh\u00F4ng t\u1ED3n t\u1EA1i."
+    englishText: "I called, I ran around him, but he still walked past me like I was not here."
+    portrait: {fileID: 6468568510307345621, guid: 0c05e137063d43e429af4b01ffae35ac, type: 3}
+  - speakerName: Silly
+    englishSpeakerName: Silly
+    text: "N\u1EBFu V\u0169 kh\u00F4ng ch\u1ECBu nh\u00ECn m\u00ECnh... m\u00ECnh s\u1EBD l\u00E0m c\u1EADu \u1EA5y ph\u1EA3i ch\u00FA \u00FD."
+    englishText: "If Vu will not look at me... I will make him notice."
     portrait: {fileID: 6468568510307345621, guid: 0c05e137063d43e429af4b01ffae35ac, type: 3}

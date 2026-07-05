@@ -16,11 +16,16 @@ MonoBehaviour:
   lines:
   - speakerName: Silly
     englishSpeakerName: Silly
-    text: "C\u1EADu ch\u1EE7 \u1EDF \u0111\u00E2y... ph\u00F2ng kho nhi\u1EC1u m\u1EA1ng nh\u1EC7n qu\u00E1."
-    englishText: He is here... the storage room is full of cobwebs.
+    text: "V\u0169 \u1EDF \u0111\u00E2y... ph\u00F2ng kho b\u1EE5i qu\u00E1."
+    englishText: Vu is here... the storage room is so dusty.
     portrait: {fileID: 6468568510307345621, guid: 0c05e137063d43e429af4b01ffae35ac, type: 3}
   - speakerName: Silly
     englishSpeakerName: Silly
-    text: "\u00C0, m\u00ECnh s\u1EBD gi\u00FAp c\u1EADu \u1EA5y b\u1EB1ng c\u00E1ch d\u1ECDn h\u1EBFt m\u1EA1ng nh\u1EC7n trong ph\u00F2ng."
-    englishText: Oh, I can help him by clearing all the cobwebs in this room.
+    text: "N\u1EBFu m\u00ECnh d\u1ECDn s\u1EA1ch ch\u1ED7 n\u00E0y, ch\u1EAFc c\u1EADu \u1EA5y s\u1EBD b\u1EDBt m\u1EC7t."
+    englishText: If I clean this place up, maybe he will feel less tired.
+    portrait: {fileID: 6468568510307345621, guid: 0c05e137063d43e429af4b01ffae35ac, type: 3}
+  - speakerName: Silly
+    englishSpeakerName: Silly
+    text: "M\u00ECnh gi\u00FAp \u0111\u01B0\u1EE3c m\u00E0. M\u00ECnh v\u1EABn l\u00E0 Silly c\u1EE7a c\u1EADu \u1EA5y m\u00E0."
+    englishText: I can help. I am still his Silly.
     portrait: {fileID: 6468568510307345621, guid: 0c05e137063d43e429af4b01ffae35ac, type: 3}

@@ -1,8 +1,9 @@
 using System;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 [DisallowMultipleComponent]
-public sealed class CarryableInteractable : MonoBehaviour, IInteractable, ICarryable
+public sealed class CarryableInteractable : MonoBehaviour, IInteractable, ICarryable, IInteractionAvailability
 {
     [SerializeField] private string carryId;
     [SerializeField] private GameObject carryPrefab;
@@ -11,6 +12,15 @@ public sealed class CarryableInteractable : MonoBehaviour, IInteractable, ICarry
     [SerializeField] private bool hideSourceOnGrab = true;
     [SerializeField] private bool hideSourceWhenAlreadyCarried = true;
     [SerializeField] private bool allowReplaceCurrentCarry;
+    [SerializeField] private string completionFlagId;
+    [SerializeField] private StoryFlagCondition condition = new();
+    [SerializeField] private StoryFlagAction action = new();
+
+    [Header("Scene Load After Grab")]
+    [SerializeField] private bool loadSceneAfterGrab;
+    [SerializeField] private SceneId sceneAfterGrab = SceneId.LivingRoomPart4;
+    [SerializeField] private bool useFadeLoadAfterGrab = true;
+    [SerializeField] private bool saveBeforeSceneLoadAfterGrab = true;
 
     public string CarryId => string.IsNullOrWhiteSpace(carryId) ? gameObject.name : carryId;
     public GameObject CarryPrefab => carryPrefab != null ? carryPrefab : gameObject;
@@ -38,6 +48,11 @@ public sealed class CarryableInteractable : MonoBehaviour, IInteractable, ICarry
 
     public bool TryInteract()
     {
+        if (!IsInteractionAvailable(null))
+        {
+            return false;
+        }
+
         CarryManager carryManager = CarryManager.GetOrCreate();
         if (carryManager == null)
         {
@@ -72,7 +87,74 @@ public sealed class CarryableInteractable : MonoBehaviour, IInteractable, ICarry
             gameObject.SetActive(false);
         }
 
+        ExecuteCompletion();
+
+        if (loadSceneAfterGrab)
+        {
+            LoadSceneAfterGrabAsync().Forget();
+        }
+
         return true;
+    }
+
+    public bool IsInteractionAvailable(Movement playerMovement)
+    {
+        return IsStoryConditionMet();
+    }
+
+    private bool IsStoryConditionMet()
+    {
+        if (condition == null)
+        {
+            return true;
+        }
+
+        if (FlagManager.Instance == null)
+        {
+            bool hasRequiredFlags = condition.requiredFlags != null && condition.requiredFlags.Count > 0;
+            bool hasBlockedFlags = condition.blockedFlags != null && condition.blockedFlags.Count > 0;
+            return !hasRequiredFlags && !hasBlockedFlags;
+        }
+
+        return condition.IsMet(FlagManager.Instance.Flags);
+    }
+
+    private void ExecuteCompletion()
+    {
+        FlagManager flagManager = FlagManager.Instance;
+        if (flagManager == null)
+        {
+            return;
+        }
+
+        action?.Execute(flagManager);
+
+        if (!string.IsNullOrWhiteSpace(completionFlagId))
+        {
+            flagManager.SetFlag(completionFlagId, true);
+        }
+    }
+
+    private async UniTaskVoid LoadSceneAfterGrabAsync()
+    {
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.SetState(GameState.Playing);
+        }
+
+        if (saveBeforeSceneLoadAfterGrab && SaveManager.Instance != null)
+        {
+            SaveManager.Instance.SaveGame();
+        }
+
+        SceneLoader sceneLoader = new();
+        if (useFadeLoadAfterGrab)
+        {
+            await sceneLoader.FadeLoadAsync(sceneAfterGrab);
+            return;
+        }
+
+        await sceneLoader.LoadSceneAsync(sceneAfterGrab);
     }
 
     private Transform ResolveCarryScaleSource()
