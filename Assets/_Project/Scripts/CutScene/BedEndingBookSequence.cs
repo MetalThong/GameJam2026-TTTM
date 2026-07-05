@@ -4,6 +4,7 @@ using Cysharp.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
 [RequireComponent(typeof(Animator))]
 public sealed class BedEndingBookSequence : MonoBehaviour
@@ -40,10 +41,23 @@ public sealed class BedEndingBookSequence : MonoBehaviour
     [SerializeField, Min(0.01f)] private float textRevealDuration = 6f;
     [SerializeField, Min(1f)] private float textFadeCharacterWidth = 8f;
 
+    [Header("Return To Menu")]
+    [SerializeField] private bool showReturnPromptOnComplete = true;
+    [SerializeField] private SceneId returnScene = SceneId.MainMenu;
+    [SerializeField] private string returnPromptText = "(Back to Main Menu)";
+    [SerializeField] private TextMeshProUGUI returnPromptTextView;
+    [SerializeField] private CanvasGroup returnPromptCanvasGroup;
+    [SerializeField, Min(0f)] private float returnPromptFadeDuration = 0.35f;
+    [SerializeField] private Vector2 returnPromptAnchoredPosition = new(0f, 84f);
+    [SerializeField, Min(1f)] private float returnPromptFontSize = 32f;
+
     private readonly Vector3[] _memoryBaseScales = new Vector3[2];
+    private readonly SceneLoader _sceneLoader = new();
     private CancellationTokenSource _playCts;
     private SequenceStep _step = SequenceStep.WaitingForOpen;
     private float _cachedAnimatorSpeed = 1f;
+    private bool _isReturnPromptVisible;
+    private bool _isLoadingReturnScene;
 
     private void Awake()
     {
@@ -96,6 +110,9 @@ public sealed class BedEndingBookSequence : MonoBehaviour
             case SequenceStep.WaitingForFlip:
                 PlayFlipAsync(_playCts.Token).Forget();
                 break;
+            case SequenceStep.Complete:
+                LoadReturnSceneAsync(_playCts.Token).Forget();
+                break;
         }
     }
 
@@ -144,6 +161,7 @@ public sealed class BedEndingBookSequence : MonoBehaviour
             _step = SequenceStep.RevealingText;
             await RevealEndingTextsAsync(cancellationToken);
             _step = SequenceStep.Complete;
+            await ShowReturnPromptAsync(cancellationToken);
         }
         catch (OperationCanceledException)
         {
@@ -284,7 +302,7 @@ public sealed class BedEndingBookSequence : MonoBehaviour
 
         text.gameObject.SetActive(true);
         text.maxVisibleCharacters = int.MaxValue;
-        text.ForceMeshUpdate();
+        text.ForceMeshUpdate(true);
 
         int visibleCount = text.textInfo.characterCount;
         SetTextAlpha(text, 0);
@@ -317,6 +335,8 @@ public sealed class BedEndingBookSequence : MonoBehaviour
         PrepareAnimatorState(openAnimationStateName);
         HideMemoryImages();
         HideEndingTexts();
+        HideReturnPromptInstant();
+        _isLoadingReturnScene = false;
     }
 
     private void PrepareAnimatorState(string stateName)
@@ -436,11 +456,177 @@ public sealed class BedEndingBookSequence : MonoBehaviour
         }
     }
 
+    private async UniTask ShowReturnPromptAsync(CancellationToken cancellationToken)
+    {
+        if (!showReturnPromptOnComplete)
+        {
+            return;
+        }
+
+        TextMeshProUGUI prompt = ResolveReturnPromptTextView();
+        if (prompt == null)
+        {
+            return;
+        }
+
+        prompt.text = returnPromptText;
+        prompt.gameObject.SetActive(true);
+
+        CanvasGroup canvasGroup = ResolveReturnPromptCanvasGroup(prompt);
+        if (canvasGroup == null)
+        {
+            _isReturnPromptVisible = true;
+            return;
+        }
+
+        canvasGroup.alpha = 0f;
+        canvasGroup.interactable = false;
+        canvasGroup.blocksRaycasts = false;
+
+        float duration = Mathf.Max(0f, returnPromptFadeDuration);
+        if (duration <= 0f)
+        {
+            canvasGroup.alpha = 1f;
+            _isReturnPromptVisible = true;
+            return;
+        }
+
+        float elapsed = 0f;
+        while (elapsed < duration)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+
+            elapsed += Time.unscaledDeltaTime;
+            canvasGroup.alpha = Mathf.Clamp01(elapsed / duration);
+            await UniTask.Yield(PlayerLoopTiming.Update, cancellationToken);
+        }
+
+        canvasGroup.alpha = 1f;
+        _isReturnPromptVisible = true;
+    }
+
+    private void HideReturnPromptInstant()
+    {
+        _isReturnPromptVisible = false;
+
+        if (returnPromptCanvasGroup != null)
+        {
+            returnPromptCanvasGroup.alpha = 0f;
+            returnPromptCanvasGroup.interactable = false;
+            returnPromptCanvasGroup.blocksRaycasts = false;
+        }
+
+        if (returnPromptTextView != null)
+        {
+            returnPromptTextView.gameObject.SetActive(false);
+        }
+    }
+
+    private async UniTaskVoid LoadReturnSceneAsync(CancellationToken cancellationToken)
+    {
+        if (_isLoadingReturnScene || !_isReturnPromptVisible)
+        {
+            return;
+        }
+
+        _isLoadingReturnScene = true;
+
+        try
+        {
+            if (GameManager.Instance != null)
+            {
+                GameManager.Instance.QuitToMenu();
+            }
+
+            await _sceneLoader.FadeLoadAsync(returnScene);
+        }
+        catch (OperationCanceledException)
+        {
+        }
+    }
+
+    private TextMeshProUGUI ResolveReturnPromptTextView()
+    {
+        if (returnPromptTextView != null)
+        {
+            return returnPromptTextView;
+        }
+
+        returnPromptTextView = CreateReturnPromptTextView();
+        return returnPromptTextView;
+    }
+
+    private CanvasGroup ResolveReturnPromptCanvasGroup(TextMeshProUGUI prompt)
+    {
+        if (returnPromptCanvasGroup != null)
+        {
+            return returnPromptCanvasGroup;
+        }
+
+        returnPromptCanvasGroup = prompt != null
+            ? prompt.GetComponentInParent<CanvasGroup>(true)
+            : null;
+
+        if (returnPromptCanvasGroup == null && prompt != null)
+        {
+            returnPromptCanvasGroup = prompt.gameObject.AddComponent<CanvasGroup>();
+        }
+
+        return returnPromptCanvasGroup;
+    }
+
+    private TextMeshProUGUI CreateReturnPromptTextView()
+    {
+        GameObject canvasObject = new("BookReturnPromptCanvas");
+        canvasObject.transform.SetParent(transform, false);
+
+        Canvas canvas = canvasObject.AddComponent<Canvas>();
+        canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+        canvas.sortingOrder = 200;
+
+        CanvasScaler canvasScaler = canvasObject.AddComponent<CanvasScaler>();
+        canvasScaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
+        canvasScaler.referenceResolution = new Vector2(1920f, 1080f);
+        canvasObject.AddComponent<GraphicRaycaster>();
+
+        returnPromptCanvasGroup = canvasObject.AddComponent<CanvasGroup>();
+        returnPromptCanvasGroup.alpha = 0f;
+
+        GameObject promptObject = new("ReturnPromptText");
+        promptObject.transform.SetParent(canvasObject.transform, false);
+
+        RectTransform rectTransform = promptObject.AddComponent<RectTransform>();
+        rectTransform.anchorMin = new Vector2(0.5f, 0f);
+        rectTransform.anchorMax = new Vector2(0.5f, 0f);
+        rectTransform.pivot = new Vector2(0.5f, 0f);
+        rectTransform.anchoredPosition = returnPromptAnchoredPosition;
+        rectTransform.sizeDelta = new Vector2(760f, 84f);
+
+        TextMeshProUGUI prompt = promptObject.AddComponent<TextMeshProUGUI>();
+        prompt.text = returnPromptText;
+        prompt.alignment = TextAlignmentOptions.Center;
+        prompt.fontSize = returnPromptFontSize;
+        prompt.fontStyle = FontStyles.Bold;
+        prompt.color = Color.white;
+        prompt.raycastTarget = false;
+
+        return prompt;
+    }
+
     private void RevealTextAlpha(TextMeshProUGUI text, float normalizedProgress)
     {
-        text.ForceMeshUpdate();
+        if (text == null)
+        {
+            return;
+        }
 
+        text.ForceMeshUpdate(true);
         TMP_TextInfo textInfo = text.textInfo;
+        if (textInfo == null)
+        {
+            return;
+        }
+
         int characterCount = textInfo.characterCount;
         float fadeWidth = Mathf.Max(1f, textFadeCharacterWidth);
         float revealPosition = normalizedProgress * (characterCount + fadeWidth);
@@ -463,9 +649,18 @@ public sealed class BedEndingBookSequence : MonoBehaviour
 
     private void SetTextAlpha(TextMeshProUGUI text, byte alpha)
     {
-        text.ForceMeshUpdate();
+        if (text == null)
+        {
+            return;
+        }
 
+        text.ForceMeshUpdate(true);
         TMP_TextInfo textInfo = text.textInfo;
+        if (textInfo == null)
+        {
+            return;
+        }
+
         for (int i = 0; i < textInfo.characterCount; i++)
         {
             TMP_CharacterInfo characterInfo = textInfo.characterInfo[i];
@@ -482,6 +677,14 @@ public sealed class BedEndingBookSequence : MonoBehaviour
     {
         int materialIndex = characterInfo.materialReferenceIndex;
         int vertexIndex = characterInfo.vertexIndex;
+        if (textInfo == null
+            || textInfo.meshInfo == null
+            || materialIndex < 0
+            || materialIndex >= textInfo.meshInfo.Length)
+        {
+            return;
+        }
+
         Color32[] vertexColors = textInfo.meshInfo[materialIndex].colors32;
         if (vertexColors == null || vertexIndex + 3 >= vertexColors.Length)
         {
@@ -496,11 +699,22 @@ public sealed class BedEndingBookSequence : MonoBehaviour
 
     private void UpdateTextGeometry(TextMeshProUGUI text)
     {
+        if (text == null || text.textInfo == null || text.textInfo.meshInfo == null)
+        {
+            return;
+        }
+
         TMP_TextInfo textInfo = text.textInfo;
         for (int i = 0; i < textInfo.meshInfo.Length; i++)
         {
-            textInfo.meshInfo[i].mesh.colors32 = textInfo.meshInfo[i].colors32;
-            text.UpdateGeometry(textInfo.meshInfo[i].mesh, i);
+            TMP_MeshInfo meshInfo = textInfo.meshInfo[i];
+            if (meshInfo.mesh == null || meshInfo.colors32 == null)
+            {
+                continue;
+            }
+
+            meshInfo.mesh.colors32 = meshInfo.colors32;
+            text.UpdateGeometry(meshInfo.mesh, i);
         }
     }
 
@@ -558,7 +772,12 @@ public sealed class BedEndingBookSequence : MonoBehaviour
             return true;
         }
 
-        return Keyboard.current != null && Keyboard.current.spaceKey.wasPressedThisFrame;
+        Keyboard keyboard = Keyboard.current;
+        return keyboard != null
+            && (keyboard.spaceKey.wasPressedThisFrame
+                || keyboard.enterKey.wasPressedThisFrame
+                || keyboard.numpadEnterKey.wasPressedThisFrame
+                || keyboard.escapeKey.wasPressedThisFrame);
     }
 
     private void ResolveReferences()
