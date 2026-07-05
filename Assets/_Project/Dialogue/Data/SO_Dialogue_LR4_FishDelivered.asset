@@ -16,6 +16,6 @@ MonoBehaviour:
   lines:
   - speakerName: Silly
     englishSpeakerName: Silly
-    text: Xong roi. Con meo ben trai da co ca.
+    text: "Xong r\u1ED3i. Con m\u00E8o b\u00EAn tr\u00E1i \u0111\u00E3 c\u00F3 c\u00E1."
     englishText: Done. The cat on the left has its fish now.
     portrait: {fileID: 6468568510307345621, guid: 0c05e137063d43e429af4b01ffae35ac, type: 3}

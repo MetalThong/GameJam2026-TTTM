@@ -16,6 +16,6 @@ MonoBehaviour:
   lines:
   - speakerName: Silly
     englishSpeakerName: Silly
-    text: No nha ca roi. Gio minh co the ngam ca va mang sang ben trai.
+    text: "N\u00F3 nh\u1EA3 c\u00E1 r\u1ED3i. Gi\u1EDD m\u00ECnh c\u00F3 th\u1EC3 ng\u1EADm c\u00E1 v\u00E0 mang sang b\u00EAn tr\u00E1i."
     englishText: It dropped the fish. Now I can carry it back to the left.
     portrait: {fileID: 6468568510307345621, guid: 0c05e137063d43e429af4b01ffae35ac, type: 3}
