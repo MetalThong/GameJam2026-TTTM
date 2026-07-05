@@ -183,12 +183,17 @@ public sealed class CarryDropZone : MonoBehaviour, IInteractable, IInteractionPr
 
     private async UniTask HideDroppedObjectAsync(GameObject droppedObject, CancellationToken cancellationToken)
     {
-        if (!destroyDroppedObject || droppedObject == null)
+        if (droppedObject == null)
         {
             return;
         }
 
-        PrepareDroppedObjectForHide(droppedObject);
+        PrepareDroppedObjectForCompletion(droppedObject);
+
+        if (!destroyDroppedObject)
+        {
+            return;
+        }
 
         SpriteRenderer[] renderers = droppedObject.GetComponentsInChildren<SpriteRenderer>(true);
         if (droppedObjectFadeDuration > 0f && renderers.Length > 0)
@@ -308,7 +313,7 @@ public sealed class CarryDropZone : MonoBehaviour, IInteractable, IInteractionPr
         }
     }
 
-    private static void PrepareDroppedObjectForHide(GameObject droppedObject)
+    private static void PrepareDroppedObjectForCompletion(GameObject droppedObject)
     {
         foreach (Collider2D targetCollider in droppedObject.GetComponentsInChildren<Collider2D>(true))
         {
@@ -326,6 +331,17 @@ public sealed class CarryDropZone : MonoBehaviour, IInteractable, IInteractionPr
             {
                 behaviour.enabled = false;
             }
+        }
+
+        foreach (InteractButton prompt in droppedObject.GetComponentsInChildren<InteractButton>(true))
+        {
+            if (prompt == null)
+            {
+                continue;
+            }
+
+            prompt.HidePromptImmediately();
+            prompt.enabled = false;
         }
     }
 
