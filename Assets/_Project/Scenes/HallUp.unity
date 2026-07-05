@@ -631,6 +631,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: acfb272cdcd1fcd49a51afedbd6f635e, type: 3}
+--- !u!114 &683215535 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 2689432705537179304, guid: acfb272cdcd1fcd49a51afedbd6f635e, type: 3}
+  m_PrefabInstance: {fileID: 683215534}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4fb32b39b2d344c4b8eaa5964bc12191, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Movement
 --- !u!1 &768667613
 GameObject:
   m_ObjectHideFlags: 0
@@ -659,10 +670,23 @@ MonoBehaviour:
   m_GameObject: {fileID: 768667613}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1c6580f15c5098346b1dc8ffaf80cc17, type: 3}
+  m_Script: {fileID: 11500000, guid: f84822b9abdb4504832e1e4e855d3e0d, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SceneLoadInteractable
+  m_EditorClassIdentifier: Assembly-CSharp::FlagConditionalSceneLoadInteractable
   targetScene: 1
+  promptLocalizationKey: prompt.pass
+  targetOverrides:
+  - requiredFlag: dishes_washed
+    targetScene: 7
+  restrictByForm: 0
+  requiredForm: 0
+  playerMovement: {fileID: 683215535}
+  conditionalTargets:
+  - condition:
+      requiredFlags:
+      - dishes_washed
+      blockedFlags: []
+    targetScene: 7
 --- !u!114 &768667615
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -676,6 +700,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InteractButton
   button: {fileID: 2114878268}
+  extraPromptObjects: []
+  fallbackPromptKey: prompt.interact
+  animateExtraPromptObjects: 1
+  extraPromptFadeInDuration: 0.2
+  extraPromptFadeOutDuration: 0.12
+  restrictByForm: 0
+  requiredForm: 0
 --- !u!61 &768667616
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -1059,6 +1090,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InteractButton
   button: {fileID: 1408704172}
+  extraPromptObjects: []
+  fallbackPromptKey: prompt.interact
+  animateExtraPromptObjects: 1
+  extraPromptFadeInDuration: 0.2
+  extraPromptFadeOutDuration: 0.12
+  restrictByForm: 0
+  requiredForm: 0
 --- !u!61 &1070125648
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -1134,6 +1172,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SceneLoadInteractable
   targetScene: 4
+  promptLocalizationKey: prompt.pass
+  targetOverrides: []
+  restrictByForm: 0
+  requiredForm: 0
+  playerMovement: {fileID: 683215535}
 --- !u!1001 &1165818002
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -1,3 +1,6 @@
+using System;
+using System.Threading;
+using Cysharp.Threading.Tasks;
 using DG.Tweening;
 using UnityEngine;
 
@@ -18,6 +21,11 @@ public sealed class MoveObjectInteractable : MonoBehaviour, IInteractable
     [SerializeField] private Movement playerMovement;
     [SerializeField] private string pullAnimationTrigger = "IsPull";
     [SerializeField] private bool requireCatFormForPullAnimation = true;
+
+    [Header("Dialogue")]
+    [SerializeField] private DialogueManager dialogueManager;
+    [SerializeField] private DialogueSO dialogueAfterMove;
+    [SerializeField] private bool waitForCurrentDialogue = true;
 
     [Header("Flag")]
     [SerializeField] private string completionFlagId;
@@ -60,11 +68,32 @@ public sealed class MoveObjectInteractable : MonoBehaviour, IInteractable
         }
 
         PlayPullAnimation();
-        MoveTarget();
+        PlaySequenceAsync().Forget();
         return true;
     }
 
-    private void MoveTarget()
+    private async UniTaskVoid PlaySequenceAsync()
+    {
+        _isMoving = true;
+        CancellationToken destroyToken = this.GetCancellationTokenOnDestroy();
+
+        try
+        {
+            await MoveTargetAsync(destroyToken);
+            await PlayDialogueAfterMoveAsync(destroyToken);
+            CompleteMove();
+        }
+        catch (OperationCanceledException)
+        {
+        }
+        finally
+        {
+            _moveTween = null;
+            _isMoving = false;
+        }
+    }
+
+    private async UniTask MoveTargetAsync(CancellationToken cancellationToken)
     {
         Vector3 destination = moveTarget != null
             ? moveTarget.position
@@ -75,38 +104,63 @@ public sealed class MoveObjectInteractable : MonoBehaviour, IInteractable
             destination.z = target.position.z;
         }
 
-        _isMoving = true;
         _moveTween?.Kill();
 
-        Sequence sequence = DOTween.Sequence();
         if (moveStartDelay > 0f)
         {
-            sequence.AppendInterval(moveStartDelay);
+            await UniTask.Delay(TimeSpan.FromSeconds(moveStartDelay), cancellationToken: cancellationToken);
         }
 
         if (duration <= 0f)
         {
-            sequence.AppendCallback(() => target.position = destination);
+            target.position = destination;
         }
         else
         {
-            sequence.Append(target.DOMove(destination, duration).SetEase(ease));
+            _moveTween = target.DOMove(destination, duration).SetEase(ease);
+
+            using (cancellationToken.Register(() => _moveTween?.Kill()))
+            {
+                await _moveTween.AsyncWaitForCompletion();
+            }
         }
 
-        _moveTween = sequence
-            .OnComplete(CompleteMove);
+        cancellationToken.ThrowIfCancellationRequested();
     }
 
     private void CompleteMove()
     {
-        _moveTween = null;
-        _isMoving = false;
         _isDone = true;
 
         if (!string.IsNullOrWhiteSpace(completionFlagId) && FlagManager.Instance != null)
         {
             FlagManager.Instance.SetFlag(completionFlagId, true);
         }
+    }
+
+    private async UniTask PlayDialogueAfterMoveAsync(CancellationToken cancellationToken)
+    {
+        if (dialogueAfterMove == null)
+        {
+            return;
+        }
+
+        DialogueManager manager = ResolveDialogueManager();
+        if (manager == null)
+        {
+            Debug.LogWarning("MoveObjectInteractable: dialogueAfterMove is assigned but no DialogueManager was found.", this);
+            return;
+        }
+
+        if (waitForCurrentDialogue)
+        {
+            while (manager.IsPlaying)
+            {
+                await UniTask.Yield(PlayerLoopTiming.Update, cancellationToken);
+            }
+        }
+
+        await manager.PlayDialogueAsync(dialogueAfterMove, cancellationToken);
     }
 
     private void PlayPullAnimation()
@@ -124,10 +178,20 @@ public sealed class MoveObjectInteractable : MonoBehaviour, IInteractable
     {
         if (playerMovement == null)
         {
-            playerMovement = Object.FindFirstObjectByType<Movement>(FindObjectsInactive.Exclude);
+            playerMovement = UnityEngine.Object.FindFirstObjectByType<Movement>(FindObjectsInactive.Exclude);
         }
 
         return playerMovement;
+    }
+
+    private DialogueManager ResolveDialogueManager()
+    {
+        if (dialogueManager == null)
+        {
+            dialogueManager = UnityEngine.Object.FindFirstObjectByType<DialogueManager>(FindObjectsInactive.Include);
+        }
+
+        return dialogueManager;
     }
 
     private void OnFlagsLoaded(FlagsLoadedEvent eventData)

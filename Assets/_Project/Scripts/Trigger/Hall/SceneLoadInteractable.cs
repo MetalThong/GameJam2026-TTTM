@@ -95,7 +95,7 @@ public class SceneLoadInteractable : MonoBehaviour, IInteractable, IInteractionP
         return UniTask.CompletedTask;
     }
 
-    private SceneId ResolveTargetScene()
+    protected virtual SceneId ResolveTargetScene()
     {
         if (targetOverrides == null)
         {
