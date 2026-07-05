@@ -203,6 +203,33 @@ MonoBehaviour:
     showProgress: 0
     progressFlags: []
     completeWhenProgressFull: 1
+  - missionId: picture_steal_fish
+    assignedFlag: mission_picture_steal_fish
+    completedFlag: picture_cookie_delivered_to_rcat
+    vietnameseTitle: "D\u1EE5 Silly \u0111\u1EC3 tr\u1ED9m c\u00E1"
+    englishTitle: Lure Silly away to steal the fish
+    restoreWhenAssignedOnLoad: 1
+    showProgress: 0
+    progressFlags: []
+    completeWhenProgressFull: 1
+  - missionId: picture_steal_gift
+    assignedFlag: mission_picture_steal_gift
+    completedFlag: picture_fish_delivered_to_fishsign
+    vietnameseTitle: "D\u1EE5 Silly \u0111\u1EC3 tr\u1ED9m qu\u00E0"
+    englishTitle: Lure Silly away to steal the gift
+    restoreWhenAssignedOnLoad: 1
+    showProgress: 0
+    progressFlags: []
+    completeWhenProgressFull: 1
+  - missionId: picture_take_birthday_gift
+    assignedFlag: mission_picture_take_birthday_gift
+    completedFlag: picture_gift_taken
+    vietnameseTitle: "L\u1EA5y qu\u00E0 sinh nh\u1EADt"
+    englishTitle: Take the birthday gift
+    restoreWhenAssignedOnLoad: 1
+    showProgress: 0
+    progressFlags: []
+    completeWhenProgressFull: 1
   visibleAlpha: 1
   assignStartOffset: {x: 0, y: 42}
   completeExitOffset: {x: 0, y: 36}

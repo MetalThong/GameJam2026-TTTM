@@ -41,13 +41,15 @@ Assets/
     Scenes/
       Bootstrap.unity
       MainMenu.unity
-      BedEnding.unity
       BedRoom.unity
+      BedRoomEnding.unity
       HallUp.unity
       HallDown.unity
       GhostKitchen.unity
       Kitchen.unity
       LivingRoom.unity
+      LivingRoomPart4.unity
+      Picture.unity
       StoreRoom.unity
       Test/SCN_TriggerDemo.unity
     Scripts/
@@ -58,6 +60,7 @@ Assets/
         Camera/
         Event/
         Input/
+        Localization/
         Manager/
         Pooling/
         Save/
@@ -96,12 +99,16 @@ Current Build Settings include:
 8. `Assets/_Project/Scenes/HallUp.unity`
 9. `Assets/_Project/Scenes/GhostKitchen.unity`
 10. `Assets/_Project/Scenes/Kitchen.unity`
+11. `Assets/_Project/Scenes/BedRoomEnding.unity`
+12. `Assets/_Project/Scenes/StoreRoom.unity`
+13. `Assets/_Project/Scenes/LivingRoomPart4.unity`
+14. `Assets/_Project/Scenes/Picture.unity`
 
 `Bootstrap.unity` owns the startup object `Bootstraper`. It instantiates `Assets/_Project/Prefabs/Core/PersistantRoot.prefab` if the persistent root is not already present, initializes managers, then loads the configured start scene.
 
-`MainMenu.unity` is currently the configured start scene through `SceneId.MainMenu`.
+The current `Bootstrap.unity` asset is configured with `SceneId.Picture` as the start scene in the working tree. `MainMenu.unity` still exists as the menu scene, and `Bootstrapper` currently sets `GameManager` to `MainMenu` after loading its configured start scene.
 
-`Kitchen.unity` and `GhostKitchen.unity` are currently present in both `SceneId` and Build Settings. `BedEnding.unity`, `StoreRoom.unity`, and `Scenes/Test/SCN_TriggerDemo.unity` exist as project scene assets but are not currently represented in `SceneId` or Build Settings. `HallUp.unity` is listed multiple times in Build Settings; clean this up when scene routing settles.
+All current `SceneId` entries are represented in Build Settings. `Scenes/Test/SCN_TriggerDemo.unity` exists as a project scene asset but is not represented in `SceneId` or Build Settings. `HallUp.unity` is listed multiple times in Build Settings; clean this up when scene routing settles.
 
 ## Core Prefab
 
@@ -115,6 +122,7 @@ Current Build Settings include:
 - `InputManager`
 - `FlagManager`
 - `LocalizationManager`
+- `CarryManager`
 - `UIManager`
 - `PanelCanvas`
 
@@ -129,23 +137,25 @@ The root is marked with `DontDestroyOnLoad`, so these services survive scene cha
 - Audio: `AudioManager` plays music and SFX from `AudioLibrary`, supports spatial one-shot SFX, writes volume values to an `AudioMixer` when configured, and falls back to direct runtime `AudioSource` volume.
 - Camera: `CameraManager` manages a Cinemachine camera, follow/look-at target, zoom, priority, bounds, and impulse shake.
 - Save: `SaveManager` stores `SaveData` as JSON in `Application.persistentDataPath`; saveable objects implement `ISaveable`.
-- UI: `UIManager` opens/closes registered `UIPanelView` instances by `PanelId`; `InteractionPromptView` owns the global `E : ...` tutorial prompt in `UI.prefab`.
+- UI: `UIManager` opens/closes registered `UIPanelView` instances by `PanelId`; `InteractionPromptView` owns the global `E : ...` tutorial prompt in `UI.prefab`, including owner-scoped fallback prompts for ability-style interactions.
 - Dialogue: `DialogueSO` assets feed the scene `DialogueManager` and `DialogueView`; `E` reveals the current typed line first, then advances once the line is fully visible. Dialogue locks movement with `GameState.OnDialog` and restores the previous state when complete.
-- Main Menu: runtime components under `Assets/_Project/Scripts/MainMenu` bind the `MainMenu.unity` buttons, control start/continue/quit flow, hide Continue until a save exists, and provide settings controls for music, SFX, and language.
+- Main Menu: runtime components under `Assets/_Project/Scripts/MainMenu` bind `Start`, `Setting`, close, and quit buttons, hide the current Continue button GameObject, and provide settings controls for music, SFX, and language.
 - Story flags and triggers: runtime components under `Assets/_Project/Scripts/Trigger` store story flags, gate triggers/interactions with required and blocked flag conditions, execute set/unset flag actions, refresh flag-based objects through events, and persist flags through `SaveData`.
-- Interaction: `CatInteractor` tracks overlapping `IInteractable` targets, skips gameplay interactions while dialogue is playing or just closed, and calls the first valid `TryInteract()` on `E`; `InteractButton` uses `IInteractionPromptProvider` to show the global prompt while still toggling any assigned scene-local `ButtonE`/`InteractE` object in range.
-- Carry: `CarryManager` lets ghost carry objects only in configured painting scenes, currently `GhostKitchen`, preserves carried world scale, and drops the object after leaving a painting scene.
+- Interaction: `CatInteractor` tracks overlapping `IInteractable` targets, skips gameplay interactions while dialogue is playing or just closed, checks `IInteractionAvailability`, then calls the first valid `TryInteract()` on `E`; `InteractButton` uses `IInteractionPromptProvider` to show the global prompt while still toggling any assigned scene-local prompt object in range.
+- Carry: `CarryManager` lets the player carry objects only in configured painting scenes, currently `GhostKitchen`, `LivingRoomPart4`, and `Picture`; pressing `E` on a carryable item puts an active visual on Cat's centered `CarryAnchor` with Sorting Layer `Player` and Order `2`, pressing `E` on a matching `CarryDropZone` hands/drops it into that target, `Q` remains a free-drop fallback, and story sequences listen to `CarriedObjectDropped`.
 - Localization: `LocalizationManager`, `LocalizationTable`, and `LocalizedText` support Vietnamese, English, and Cat language. Cat language returns `Meow` for normal strings/dialogue except the three readable language picker labels.
-- Mission HUD: `MissionView` watches story flags and shows assigned missions with fade/slide animation, then strikethrough and fades completed missions out.
-- Cutscenes: `CutSceneDialoguePlayer` can play an Animator or legacy Animation once, optionally freeze on the last frame, then play a `DialogueSO`. `BedEndingBookSequence` drives the click-stepped BedEnding book/memory/text beat.
-- Minigames: `WashingMinigameController` currently drives the Kitchen washing prototype. `Washing.prefab` stays hidden until `Enter`/numpad Enter, then uses `E` for timing hits and opens `Lose` on fail.
+- Mission HUD: `MissionView` watches story flags and shows assigned missions with fade/slide animation, normalizes localized mission titles before rendering Vietnamese text with accents, then strikethrough and fades completed missions out.
+- Cutscenes: `CutSceneDialoguePlayer` can play an Animator or legacy Animation once, optionally freeze on the last frame, then play a `DialogueSO`. `BedEndingBookSequence` drives the click-stepped `BedRoomEnding` book/memory/text beat.
+- Minigames: `WashingMinigameController` drives the Kitchen washing minigame through `WashingMinigameInteractable`, uses `E` for timing hits, sets `dishes_washed`, and can play a failure cutscene plus post-failure dialogue/mission flow.
 - LivingRoom story flow: `LivingRoomChatTransformSequence` handles the form-change/dialogue/mission beat after the first ChatTrigger bubble completes, while `LivingToyBoxDropInteractable`, `OwnerBoxPickupSequence`, and `PushFlagObject` handle the toy-box/drop-owner pickup sequence with flags, SFX, tweening, cutscene, and dialogue.
+- StoreRoom/Kitchen continuation: `KitchenDroppedBowlSequence`, `PostBowlStoreStoryCoordinator`, `CobwebInteractable`, and `StoreRoomCatMeowTransformAbility` connect the carried bowl, StoreRoom cobweb cleanup, temporary meow-transform ability, dish mission, and washing minigame.
+- LivingRoomPart4/Picture painting flow: after `dishes_washed`, Kitchen routes to `LivingRoomPart4`; the old-picture trigger loads `Picture` as ghost form, where `E` picks up cookie/fish/gift onto Cat's mouth anchor and `E` at the Rcat/fishsign `CarryDropZone` targets runs the cookie -> Rcat and fish -> fishsign beats. Picking up the gift completes the picture flow and immediately returns to `LivingRoomPart4`.
 - Pooling: `PrefabPool<T>` wraps Unity `ObjectPool<T>` for prefab instances implementing `IPoolable`.
 - Events: `EventBus` is a static typed pub/sub helper for gameplay events.
 
 ## Current Enums
 
-- `SceneId`: `MainMenu`, `BedRoom`, `HallUp`, `LivingRoom`, `HallDown`, `Kitchen`, `GhostKitchen`
+- `SceneId`: `MainMenu`, `BedRoom`, `HallUp`, `LivingRoom`, `HallDown`, `Kitchen`, `GhostKitchen`, `BedRoomEnding`, `StoreRoom`, `LivingRoomPart4`, `Picture`
 - `GameState`: `Booting`, `MainMenu`, `Playing`, `Paused`, `GameOver`, `OnDialog`
 - `PanelId`: `Loading`, `Settings`, `Pause`, `Win`, `Lose`
 - `Language`: `Vietnamese`, `English`, `Cat`

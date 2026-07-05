@@ -28,8 +28,11 @@ public sealed class CarryManager : MonoBehaviour
     [SerializeField] private string playerTag = "Player";
     [SerializeField] private SceneId[] paintingScenes = { SceneId.GhostKitchen, SceneId.LivingRoomPart4, SceneId.Picture };
     [SerializeField] private string carryAnchorName = "CarryAnchor";
-    [SerializeField] private Vector3 carryLocalPosition = new(0f, 0.45f, 0f);
+    [SerializeField] private Vector3 carryLocalPosition;
     [SerializeField] private Vector3 carryLocalEulerAngles;
+    [SerializeField] private string carriedSortingLayerName = "Player";
+    [SerializeField] private int carriedSortingOrder = 2;
+    [SerializeField] private string carriedObjectLayerName = "Player";
     [SerializeField] private bool preserveCarriedWorldScale = true;
     [SerializeField] private Key dropKey = Key.Q;
     [SerializeField] private Vector3 dropLocalPosition = new(0f, -0.25f, 0f);
@@ -138,6 +141,16 @@ public sealed class CarryManager : MonoBehaviour
 
     public void Drop()
     {
+        DropAtOverride(null);
+    }
+
+    public void DropAt(Vector3 dropPosition)
+    {
+        DropAtOverride(dropPosition);
+    }
+
+    private void DropAtOverride(Vector3? dropPositionOverride)
+    {
         string droppedCarryId = _carryId;
         GameObject prefabToDrop = _carryPrefab;
         if (prefabToDrop == null)
@@ -147,6 +160,11 @@ public sealed class CarryManager : MonoBehaviour
         }
 
         ResolveDropPose(out Vector3 dropPosition, out Quaternion dropRotation);
+        if (dropPositionOverride.HasValue)
+        {
+            dropPosition = dropPositionOverride.Value;
+        }
+
         GameObject droppedObject = Instantiate(prefabToDrop, dropPosition, dropRotation);
         droppedObject.name = GetDroppedObjectName(prefabToDrop);
         ApplyDroppedScale(droppedObject);
@@ -282,12 +300,12 @@ public sealed class CarryManager : MonoBehaviour
 
         _visual = Instantiate(_carryPrefab, anchor);
         _visual.name = _carryPrefab.name;
+        SetHierarchyActive(_visual, true);
         _visual.transform.localPosition = carryLocalPosition;
         _visual.transform.localRotation = Quaternion.Euler(carryLocalEulerAngles);
         ApplyCarriedScale(_visual.transform);
-        _visual.SetActive(true);
-        ApplyCarriedScale(_visual.transform);
 
+        ApplyCarriedVisualPresentation(_visual);
         PrepareCarriedVisual(_visual);
     }
 
@@ -409,6 +427,71 @@ public sealed class CarryManager : MonoBehaviour
             if (behaviour is IInteractable)
             {
                 behaviour.enabled = false;
+            }
+        }
+    }
+
+    private void ApplyCarriedVisualPresentation(GameObject visual)
+    {
+        if (visual == null)
+        {
+            return;
+        }
+
+        int objectLayer = LayerMask.NameToLayer(carriedObjectLayerName);
+        if (objectLayer >= 0)
+        {
+            SetLayerRecursively(visual.transform, objectLayer);
+        }
+
+        SpriteRenderer[] renderers = visual.GetComponentsInChildren<SpriteRenderer>(true);
+        for (int i = 0; i < renderers.Length; i++)
+        {
+            SpriteRenderer renderer = renderers[i];
+            if (renderer == null)
+            {
+                continue;
+            }
+
+            if (!string.IsNullOrWhiteSpace(carriedSortingLayerName))
+            {
+                renderer.sortingLayerName = carriedSortingLayerName;
+            }
+
+            renderer.sortingOrder = carriedSortingOrder;
+        }
+    }
+
+    private static void SetHierarchyActive(GameObject root, bool active)
+    {
+        if (root == null)
+        {
+            return;
+        }
+
+        Transform[] children = root.GetComponentsInChildren<Transform>(true);
+        for (int i = 0; i < children.Length; i++)
+        {
+            if (children[i] != null)
+            {
+                children[i].gameObject.SetActive(active);
+            }
+        }
+    }
+
+    private static void SetLayerRecursively(Transform root, int layer)
+    {
+        if (root == null)
+        {
+            return;
+        }
+
+        Transform[] children = root.GetComponentsInChildren<Transform>(true);
+        for (int i = 0; i < children.Length; i++)
+        {
+            if (children[i] != null)
+            {
+                children[i].gameObject.layer = layer;
             }
         }
     }
