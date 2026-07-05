@@ -1025,6 +1025,172 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 7878350319992209165, guid: c741cb78dd6ee334595dc59c3389c1cd, type: 3}
   m_PrefabInstance: {fileID: 686669435}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &813018696
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 813018698}
+  - component: {fileID: 813018697}
+  - component: {fileID: 813018700}
+  - component: {fileID: 813018699}
+  m_Layer: 0
+  m_Name: BellCat
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!212 &813018697
+SpriteRenderer:
+  serializedVersion: 2
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 813018696}
+  m_Enabled: 1
+  m_CastShadows: 0
+  m_ReceiveShadows: 0
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 0
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 0
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
+  m_SortingLayerID: -1638106889
+  m_SortingLayer: 4
+  m_SortingOrder: 2
+  m_MaskInteraction: 0
+  m_Sprite: {fileID: 473386890957647989, guid: 5a1486b392f504942bb0357a84aacfc7, type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_FlipX: 0
+  m_FlipY: 0
+  m_DrawMode: 0
+  m_Size: {x: 0.4, y: 0.28}
+  m_AdaptiveModeThreshold: 0.5
+  m_SpriteTileMode: 0
+  m_WasSpriteAssigned: 1
+  m_SpriteSortPoint: 0
+--- !u!4 &813018698
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 813018696}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 2, y: 2, z: 2}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!61 &813018699
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 813018696}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0, y: 0.21}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: -0.25}
+    oldSize: {x: 0.4, y: 0.28}
+    newSize: {x: 0.4, y: 0.28}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  m_Size: {x: 0.4, y: 0.28}
+  m_EdgeRadius: 0
+--- !u!50 &813018700
+Rigidbody2D:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 813018696}
+  m_BodyType: 0
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_GravityScale: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 0
 --- !u!1 &815857765
 GameObject:
   m_ObjectHideFlags: 0
@@ -2553,23 +2719,30 @@ MonoBehaviour:
   completionFlagId: owner_memento_found
   nextMissionFlagId: mission_go_to_bedroom
   startDelay: 0.2
-  bellCatPrefab: {fileID: -8435245712485981826, guid: 5a1486b392f504942bb0357a84aacfc7, type: 3}
+  bellCatPrefab: {fileID: 813018696}
   bellCatGroundOffset: {x: 0, y: 0, z: 0}
   bellCatSpawnOffset: {x: 0, y: 1.2, z: 0}
   bellCatSpawnScale: {x: 1, y: 1, z: 1}
+  bellCatSortingLayerName: Player
+  bellCatSortingOrder: 2
   bellCatFallDuration: 0.45
   bellCatFallEase: 30
   ownerPrefab: {fileID: 4460802599194774219, guid: 035b606787c0fe64387e61aab294d1e5, type: 3}
   ownerResourcePath: Main/thang chu di
-  spawnOwnerAtDropPosition: 1
+  spawnOwnerAtDropPosition: 0
   ownerDropSpawnOffset: {x: 1.2, y: 0, z: 0}
   ownerSpawnPoint: {fileID: 0}
-  ownerSpawnOffset: {x: 0, y: 0, z: 0}
+  ownerSpawnOffset: {x: 5.46, y: -2.94, z: 0}
   ownerSpawnScale: {x: 1.3, y: 1.3, z: 1.3}
-  flipOwnerOnSpawn: 1
+  flipOwnerOnSpawn: 0
   disableOwnerAnimatorOnSpawn: 1
   ownerSpawnFadeDuration: 0.25
   ownerDespawnFadeDuration: 0.35
+  setPlayerFormOnComplete: 1
+  playerFormOnComplete: 0
+  playerMovement: {fileID: 1960256532}
+  hideBellCatOnComplete: 1
+  bellCatHideFadeDuration: 0.2
   hideDroppedGiftOnBellCatSpawn: 1
   droppedGiftFadeDuration: 0.2
   dialogueManager: {fileID: 0}
@@ -2586,3 +2759,4 @@ SceneRoots:
   - {fileID: 353672565}
   - {fileID: 710000000000010001}
   - {fileID: 710000000000012001}
+  - {fileID: 813018698}

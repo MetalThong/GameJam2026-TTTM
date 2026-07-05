@@ -676,7 +676,7 @@ MonoBehaviour:
   targetScene: 1
   promptLocalizationKey: prompt.pass
   targetOverrides:
-  - requiredFlag: dishes_washed
+  - requiredFlag: owner_memento_found
     targetScene: 7
   restrictByForm: 0
   requiredForm: 0
@@ -684,7 +684,7 @@ MonoBehaviour:
   conditionalTargets:
   - condition:
       requiredFlags:
-      - dishes_washed
+      - owner_memento_found
       blockedFlags: []
     targetScene: 7
 --- !u!114 &768667615

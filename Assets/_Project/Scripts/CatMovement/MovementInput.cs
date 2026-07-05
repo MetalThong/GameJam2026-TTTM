@@ -8,11 +8,9 @@ public sealed class MovementInput : MonoBehaviour
 
     private InputActionAsset _runtimeInputActions;
     private InputAction _moveAction;
-    private InputAction _toggleFormAction;
     private bool _isInitialized;
 
     public Vector2 Move { get; private set; }
-    public bool WasToggleFormPressed { get; private set; }
 
     public void Initialize(InputActionAsset fallbackInputActions)
     {
@@ -33,7 +31,6 @@ public sealed class MovementInput : MonoBehaviour
     public void Refresh()
     {
         Move = ReadMoveInput();
-        WasToggleFormPressed = ReadToggleFormPressed();
     }
 
     private void OnDestroy()
@@ -52,18 +49,6 @@ public sealed class MovementInput : MonoBehaviour
         }
 
         return _moveAction != null ? _moveAction.ReadValue<Vector2>() : Vector2.zero;
-    }
-
-    private bool ReadToggleFormPressed()
-    {
-        bool globalInput = InputManager.Instance != null
-            && InputManager.Instance.Reader != null
-            && InputManager.Instance.Reader.WasNextPressedThisFrame;
-
-        bool localInput = _toggleFormAction != null && _toggleFormAction.WasPressedThisFrame();
-        bool keyboardFallback = Keyboard.current != null && Keyboard.current.tKey.wasPressedThisFrame;
-
-        return globalInput || localInput || keyboardFallback;
     }
 
     private void InitializeLocalInputActions()
@@ -87,12 +72,6 @@ public sealed class MovementInput : MonoBehaviour
         {
             Debug.LogWarning("MovementInput: input action 'Move' was not found in 'Player'.", this);
             return;
-        }
-
-        _toggleFormAction = playerMap.FindAction("Next", throwIfNotFound: false);
-        if (_toggleFormAction == null)
-        {
-            Debug.LogWarning("MovementInput: input action 'Next' was not found in 'Player'. Falling back to T key for form switching.", this);
         }
 
         playerMap.Enable();

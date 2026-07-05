@@ -139,11 +139,6 @@ public sealed class Movement : MonoBehaviour, ISaveable
             return;
         }
 
-        if (_input.WasToggleFormPressed)
-        {
-            ToggleForm();
-        }
-
         UpdateAnimator(_input.Move);
         UpdateFlip(_input.Move);
     }
@@ -313,15 +308,6 @@ public sealed class Movement : MonoBehaviour, ISaveable
         {
             targetRigidbody.gravityScale = _defaultGravityScale;
         }
-    }
-
-    private void ToggleForm()
-    {
-        MovementForm nextForm = _currentForm != null && _currentForm.Form == MovementForm.Cat
-            ? MovementForm.Ghost
-            : MovementForm.Cat;
-
-        SetForm(nextForm);
     }
 
     public void SetForm(MovementForm form)

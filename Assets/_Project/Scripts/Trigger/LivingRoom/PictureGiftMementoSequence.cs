@@ -16,10 +16,12 @@ public sealed class PictureGiftMementoSequence : MonoBehaviour
     [SerializeField, Min(0f)] private float startDelay = 0.2f;
 
     [Header("BellCat")]
-    [SerializeField] private GameObject bellCatPrefab;
+    [SerializeField] private UnityEngine.Object bellCatPrefab;
     [SerializeField] private Vector3 bellCatGroundOffset;
     [SerializeField] private Vector3 bellCatSpawnOffset = new(0f, 1.2f, 0f);
     [SerializeField] private Vector3 bellCatSpawnScale = Vector3.one;
+    [SerializeField] private string bellCatSortingLayerName = "Player";
+    [SerializeField] private int bellCatSortingOrder = 2;
     [SerializeField, Min(0f)] private float bellCatFallDuration = 0.45f;
     [SerializeField] private Ease bellCatFallEase = Ease.OutBounce;
 
@@ -35,6 +37,13 @@ public sealed class PictureGiftMementoSequence : MonoBehaviour
     [SerializeField] private bool disableOwnerAnimatorOnSpawn = true;
     [SerializeField, Min(0f)] private float ownerSpawnFadeDuration = 0.25f;
     [SerializeField, Min(0f)] private float ownerDespawnFadeDuration = 0.35f;
+
+    [Header("Completion")]
+    [SerializeField] private bool setPlayerFormOnComplete = true;
+    [SerializeField] private MovementForm playerFormOnComplete = MovementForm.Cat;
+    [SerializeField] private Movement playerMovement;
+    [SerializeField] private bool hideBellCatOnComplete = true;
+    [SerializeField, Min(0f)] private float bellCatHideFadeDuration = 0.2f;
 
     [Header("Dropped Gift")]
     [SerializeField] private bool hideDroppedGiftOnBellCatSpawn = true;
@@ -110,6 +119,8 @@ public sealed class PictureGiftMementoSequence : MonoBehaviour
 
             await FadeOwnerAsync(_spawnedOwner, 0f, ownerDespawnFadeDuration, cancellationToken);
             DespawnOwner();
+            ApplyPlayerFormOnComplete();
+            await HideBellCatAsync(bellCat, cancellationToken);
             SetCompletionFlags();
         }
         catch (OperationCanceledException)
@@ -130,8 +141,13 @@ public sealed class PictureGiftMementoSequence : MonoBehaviour
             return null;
         }
 
-        Vector3 groundPosition = dropPosition + bellCatGroundOffset;
-        GameObject bellCat = Instantiate(bellCatPrefab, groundPosition + bellCatSpawnOffset, Quaternion.identity);
+        Vector3 spawnPosition = dropPosition + bellCatGroundOffset + bellCatSpawnOffset;
+        GameObject bellCat = CreateBellCatInstance(spawnPosition);
+        if (bellCat == null)
+        {
+            return null;
+        }
+
         bellCat.name = bellCatPrefab.name;
         bellCat.SetActive(true);
 
@@ -140,6 +156,43 @@ public sealed class PictureGiftMementoSequence : MonoBehaviour
             bellCat.transform.localScale = bellCatSpawnScale;
         }
 
+        return bellCat;
+    }
+
+    private GameObject CreateBellCatInstance(Vector3 spawnPosition)
+    {
+        if (bellCatPrefab is GameObject prefab)
+        {
+            return Instantiate(prefab, spawnPosition, Quaternion.identity);
+        }
+
+        if (bellCatPrefab is Component component)
+        {
+            return Instantiate(component.gameObject, spawnPosition, Quaternion.identity);
+        }
+
+        if (bellCatPrefab is Sprite sprite)
+        {
+            return CreateBellCatSpriteObject(sprite, spawnPosition);
+        }
+
+        Debug.LogWarning($"PictureGiftMementoSequence: BellCat reference '{bellCatPrefab.name}' is not a GameObject, Component, or Sprite.", this);
+        return null;
+    }
+
+    private GameObject CreateBellCatSpriteObject(Sprite sprite, Vector3 spawnPosition)
+    {
+        GameObject bellCat = new GameObject(string.IsNullOrWhiteSpace(sprite.name) ? "BellCat" : sprite.name);
+        bellCat.transform.position = spawnPosition;
+
+        SpriteRenderer renderer = bellCat.AddComponent<SpriteRenderer>();
+        renderer.sprite = sprite;
+        if (!string.IsNullOrWhiteSpace(bellCatSortingLayerName))
+        {
+            renderer.sortingLayerName = bellCatSortingLayerName;
+        }
+
+        renderer.sortingOrder = bellCatSortingOrder;
         return bellCat;
     }
 
@@ -215,6 +268,46 @@ public sealed class PictureGiftMementoSequence : MonoBehaviour
         return scale;
     }
 
+    private void ApplyPlayerFormOnComplete()
+    {
+        if (!setPlayerFormOnComplete)
+        {
+            return;
+        }
+
+        Movement movement = ResolvePlayerMovement();
+        if (movement != null)
+        {
+            movement.SetForm(playerFormOnComplete);
+        }
+    }
+
+    private Movement ResolvePlayerMovement()
+    {
+        if (playerMovement == null)
+        {
+            playerMovement = UnityEngine.Object.FindFirstObjectByType<Movement>(FindObjectsInactive.Exclude);
+        }
+
+        return playerMovement;
+    }
+
+    private async UniTask HideBellCatAsync(GameObject bellCat, CancellationToken cancellationToken)
+    {
+        if (!hideBellCatOnComplete || bellCat == null)
+        {
+            return;
+        }
+
+        SpriteRenderer[] renderers = bellCat.GetComponentsInChildren<SpriteRenderer>(true);
+        await FadeSpriteRenderersAsync(renderers, 0f, bellCatHideFadeDuration, cancellationToken);
+
+        if (bellCat != null)
+        {
+            Destroy(bellCat);
+        }
+    }
+
     private async UniTask HideDroppedGiftAsync(GameObject droppedGift, CancellationToken cancellationToken)
     {
         if (!hideDroppedGiftOnBellCatSpawn || droppedGift == null)
@@ -272,6 +365,26 @@ public sealed class PictureGiftMementoSequence : MonoBehaviour
         if (renderers.Length <= 0)
         {
             droppedGift.SetActive(false);
+            return;
+        }
+
+        if (duration <= 0f)
+        {
+            SetSpriteRenderersAlpha(renderers, targetAlpha);
+            return;
+        }
+
+        await FadeSpriteRenderersAsync(renderers, targetAlpha, duration, cancellationToken);
+    }
+
+    private async UniTask FadeSpriteRenderersAsync(
+        SpriteRenderer[] renderers,
+        float targetAlpha,
+        float duration,
+        CancellationToken cancellationToken)
+    {
+        if (renderers == null || renderers.Length <= 0)
+        {
             return;
         }
 
